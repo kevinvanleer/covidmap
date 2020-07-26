@@ -53,6 +53,6 @@
     "stylelint-processor-styled-components": "^1.10.0"
   },
   "lint-staged": {
-    "*": "yarn lint:fix"
+    "*": "eslint --fix"
   }
 }
