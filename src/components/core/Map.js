@@ -9,11 +9,13 @@ import { fetchUsCasesByCounty } from '../../workflows/fetchCovidData.js';
 mapboxgl.accessToken =
   'pk.eyJ1IjoicnVva3ZsIiwiYSI6ImNrZDA3NW9oNTBhanYyeXBjOXBjazloazUifQ.qwtn31dojyeKrFMrcRAjBw';
 
-const MapboxMap = ({ activeLayers, layers, ...props }) => {
+const MapboxMap = ({ activeLayers, layers, date, ...props }) => {
   const [lat, setLat] = useState(39);
   const [lng, setLng] = useState(-95);
   const [zoom, setZoom] = useState(3);
   const [map, setMap] = useState(null);
+  const [casesByCounty, setCasesByCounty] = useState(null);
+  const [initialized, setInitialized] = useState(false);
   const mapContainer = useRef(null);
 
   useMemo(() => {
@@ -27,6 +29,35 @@ const MapboxMap = ({ activeLayers, layers, ...props }) => {
       );
     }
   }, [layers, activeLayers]);
+
+  const updateFeatureState = useMemo(() => {
+    if (casesByCounty) {
+      for (const [key, value] of Object.entries(casesByCounty)) {
+        const recentData = last(value.filter((status) => status.date <= date));
+        map.setFeatureState(
+          {
+            source: 'us-counties',
+            id: key,
+          },
+          {
+            cases: recentData ? parseInt(recentData.cases) : 0,
+            deaths: recentData ? parseInt(recentData.deaths) : 0,
+          }
+        );
+      }
+    }
+  }, [date, casesByCounty, map]);
+
+  useEffect(() => {
+    if (map) {
+      map.on('sourcedata', (e) => {
+        if (e.sourceId === 'us-counties' && e.isSourceLoaded) {
+          console.debug('initialized');
+          setInitialized(true);
+        }
+      });
+    }
+  }, [map]);
 
   useEffect(() => {
     const dataPromise = fetchUsCasesByCounty();
@@ -56,34 +87,39 @@ const MapboxMap = ({ activeLayers, layers, ...props }) => {
           activeLayers.includes(layer.id) ? 'visible' : 'none'
         )
       );
-      const updateFeatureState = async () => {
-        const casesByCounty = await dataPromise;
-        for (const [key, value] of Object.entries(casesByCounty)) {
-          //const recentData = last(value);
-          const recentData = last(
-            value.filter((status) => status.date <= '2020-07-30')
-          );
-          map.setFeatureState(
-            {
-              source: 'us-counties',
-              id: key,
-            },
-            {
-              cases: recentData ? parseInt(recentData.cases) : 0,
-              deaths: recentData ? parseInt(recentData.deaths) : 0,
-            }
-          );
-        }
+      const initializeFeatureState = async () => {
+        setCasesByCounty(await dataPromise);
       };
-      updateFeatureState();
+      initializeFeatureState();
     });
   }, []);
-  return <div ref={mapContainer} {...props} />;
+  return (
+    <>
+      {!initialized && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            margin: '0 auto',
+            zIndex: 100,
+            width: '100%',
+            textAlign: 'center',
+            fontSize: '2em',
+            textShadow: '0px 0px 2px #00e',
+          }}
+        >
+          Initializing...
+        </div>
+      )}
+      <div ref={mapContainer} {...props} />
+    </>
+  );
 };
 
 MapboxMap.propTypes = {
   activeLayers: PropTypes.array,
   layers: PropTypes.array,
+  date: PropTypes.string,
 };
 
 export default MapboxMap;

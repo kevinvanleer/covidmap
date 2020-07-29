@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
+import moment from 'moment';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 
 //import { fetchUsCovidByCounty } from './workflows/fetchCovidData.js';
 //import { fetchUsCasesByCounty } from './workflows/fetchCovidData.js';
@@ -15,18 +18,35 @@ const LegendItem = styled(({ className, onClick, label }) => (
   cursor: pointer;
   font-weight: ${(props) => (props.active ? 'bold' : 'normal')};
 `;
+
+const DateSelector = ({ className, date, setDate }) => (
+  <>
+    <Slider
+      reverse={true}
+      min={0}
+      max={moment().dayOfYear()}
+      onChange={setDate}
+    />
+    <div className={className}>{date}</div>
+  </>
+);
+
 const Legend = styled(
-  ({ className, layers, activeLayers, updateActiveLayers }) => {
+  ({ className, layers, activeLayers, updateActiveLayers, date, setDate }) => {
     return (
       <div className={className}>
-        {layers.map((layer) => (
-          <LegendItem
-            key={layer.id}
-            onClick={() => updateActiveLayers(layer.id)}
-            label={layer.id}
-            active={activeLayers.includes(layer.id)}
-          />
-        ))}
+        <>
+          {layers.map((layer) => (
+            <LegendItem
+              key={layer.id}
+              onClick={() => updateActiveLayers(layer.id)}
+              label={layer.id}
+              active={activeLayers.includes(layer.id)}
+            />
+          ))}
+        </>
+        <div style={{ height: '1em' }} />
+        <DateSelector date={date} setDate={setDate} />
       </div>
     );
   }
@@ -111,6 +131,8 @@ function App() {
   const [activeLayers, setActiveLayers] = useState(
     layers.map((layer) => layer.id)
   );
+  const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
+
   const updateActiveLayers = useCallback(
     (layerId) => {
       const currentState = activeLayers.includes(layerId);
@@ -122,14 +144,23 @@ function App() {
     },
     [activeLayers]
   );
+
+  const onSetDate = useCallback((value) => {
+    let newDate = moment().subtract(value, 'days');
+    console.debug(newDate.format('YYYY-MM-DD'));
+    setDate(newDate.format('YYYY-MM-DD'));
+  });
+
   return (
     <>
       <Legend
         layers={layers}
         activeLayers={activeLayers}
         updateActiveLayers={updateActiveLayers}
+        date={date}
+        setDate={onSetDate}
       />
-      <FullscreenMap layers={layers} activeLayers={activeLayers} />
+      <FullscreenMap date={date} layers={layers} activeLayers={activeLayers} />
     </>
   );
 }
