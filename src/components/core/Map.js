@@ -16,6 +16,18 @@ const MapboxMap = ({ activeLayers, layers, ...props }) => {
   const [map, setMap] = useState(null);
   const mapContainer = useRef(null);
 
+  useMemo(() => {
+    if (map) {
+      layers.forEach((layer) =>
+        map.setLayoutProperty(
+          layer.id,
+          'visibility',
+          activeLayers.includes(layer.id) ? 'visible' : 'none'
+        )
+      );
+    }
+  }, [layers, activeLayers]);
+
   useEffect(() => {
     const dataPromise = fetchUsCasesByCounty();
     const map = new mapboxgl.Map({

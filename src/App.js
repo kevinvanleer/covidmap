@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 
 //import { fetchUsCovidByCounty } from './workflows/fetchCovidData.js';
@@ -6,15 +7,38 @@ import { useDispatch } from 'react-redux';
 
 import FullscreenMap from './components/presentation/FullscreenMap.js';
 
-const Legend = ({ layers, activeLayers }) => {
-  return (
-    <div>
-      {layers.map((layer) => (
-        <div key={layer.id}>{layer.id}</div>
-      ))}
-    </div>
-  );
-};
+const LegendItem = styled(({ className, onClick, label }) => (
+  <div className={className} onClick={onClick}>
+    {label}
+  </div>
+))`
+  cursor: pointer;
+  font-weight: ${(props) => (props.active ? 'bold' : 'normal')};
+`;
+const Legend = styled(
+  ({ className, layers, activeLayers, updateActiveLayers }) => {
+    return (
+      <div className={className}>
+        {layers.map((layer) => (
+          <LegendItem
+            key={layer.id}
+            onClick={() => updateActiveLayers(layer.id)}
+            label={layer.id}
+            active={activeLayers.includes(layer.id)}
+          />
+        ))}
+      </div>
+    );
+  }
+)`
+  position: absolute;
+  z-index: 10;
+  right: 1em;
+  top: 1em;
+  background-color: #444;
+  color: #eee;
+  padding: 1em;
+`;
 
 const layers = [
   {
@@ -87,9 +111,24 @@ function App() {
   const [activeLayers, setActiveLayers] = useState(
     layers.map((layer) => layer.id)
   );
+  const updateActiveLayers = useCallback(
+    (layerId) => {
+      const currentState = activeLayers.includes(layerId);
+      setActiveLayers(
+        currentState
+          ? activeLayers.filter((item) => item !== layerId)
+          : [...activeLayers, layerId]
+      );
+    },
+    [activeLayers]
+  );
   return (
     <>
-      <Legend layers={layers} activeLayers={activeLayers} />
+      <Legend
+        layers={layers}
+        activeLayers={activeLayers}
+        updateActiveLayers={updateActiveLayers}
+      />
       <FullscreenMap layers={layers} activeLayers={activeLayers} />
     </>
   );
