@@ -4,12 +4,29 @@ import { useDispatch } from 'react-redux';
 import moment from 'moment';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
+import { last } from 'lodash';
 
 //import { fetchUsCovidByCounty } from './workflows/fetchCovidData.js';
-//import { fetchUsCasesByCounty } from './workflows/fetchCovidData.js';
+import { fetchUsCasesByCounty } from './workflows/fetchCovidData.js';
 
 import FullscreenMap from './components/presentation/FullscreenMap.js';
 
+const Details = styled(({ className, info }) => (
+  <div className={className}>
+    <div>{`${info.county}, ${info.state}`}</div>
+    <div style={{ height: '0.2em' }} />
+    <div>{`cases: ${info.cases}`}</div>
+    <div>{`deaths: ${info.deaths}`}</div>
+  </div>
+))`
+  position: absolute;
+  z-index: 10;
+  left: 1em;
+  top: 1em;
+  background-color: #444;
+  color: #eee;
+  padding: 1em;
+`;
 const LegendItem = styled(({ className, onClick, label }) => (
   <div className={className} onClick={onClick}>
     {label}
@@ -36,14 +53,16 @@ const Legend = styled(
     return (
       <div className={className}>
         <>
-          {layers.map((layer) => (
-            <LegendItem
-              key={layer.id}
-              onClick={() => updateActiveLayers(layer.id)}
-              label={layer.id}
-              active={activeLayers.includes(layer.id)}
-            />
-          ))}
+          {layers.map((layer) =>
+            layer.legendHide ? null : (
+              <LegendItem
+                key={layer.id}
+                onClick={() => updateActiveLayers(layer.id)}
+                label={layer.id}
+                active={activeLayers.includes(layer.id)}
+              />
+            )
+          )}
         </>
         <div style={{ height: '1em' }} />
         <DateSelector date={date} setDate={setDate} />
@@ -61,16 +80,6 @@ const Legend = styled(
 `;
 
 const layers = [
-  {
-    id: 'us-counties-base',
-    type: 'fill',
-    source: 'us-counties',
-    paint: {
-      'fill-outline-color': '#0f0',
-      'fill-color': 'rgba(0, 255, 0, 1)',
-      'fill-opacity': ['to-number', ['feature-state', 'active']],
-    },
-  },
   {
     id: 'us-county-total-deaths',
     type: 'fill',
@@ -121,17 +130,29 @@ const layers = [
       ],
     },
   },
-  /*{
+  {
+    id: 'us-counties-base',
+    legendHide: true,
+    type: 'fill',
+    source: 'us-counties',
+    paint: {
+      'fill-outline-color': '#0f0',
+      'fill-color': 'rgba(0, 255, 0, 1)',
+      'fill-opacity': ['to-number', ['feature-state', 'active']],
+    },
+  },
+  {
     id: 'us-county-names',
+    legendHide: true,
     type: 'symbol',
     source: 'us-county-centroids',
     minzoom: 7,
     layout: { 'text-field': ['get', 'NAME'] },
     paint: {
       'text-halo-color': '#fff',
-      'text-halo-width': 0.5,
+      'text-halo-width': 1,
     },
-  },*/
+  },
 ];
 
 function App() {
@@ -143,6 +164,7 @@ function App() {
   );
   const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
   const [selectedFeature, setSelectedFeature] = useState(null);
+  const [casesByCounty, setCasesByCounty] = useState(null);
 
   const updateActiveLayers = useCallback(
     (layerId) => {
@@ -156,12 +178,24 @@ function App() {
     [activeLayers]
   );
 
+  useEffect(() => {
+    const initializeFeatureState = async () => {
+      setCasesByCounty(await fetchUsCasesByCounty());
+    };
+    initializeFeatureState();
+  }, []);
+
   const onSetDate = useCallback((value) => {
     let newDate = moment().subtract(value, 'days');
-    console.debug(newDate.format('YYYY-MM-DD'));
     setDate(newDate.format('YYYY-MM-DD'));
   });
 
+  let recentData = null;
+  if (casesByCounty && selectedFeature) {
+    recentData = last(
+      casesByCounty[selectedFeature].filter((status) => status.date <= date)
+    );
+  }
   return (
     <>
       <Legend
@@ -171,12 +205,14 @@ function App() {
         date={date}
         setDate={onSetDate}
       />
+      {recentData ? <Details info={recentData} /> : null}
       <FullscreenMap
         date={date}
         layers={layers}
         selectedFeature={selectedFeature}
         setSelectedFeature={setSelectedFeature}
         activeLayers={activeLayers}
+        casesByCounty={casesByCounty}
       />
     </>
   );

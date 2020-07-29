@@ -15,13 +15,13 @@ const MapboxMap = ({
   date,
   selectedFeature,
   setSelectedFeature,
+  casesByCounty,
   ...props
 }) => {
   const [lat, setLat] = useState(39);
   const [lng, setLng] = useState(-95);
   const [zoom, setZoom] = useState(3);
   const [map, setMap] = useState(null);
-  const [casesByCounty, setCasesByCounty] = useState(null);
   const [initialized, setInitialized] = useState(false);
   const mapContainer = useRef(null);
 
@@ -44,7 +44,7 @@ const MapboxMap = ({
         map.setFeatureState(
           {
             source: 'us-counties',
-            id: key,
+            id: parseInt(key),
           },
           {
             cases: recentData ? parseInt(recentData.cases) : 0,
@@ -59,7 +59,6 @@ const MapboxMap = ({
     if (map) {
       map.on('sourcedata', (e) => {
         if (e.sourceId === 'us-counties' && e.isSourceLoaded) {
-          console.debug('initialized');
           setInitialized(true);
         }
       });
@@ -81,7 +80,7 @@ const MapboxMap = ({
           );
           setSelectedFeature(theFeature.id);
           map.setFeatureState(
-            { source: 'us-counties', id: theFeature.id },
+            { source: 'us-counties', id: parseInt(theFeature.id) },
             { active: true }
           );
         }
@@ -96,7 +95,7 @@ const MapboxMap = ({
         setSelectedFeature(null);
       });
     }
-  }, [map, selectedFeature, initialized]);
+  }, [map, selectedFeature, setSelectedFeature, initialized]);
 
   useEffect(() => {
     const dataPromise = fetchUsCasesByCounty();
@@ -126,10 +125,6 @@ const MapboxMap = ({
           activeLayers.includes(layer.id) ? 'visible' : 'none'
         )
       );
-      const initializeFeatureState = async () => {
-        setCasesByCounty(await dataPromise);
-      };
-      initializeFeatureState();
     });
   }, []);
   return (
@@ -147,7 +142,7 @@ const MapboxMap = ({
             textShadow: '0px 0px 2px #00e',
           }}
         >
-          Loading COVID data...
+          Initializing pandemic...
         </div>
       )}
       <div ref={mapContainer} {...props} />
@@ -159,6 +154,9 @@ MapboxMap.propTypes = {
   activeLayers: PropTypes.array,
   layers: PropTypes.array,
   date: PropTypes.string,
+  selectedFeature: PropTypes.number,
+  setSelectedFeature: PropTypes.func,
+  casesByCounty: PropTypes.object,
 };
 
 export default MapboxMap;
