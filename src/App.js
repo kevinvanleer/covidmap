@@ -6,6 +6,16 @@ import { useDispatch } from 'react-redux';
 
 import FullscreenMap from './components/presentation/FullscreenMap.js';
 
+const Legend = ({ layers, activeLayers }) => {
+  return (
+    <div>
+      {layers.map((layer) => (
+        <div key={layer.id}>{layer.id}</div>
+      ))}
+    </div>
+  );
+};
+
 const layers = [
   {
     id: 'us-county-total-deaths',
@@ -77,7 +87,12 @@ function App() {
   const [activeLayers, setActiveLayers] = useState(
     layers.map((layer) => layer.id)
   );
-  return <FullscreenMap layers={layers} activeLayers={activeLayers} />;
+  return (
+    <>
+      <Legend layers={layers} activeLayers={activeLayers} />
+      <FullscreenMap layers={layers} activeLayers={activeLayers} />
+    </>
+  );
 }
 
 export default App;
