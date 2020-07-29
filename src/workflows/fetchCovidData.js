@@ -16,8 +16,11 @@ export const fetchUsCovidByCounty = () => (dispatch) => {
   });
 };
 
-export const fetchUsCasesByCounty = () => async (dispatch) => {
+export const fetchUsCasesByCounty = async () => {
   const response = await fetch('/api/us-cases-by-county');
-  const json = await response.json();
-  dispatch(load(json));
+  return response.json();
+};
+
+export const updateUsCasesByCounty = () => async (dispatch) => {
+  dispatch(await fetchUsCasesByCounty());
 };
