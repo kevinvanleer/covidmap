@@ -9,7 +9,14 @@ import { fetchUsCasesByCounty } from '../../workflows/fetchCovidData.js';
 mapboxgl.accessToken =
   'pk.eyJ1IjoicnVva3ZsIiwiYSI6ImNrZDA3NW9oNTBhanYyeXBjOXBjazloazUifQ.qwtn31dojyeKrFMrcRAjBw';
 
-const MapboxMap = ({ activeLayers, layers, date, ...props }) => {
+const MapboxMap = ({
+  activeLayers,
+  layers,
+  date,
+  selectedFeature,
+  setSelectedFeature,
+  ...props
+}) => {
   const [lat, setLat] = useState(39);
   const [lng, setLng] = useState(-95);
   const [zoom, setZoom] = useState(3);
@@ -60,6 +67,38 @@ const MapboxMap = ({ activeLayers, layers, date, ...props }) => {
   }, [map]);
 
   useEffect(() => {
+    if (map && initialized) {
+      map.on('mousemove', 'us-counties-base', (e) => {
+        if (e.features.length > 0) {
+          if (selectedFeature) {
+            map.setFeatureState(
+              { source: 'us-counties', id: selectedFeature },
+              { active: false }
+            );
+          }
+          const theFeature = e.features.find(
+            (feature) => feature.layer.id === 'us-counties-base'
+          );
+          setSelectedFeature(theFeature.id);
+          map.setFeatureState(
+            { source: 'us-counties', id: theFeature.id },
+            { active: true }
+          );
+        }
+      });
+      map.on('mouseleave', 'us-counties-base', () => {
+        if (selectedFeature) {
+          map.setFeatureState(
+            { source: 'us-counties', id: selectedFeature },
+            { active: false }
+          );
+        }
+        setSelectedFeature(null);
+      });
+    }
+  }, [map, selectedFeature, initialized]);
+
+  useEffect(() => {
     const dataPromise = fetchUsCasesByCounty();
     const map = new mapboxgl.Map({
       container: mapContainer.current,
@@ -71,7 +110,7 @@ const MapboxMap = ({ activeLayers, layers, date, ...props }) => {
     map.on('load', () => {
       map.addSource('us-counties', {
         type: 'geojson',
-        data: '/api/us-geo-cases-by-county',
+        data: '/api/us-counties',
       });
       map.addSource('us-county-centroids', {
         type: 'geojson',
@@ -108,7 +147,7 @@ const MapboxMap = ({ activeLayers, layers, date, ...props }) => {
             textShadow: '0px 0px 2px #00e',
           }}
         >
-          Initializing...
+          Loading COVID data...
         </div>
       )}
       <div ref={mapContainer} {...props} />

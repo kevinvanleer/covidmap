@@ -62,6 +62,16 @@ const Legend = styled(
 
 const layers = [
   {
+    id: 'us-counties-base',
+    type: 'fill',
+    source: 'us-counties',
+    paint: {
+      'fill-outline-color': '#0f0',
+      'fill-color': 'rgba(0, 255, 0, 1)',
+      'fill-opacity': ['to-number', ['feature-state', 'active']],
+    },
+  },
+  {
     id: 'us-county-total-deaths',
     type: 'fill',
     source: 'us-counties',
@@ -111,7 +121,7 @@ const layers = [
       ],
     },
   },
-  {
+  /*{
     id: 'us-county-names',
     type: 'symbol',
     source: 'us-county-centroids',
@@ -121,7 +131,7 @@ const layers = [
       'text-halo-color': '#fff',
       'text-halo-width': 0.5,
     },
-  },
+  },*/
 ];
 
 function App() {
@@ -132,6 +142,7 @@ function App() {
     layers.map((layer) => layer.id)
   );
   const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
+  const [selectedFeature, setSelectedFeature] = useState(null);
 
   const updateActiveLayers = useCallback(
     (layerId) => {
@@ -160,7 +171,13 @@ function App() {
         date={date}
         setDate={onSetDate}
       />
-      <FullscreenMap date={date} layers={layers} activeLayers={activeLayers} />
+      <FullscreenMap
+        date={date}
+        layers={layers}
+        selectedFeature={selectedFeature}
+        setSelectedFeature={setSelectedFeature}
+        activeLayers={activeLayers}
+      />
     </>
   );
 }
