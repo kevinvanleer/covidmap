@@ -1,19 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
+import moment from 'moment';
+import { last } from 'lodash';
 
-const AreaChart = ({ csvData }) => {
+const AreaChart = ({ data }) => {
   //const [data, setData] = useState(null);
   const d3svg = useRef(null);
-  const width = 500;
-  const height = 500;
-  const margin = { top: 20, right: 20, bottom: 30, left: 30 };
+  const width = 300;
+  const height = 200;
+  const margin = { top: 20, right: 40, bottom: 30, left: 40 };
 
-  const data = Object.assign(
-    d3
-      .csvParse(csvData, d3.autoType)
-      .map(({ date, close }) => ({ date, value: close })),
-    { y: '$ Close' }
+  const casesData = Object.assign(
+    data.map(({ date, cases }) => ({ date: moment(date), value: cases })),
+    { y: 'Cases' }
+  );
+  const mortalityData = Object.assign(
+    data.map(({ date, deaths }) => ({ date: moment(date), value: deaths })),
+    { y: 'Deaths' }
   );
   /*
   useEffect(() => {
@@ -29,19 +33,25 @@ const AreaChart = ({ csvData }) => {
       initializeChart(data);
     })();
   }, []);*/
-  console.debug(csvData, data);
 
   useEffect(() => {
     if (data && d3svg.current) {
       let svg = d3.select(d3svg.current);
+      svg.selectAll('*').remove();
       let x = d3
         .scaleUtc()
-        .domain(d3.extent(data, (d) => d.date))
+        .domain(d3.extent(casesData, (d) => d.date))
         .range([margin.left, width - margin.right]);
 
-      let y = d3
+      let yc = d3
         .scaleLinear()
-        .domain([0, d3.max(data, (d) => d.value)])
+        .domain([0, last(casesData).value])
+        .nice()
+        .range([height - margin.bottom, margin.top]);
+
+      let ym = d3
+        .scaleLinear()
+        .domain([0, last(mortalityData).value])
         .nice()
         .range([height - margin.bottom, margin.top]);
 
@@ -53,10 +63,10 @@ const AreaChart = ({ csvData }) => {
             .tickSizeOuter(0)
         );
 
-      let yAxis = (g) =>
+      let ycAxis = (g) =>
         g
           .attr('transform', `translate(${margin.left},0)`)
-          .call(d3.axisLeft(y))
+          .call(d3.axisLeft(yc))
           .call((g) => g.select('.domain').remove())
           .call((g) =>
             g
@@ -65,22 +75,53 @@ const AreaChart = ({ csvData }) => {
               .attr('x', 3)
               .attr('text-anchor', 'start')
               .attr('font-weight', 'bold')
-              .text(data.y)
+              .text(casesData.y)
+          );
+
+      let ymAxis = (g) =>
+        g
+          .attr('transform', `translate(${width - margin.right},0)`)
+          .call(d3.axisRight(ym))
+          .call((g) => g.select('.domain').remove())
+          .call((g) =>
+            g
+              .select('.tick:last-of-type text')
+              .clone()
+              .attr('x', 3)
+              .attr('text-anchor', 'start')
+              .attr('font-weight', 'bold')
+              .text(mortalityData.y)
           );
 
       let curve = d3.curveLinear;
-      let area = d3
+      let areaC = d3
         .area()
         .curve(curve)
         .x((d) => x(d.date))
-        .y0(y(0))
-        .y1((d) => y(d.value));
+        .y0(yc(0))
+        .y1((d) => yc(d.value));
+      let areaM = d3
+        .area()
+        .curve(curve)
+        .x((d) => x(d.date))
+        .y0(yc(0))
+        .y1((d) => yc(d.value));
 
-      svg.append('path').datum(data).attr('fill', 'steelblue').attr('d', area);
+      svg
+        .append('path')
+        .datum(casesData)
+        .attr('fill', 'steelblue')
+        .attr('d', areaC);
+      svg
+        .append('path')
+        .datum(mortalityData)
+        .attr('fill', 'red')
+        .attr('d', areaM);
       svg.append('g').call(xAxis);
-      svg.append('g').call(yAxis);
+      svg.append('g').call(ycAxis);
+      //svg.append('g').call(ymAxis);
     }
-  });
+  }, [data]);
 
   return (
     <svg

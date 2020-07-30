@@ -6,17 +6,20 @@ import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { last } from 'lodash';
 
+import AreaChart from './components/core/d3AreaChart.js';
+
 //import { fetchUsCovidByCounty } from './workflows/fetchCovidData.js';
 import { fetchUsCasesByCounty } from './workflows/fetchCovidData.js';
 
 import FullscreenMap from './components/presentation/FullscreenMap.js';
 
-const Details = styled(({ className, info }) => (
+const Details = styled(({ className, info, data }) => (
   <div className={className}>
     <div>{`${info.county}, ${info.state}`}</div>
     <div style={{ height: '0.2em' }} />
     <div>{`cases: ${info.cases}`}</div>
     <div>{`deaths: ${info.deaths}`}</div>
+    <AreaChart data={data} />
   </div>
 ))`
   position: absolute;
@@ -205,7 +208,9 @@ function App() {
         date={date}
         setDate={onSetDate}
       />
-      {recentData ? <Details info={recentData} /> : null}
+      {recentData ? (
+        <Details info={recentData} data={casesByCounty[selectedFeature]} />
+      ) : null}
       <FullscreenMap
         date={date}
         layers={layers}
