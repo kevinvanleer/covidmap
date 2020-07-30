@@ -17,9 +17,19 @@ const Details = styled(({ className, info, data }) => (
   <div className={className}>
     <div>{`${info.county}, ${info.state}`}</div>
     <div style={{ height: '0.2em' }} />
-    <div>{`cases: ${info.cases}`}</div>
-    <div>{`deaths: ${info.deaths}`}</div>
-    <AreaChart data={data} />
+    {info.cases > 0 ? (
+      <>
+        <div>{`cases: ${info.cases}`}</div>
+        <div>{`deaths: ${info.deaths}`}</div>
+        <div>{`death rate: ${(
+          (info.deaths / info.cases) *
+          100
+        ).toFixed()}%`}</div>
+        <AreaChart data={data} />)
+      </>
+    ) : (
+      <div>No cases reported</div>
+    )}
   </div>
 ))`
   position: absolute;
