@@ -23,9 +23,11 @@ export const Details = ({ info, data }) => (
       <>
         <Text>{`cases: ${info.cases}`}</Text>
         <Text>{`deaths: ${info.deaths}`}</Text>
-        <Text>{`death rate: ${(
-          info.deathRate.fourWeek * 100
-        ).toFixed()}%`}</Text>
+        <Text>{`death rate:
+          ${(info.deathRate.current * 100).toFixed()}% /
+          ${(info.deathRate.twoWeek * 100).toFixed()}% /
+          ${(info.deathRate.fourWeek * 100).toFixed()}% /
+          ${(info.deathRate.eightWeek * 100).toFixed()}%`}</Text>
         <AreaChart data={data} />
       </>
     ) : (

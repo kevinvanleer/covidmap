@@ -81,7 +81,7 @@ const AreaChart = ({ data }) => {
           );
           */
 
-      let curve = d3.curveLinear;
+      let curve = d3.curveStep;
       let areaC = d3
         .area()
         .curve(curve)

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import moment from 'moment';
-import { last, set } from 'lodash';
+import { get, last, set } from 'lodash';
 
 import { Details, Legend } from './components/structural';
 
@@ -65,20 +65,21 @@ function App() {
           status.date <= moment(date).subtract(8, 'weeks').format('YYYY-MM-DD')
       )
     );
+    set(recentData, 'deathRate.current', recentData.deaths / recentData.cases);
     set(
       recentData,
       'deathRate.twoWeek',
-      recentData.deaths / fourWeekLagData.cases
+      recentData.deaths / twoWeekLagData.cases || 0
     );
     set(
       recentData,
       'deathRate.fourWeek',
-      recentData.deaths / fourWeekLagData.cases
+      recentData.deaths / fourWeekLagData.cases || 0
     );
     set(
       recentData,
       'deathRate.eightWeek',
-      recentData.deaths / fourWeekLagData.cases
+      recentData.deaths / eightWeekLagData.cases || 0
     );
   }
   return (
