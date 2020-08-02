@@ -1,15 +1,13 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
 import mapboxgl from 'mapbox-gl';
 import { last } from 'lodash';
-
-import { fetchUsCasesByCounty } from '../../workflows/fetchCovidData.js';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoicnVva3ZsIiwiYSI6ImNrZDA3NW9oNTBhanYyeXBjOXBjazloazUifQ.qwtn31dojyeKrFMrcRAjBw';
 
 const MapboxMap = ({
+  sources,
   activeLayers,
   layers,
   date,
@@ -18,15 +16,12 @@ const MapboxMap = ({
   casesByCounty,
   ...props
 }) => {
-  const [lat, setLat] = useState(39);
-  const [lng, setLng] = useState(-95);
-  const [zoom, setZoom] = useState(3);
   const [map, setMap] = useState(null);
   const [initialized, setInitialized] = useState(false);
   const mapContainer = useRef(null);
 
   useMemo(() => {
-    if (map) {
+    if (map && initialized) {
       layers.forEach((layer) =>
         map.setLayoutProperty(
           layer.id,
@@ -35,10 +30,10 @@ const MapboxMap = ({
         )
       );
     }
-  }, [layers, activeLayers]);
+  }, [map, initialized, layers, activeLayers]);
 
-  const updateFeatureState = useMemo(() => {
-    if (casesByCounty) {
+  useMemo(() => {
+    if (initialized && casesByCounty) {
       for (const [key, value] of Object.entries(casesByCounty)) {
         const recentData = last(value.filter((status) => status.date <= date));
         map.setFeatureState(
@@ -53,17 +48,7 @@ const MapboxMap = ({
         );
       }
     }
-  }, [date, casesByCounty, map]);
-
-  useEffect(() => {
-    if (map) {
-      map.on('sourcedata', (e) => {
-        if (e.sourceId === 'us-counties' && e.isSourceLoaded) {
-          setInitialized(true);
-        }
-      });
-    }
-  }, [map]);
+  }, [initialized, date, casesByCounty, map]);
 
   useEffect(() => {
     if (map && initialized) {
@@ -98,7 +83,9 @@ const MapboxMap = ({
   }, [map, selectedFeature, setSelectedFeature, initialized]);
 
   useEffect(() => {
-    const dataPromise = fetchUsCasesByCounty();
+    const lat = 39;
+    const lng = -95;
+    const zoom = 3;
     const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v10',
@@ -107,26 +94,18 @@ const MapboxMap = ({
     });
     setMap(map);
     map.on('load', () => {
-      map.addSource('us-counties', {
-        type: 'geojson',
-        data: '/api/us-counties',
-      });
-      map.addSource('us-county-centroids', {
-        type: 'geojson',
-        data: '/api/us-county-centroids',
-      });
-
+      sources.forEach((source) => map.addSource(source.id, source.config));
       layers.forEach((layer) => map.addLayer(layer));
-
-      layers.forEach((layer) =>
-        map.setLayoutProperty(
-          layer.id,
-          'visibility',
-          activeLayers.includes(layer.id) ? 'visible' : 'none'
+      map.on('sourcedata', () =>
+        setInitialized(
+          sources.reduce(
+            (loaded, source) => loaded && map.isSourceLoaded(source.id),
+            true
+          )
         )
       );
     });
-  }, []);
+  }, [sources, layers]);
   return (
     <>
       {!initialized && (
@@ -142,7 +121,7 @@ const MapboxMap = ({
             textShadow: '0px 0px 2px #00e',
           }}
         >
-          Initializing pandemic...
+          Calculating spread...
         </div>
       )}
       <div ref={mapContainer} {...props} />
@@ -152,6 +131,7 @@ const MapboxMap = ({
 
 MapboxMap.propTypes = {
   activeLayers: PropTypes.array,
+  sources: PropTypes.array,
   layers: PropTypes.array,
   date: PropTypes.string,
   selectedFeature: PropTypes.number,
