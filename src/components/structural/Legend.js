@@ -24,7 +24,6 @@ export const Legend = ({
     padding="1em"
   >
     <Text fontSize="heading">COVID-19 Pandemic in the US</Text>
-    <Text>Kevin Van Leer</Text>
     <Spacer height="1em" />
     <Flexbox flexDirection="column" marginBetween="0.5em">
       {layers.map((layer) =>
