@@ -1,0 +1,8 @@
+{
+  "redirects": [
+    {
+      "source": "/api/:resource",
+      "destination": "https://geo-covid19-api.herokuapp.com/api/:resource"
+    }
+  ]
+}
