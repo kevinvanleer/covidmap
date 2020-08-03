@@ -3,7 +3,7 @@ export const sources = [
     id: 'us-counties',
     config: {
       type: 'geojson',
-      data: '/api/us-counties',
+      data: '/resources/us-counties-500k.json',
     },
   },
   {
