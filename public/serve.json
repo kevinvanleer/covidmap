@@ -1,5 +1,5 @@
 {
-  "redirects": [
+  "proxy": [
     {
       "source": "/resources/:resource",
       "destination": "https://geo-covid19-api.herokuapp.com/resources/:resource"
