@@ -2,7 +2,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import moment from 'moment';
 import { get, last, set } from 'lodash';
 
-import { Details, Legend } from './components/structural';
+import { Details, Legend, About } from './components/structural';
+import { Flexbox } from 'kvl-ui';
 
 import { fetchUsCasesByCounty } from './workflows/fetchCovidData.js';
 
@@ -17,6 +18,11 @@ function App() {
   const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
   const [selectedFeature, setSelectedFeature] = useState(null);
   const [casesByCounty, setCasesByCounty] = useState(null);
+  const [showAbout, setShowAbout] = useState(false);
+
+  const onShowAbout = useCallback((show) => {
+    setShowAbout(show);
+  }, []);
 
   const updateActiveLayers = useCallback(
     (layerId) => {
@@ -84,12 +90,18 @@ function App() {
   }
   return (
     <>
+      {showAbout ? (
+        <Flexbox position="absolute" zIndex={10}>
+          <About onHide={() => onShowAbout(false)} />
+        </Flexbox>
+      ) : null}
       <Legend
         layers={layers}
         activeLayers={activeLayers}
         updateActiveLayers={updateActiveLayers}
         date={date}
         setDate={onSetDate}
+        onShowAbout={() => onShowAbout(true)}
       />
       {recentData ? (
         <Details info={recentData} data={casesByCounty[selectedFeature]} />
