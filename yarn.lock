@@ -9223,9 +9223,9 @@ known-css-properties@^0.19.0:
   resolved "https://registry.yarnpkg.com/known-css-properties/-/known-css-properties-0.19.0.tgz#5d92b7fa16c72d971bda9b7fe295bdf61836ee5b"
   integrity sha512-eYboRV94Vco725nKMlpkn3nV2+96p9c3gKXRsYqAJSswSENvBhN7n5L+uDhY58xQa0UukWsDMTGELzmD8Q+wTA==
 
-"kvl-ui@https://github.com/kevinvanleer/kvl-ui.git":
-  version "0.0.2"
-  resolved "https://github.com/kevinvanleer/kvl-ui.git#9e48d5e161ac1af820870118843c95df1489f497"
+"kvl-ui@https://github.com/kevinvanleer/kvl-ui.git#v0.0.3":
+  version "0.0.3"
+  resolved "https://github.com/kevinvanleer/kvl-ui.git#7890ce57fd1a6996ed361feef6ad0750922f88ae"
   dependencies:
     color "^3.1.2"
 
