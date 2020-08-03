@@ -69,17 +69,17 @@ function App() {
     set(
       recentData,
       'deathRate.twoWeek',
-      recentData.deaths / twoWeekLagData.cases || 0
+      recentData.deaths / get(twoWeekLagData, 'cases') || 0
     );
     set(
       recentData,
       'deathRate.fourWeek',
-      recentData.deaths / fourWeekLagData.cases || 0
+      recentData.deaths / get(fourWeekLagData, 'cases') || 0
     );
     set(
       recentData,
       'deathRate.eightWeek',
-      recentData.deaths / eightWeekLagData.cases || 0
+      recentData.deaths / get(eightWeekLagData, 'cases') || 0
     );
   }
   return (
