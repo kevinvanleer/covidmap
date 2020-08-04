@@ -15,10 +15,14 @@ function App() {
   const [activeLayers, setActiveLayers] = useState(
     layers.map((layer) => layer.id)
   );
-  const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
+  const [date, setDate] = useState(
+    moment().subtract(1, 'days').format('YYYY-MM-DD')
+  );
   const [selectedFeature, setSelectedFeature] = useState(null);
   const [casesByCounty, setCasesByCounty] = useState(null);
   const [showAbout, setShowAbout] = useState(false);
+  const [playRate, setPlayRate] = useState(10);
+  const [startTime, setStartTime] = useState(null);
 
   const onShowAbout = useCallback((show) => {
     setShowAbout(show);
@@ -43,10 +47,35 @@ function App() {
     initializeFeatureState();
   }, []);
 
-  const onSetDate = useCallback((value) => {
-    let newDate = moment().subtract(value, 'days');
+  const onSetDate = useCallback((newDate) => {
     setDate(newDate.format('YYYY-MM-DD'));
   }, []);
+
+  /*
+  useEffect(() => {
+    const step = (timestamp) => {
+      let offset = startTime;
+      if (offset === null) {
+        setStartTime(timestamp);
+        offset = timestamp;
+      }
+      let newDate = moment(date).add(
+        ((timestamp - offset) / 1000) * playRate,
+        'days'
+      );
+      if (newDate > moment().subtract(1, 'days')) {
+        newDate = moment('2020-01-01');
+      }
+      onSetDate(newDate);
+      if (playRate > 0) {
+        requestAnimationFrame(step);
+      } else {
+        setStartTime(null);
+      }
+    };
+    requestAnimationFrame(step);
+  }, [date, playRate, startTime]);
+  */
 
   let recentData = null;
   if (casesByCounty && selectedFeature) {

@@ -9,10 +9,12 @@ import { Text } from 'kvl-ui';
 export const DateSelector = ({ date, setDate }) => (
   <>
     <Slider
-      reverse={true}
       min={0}
-      max={moment().dayOfYear()}
-      onChange={setDate}
+      max={moment().subtract(1, 'days').dayOfYear()}
+      onChange={(value) => {
+        setDate(moment().dayOfYear(value));
+      }}
+      value={moment(date).dayOfYear()}
     />
     <Text>{date}</Text>
   </>
