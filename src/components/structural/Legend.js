@@ -50,7 +50,7 @@ Legend.propTypes = {
   layers: PropTypes.array,
   activeLayers: PropTypes.array,
   updateActiveLayers: PropTypes.func,
-  date: PropTypes.string,
+  date: PropTypes.object,
   setDate: PropTypes.func,
   onShowAbout: PropTypes.func,
 };
