@@ -16,11 +16,11 @@ export const DateSelector = ({ date, setDate }) => (
       }}
       value={moment(date).dayOfYear()}
     />
-    <Text>{date}</Text>
+    <Text>{date.format('YYYY-MM-DD')}</Text>
   </>
 );
 
 DateSelector.propTypes = {
-  date: PropTypes.string,
+  date: PropTypes.object,
   setDate: PropTypes.func,
 };
