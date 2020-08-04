@@ -14,8 +14,8 @@ export const About = ({ onHide }) => (
     <Spacer height="0.5em" />
     <Text>
       This visualization depicts COVID-19 cases and deaths since the onset of
-      the pandemic. The geographic visuals are handled by mapbox. The charts are
-      built with D3.
+      the pandemic. The geographic visuals are rendered with MapBox. The charts
+      are built with D3.
     </Text>
     <Spacer height="0.5em" />
     <Text fontSize="label">Data sources</Text>

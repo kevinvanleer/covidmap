@@ -90,11 +90,6 @@ function App() {
   }
   return (
     <>
-      {showAbout ? (
-        <Flexbox position="absolute" zIndex={10}>
-          <About onHide={() => onShowAbout(false)} />
-        </Flexbox>
-      ) : null}
       <Legend
         layers={layers}
         activeLayers={activeLayers}
@@ -115,6 +110,11 @@ function App() {
         activeLayers={activeLayers}
         casesByCounty={casesByCounty}
       />
+      {showAbout ? (
+        <Flexbox position="absolute" zIndex={10}>
+          <About onHide={() => onShowAbout(false)} />
+        </Flexbox>
+      ) : null}
     </>
   );
 }
