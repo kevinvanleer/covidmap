@@ -32,7 +32,32 @@ const MapboxMap = ({
     }
   }, [map, initialized, layers, activeLayers]);
 
-  useMemo(() => {
+  useEffect(() => {
+    const lat = 39;
+    const lng = -95;
+    const zoom = 3;
+    const map = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/light-v10',
+      center: [lng, lat],
+      zoom: zoom,
+    });
+    setMap(map);
+    map.on('load', () => {
+      sources.forEach((source) => map.addSource(source.id, source.config));
+      layers.forEach((layer) => map.addLayer(layer));
+      map.on('sourcedata', () =>
+        setInitialized(
+          sources.reduce(
+            (loaded, source) => loaded && map.isSourceLoaded(source.id),
+            true
+          )
+        )
+      );
+    });
+  }, [sources, layers]);
+
+  useEffect(() => {
     if (initialized && casesByCounty) {
       for (const [key, value] of Object.entries(casesByCounty)) {
         const recentData = last(value.filter((status) => status.date <= date));
@@ -82,30 +107,6 @@ const MapboxMap = ({
     }
   }, [map, selectedFeature, setSelectedFeature, initialized]);
 
-  useEffect(() => {
-    const lat = 39;
-    const lng = -95;
-    const zoom = 3;
-    const map = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v10',
-      center: [lng, lat],
-      zoom: zoom,
-    });
-    setMap(map);
-    map.on('load', () => {
-      sources.forEach((source) => map.addSource(source.id, source.config));
-      layers.forEach((layer) => map.addLayer(layer));
-      map.on('sourcedata', () =>
-        setInitialized(
-          sources.reduce(
-            (loaded, source) => loaded && map.isSourceLoaded(source.id),
-            true
-          )
-        )
-      );
-    });
-  }, [sources, layers]);
   return (
     <>
       {!initialized && (
@@ -121,7 +122,7 @@ const MapboxMap = ({
             textShadow: '0px 0px 2px #00e',
           }}
         >
-          Calculating spread...
+          Rendering visualization...
         </div>
       )}
       <div ref={mapContainer} {...props} />
