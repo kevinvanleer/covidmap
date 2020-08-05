@@ -80,6 +80,6 @@ export const Details = ({ date, data }) => {
 };
 
 Details.propTypes = {
-  info: PropTypes.object,
+  date: PropTypes.object,
   data: PropTypes.array,
 };

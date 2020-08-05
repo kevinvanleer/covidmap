@@ -1,10 +1,24 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import mapboxgl from 'mapbox-gl';
-import { last } from 'lodash';
+import { last, findLast } from 'lodash';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoicnVva3ZsIiwiYSI6ImNrZDA3NW9oNTBhanYyeXBjOXBjazloazUifQ.qwtn31dojyeKrFMrcRAjBw';
+
+const setFeatureState = (map, featureId, mapSource, state, date) => {
+  const recentData = findLast(state, (status) => status.date <= date);
+  map.setFeatureState(
+    {
+      source: mapSource,
+      id: parseInt(featureId),
+    },
+    {
+      cases: recentData ? parseInt(recentData.cases) : 0,
+      deaths: recentData ? parseInt(recentData.deaths) : 0,
+    }
+  );
+};
 
 const MapboxMap = ({
   sources,
@@ -60,17 +74,7 @@ const MapboxMap = ({
   useEffect(() => {
     if (initialized && casesByCounty) {
       for (const [key, value] of Object.entries(casesByCounty)) {
-        const recentData = last(value.filter((status) => status.date <= date));
-        map.setFeatureState(
-          {
-            source: 'us-counties',
-            id: parseInt(key),
-          },
-          {
-            cases: recentData ? parseInt(recentData.cases) : 0,
-            deaths: recentData ? parseInt(recentData.deaths) : 0,
-          }
-        );
+        setFeatureState(map, key, 'us-counties', value, date);
       }
     }
   }, [initialized, date, casesByCounty, map]);
@@ -101,8 +105,8 @@ const MapboxMap = ({
             { source: 'us-counties', id: selectedFeature },
             { active: false }
           );
+          setSelectedFeature(null);
         }
-        setSelectedFeature(null);
       });
     }
   }, [map, selectedFeature, setSelectedFeature, initialized]);
