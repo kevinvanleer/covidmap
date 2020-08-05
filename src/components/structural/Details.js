@@ -1,29 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { get, last, set } from 'lodash';
+import { get, findLast, set } from 'lodash';
 import { Flexbox, Spacer, Text } from 'kvl-ui';
 
 import AreaChart from '../core/d3AreaChart.js';
 
 export const Details = ({ date, data }) => {
   let recentData = null;
-  recentData = last(
-    data.filter((status) => status.date <= date.format('YYYY-MM-DD'))
+  recentData = findLast(
+    data,
+    (status) => status.date <= date.format('YYYY-MM-DD')
   );
-  const twoWeekLagData = last(
-    data.filter(
-      (status) =>
-        status.date <= moment(date).subtract(2, 'weeks').format('YYYY-MM-DD')
-    )
+  const twoWeekLagData = findLast(
+    data,
+    (status) =>
+      status.date <= moment(date).subtract(2, 'weeks').format('YYYY-MM-DD')
   );
-  const fourWeekLagData = last(
-    data.filter(
-      (status) =>
-        status.date <= moment(date).subtract(4, 'weeks').format('YYYY-MM-DD')
-    )
+  const fourWeekLagData = findLast(
+    data,
+    (status) =>
+      status.date <= moment(date).subtract(4, 'weeks').format('YYYY-MM-DD')
   );
-  const eightWeekLagData = last(
+  const eightWeekLagData = findLast(
     data.filter(
       (status) =>
         status.date <= moment(date).subtract(8, 'weeks').format('YYYY-MM-DD')
