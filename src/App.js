@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 
 import { Details, Legend, About } from './components/structural';
@@ -10,11 +11,14 @@ import FullscreenMap from './components/presentation/FullscreenMap.js';
 
 import { layers, sources } from './mapboxConfig.js';
 
+import { setCurrent } from './state/core/time.js';
+
 function App() {
+  const dispatch = useDispatch();
+  const date = useSelector((state) => moment(state.core.time.current, 'x'));
   const [activeLayers, setActiveLayers] = useState(
     layers.map((layer) => layer.id)
   );
-  const [date, setDate] = useState(moment().subtract(1, 'days'));
   const [selectedFeature, setSelectedFeature] = useState(null);
   const [casesByCounty, setCasesByCounty] = useState(null);
   const [showAbout, setShowAbout] = useState(false);
@@ -42,9 +46,12 @@ function App() {
     initializeFeatureState();
   }, []);
 
-  const onSetDate = useCallback((newDate) => {
-    setDate(newDate);
-  }, []);
+  const onSetDate = useCallback(
+    (newDate) => {
+      dispatch(setCurrent(newDate));
+    },
+    [dispatch, setCurrent]
+  );
 
   return (
     <>
@@ -52,12 +59,12 @@ function App() {
         layers={layers}
         activeLayers={activeLayers}
         updateActiveLayers={updateActiveLayers}
-        date={date}
+        date={moment(date)}
         setDate={onSetDate}
         onShowAbout={() => onShowAbout(true)}
       />
       {selectedFeature ? (
-        <Details date={date} data={casesByCounty[selectedFeature]} />
+        <Details date={moment(date)} data={casesByCounty[selectedFeature]} />
       ) : null}
       <FullscreenMap
         date={date.format('YYYY-MM-DD')}

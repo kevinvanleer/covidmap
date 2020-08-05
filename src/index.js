@@ -3,12 +3,15 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { start as startTimeService } from './services/time.js';
 
 import { Provider } from 'react-redux';
 
 import configureAppStore from './state/configureAppStore.js';
 
 const store = configureAppStore();
+
+store.dispatch(startTimeService());
 
 ReactDOM.render(
   <React.StrictMode>
