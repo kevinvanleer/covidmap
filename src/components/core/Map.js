@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import mapboxgl from 'mapbox-gl';
-import { last, findLast } from 'lodash';
+import { findLast } from 'lodash';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoicnVva3ZsIiwiYSI6ImNrZDA3NW9oNTBhanYyeXBjOXBjazloazUifQ.qwtn31dojyeKrFMrcRAjBw';

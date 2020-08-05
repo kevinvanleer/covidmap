@@ -18,7 +18,7 @@ const AreaChart = ({ data }) => {
     { y: 'Cases' }
   );
   useEffect(() => {
-    const margin = { top: 20, right: 40, bottom: 30, left: 40 };
+    const margin = { top: 20, right: 20, bottom: 30, left: 30 };
     if (data && d3svg.current) {
       let svg = d3.select(d3svg.current);
       svg.selectAll('*').remove();
@@ -29,7 +29,7 @@ const AreaChart = ({ data }) => {
 
       let yc = d3
         .scaleLinear()
-        .domain([0, last(casesData).cases])
+        .domain([0, Math.max(last(casesData).cases, 10)])
         .nice()
         .range([height - margin.bottom, margin.top]);
 
@@ -52,7 +52,7 @@ const AreaChart = ({ data }) => {
       let ycAxis = (g) =>
         g
           .attr('transform', `translate(${margin.left},0)`)
-          .call(d3.axisLeft(yc))
+          .call(d3.axisLeft(yc).ticks(7, 's'))
           .call((g) => g.select('.domain').remove())
           .call((g) =>
             g
@@ -63,7 +63,6 @@ const AreaChart = ({ data }) => {
               .attr('font-weight', 'bold')
               .text(casesData.y)
           );
-
       /*
       let ymAxis = (g) =>
         g
