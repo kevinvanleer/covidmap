@@ -5,13 +5,68 @@ import moment from 'moment';
 import { Details, Legend, About } from './components/structural';
 import { Flexbox } from 'kvl-ui';
 
-import { fetchUsCasesByCounty } from './workflows/fetchCovidData.js';
+import {
+  fetchUsCasesByCounty,
+  fetchUsCovidBoundaries,
+} from './workflows/fetchCovidData.js';
 
 import FullscreenMap from './components/presentation/FullscreenMap.js';
 
 import { layers, sources } from './mapboxConfig.js';
 
 import { setCurrent } from './state/core/time.js';
+
+const sortCasesByCounty = async (casesPromise, lowResPromise) => {
+  const casesByCounty = {};
+  const lowRes = await lowResPromise;
+  lowRes.features.forEach((county) => {
+    casesByCounty[parseInt(county.properties.FEATURE_ID)] = [
+      {
+        date: '2020-01-01',
+        cases: 0,
+        deaths: 0,
+        county: county.properties.NAME,
+        state: county.properties.STATE,
+      },
+    ];
+  });
+
+  const badRecords = [];
+  const cases = await casesPromise;
+  cases.data.forEach((status) => {
+    const countyId = parseInt(status.fips);
+
+    if (isNaN(countyId)) {
+      badRecords.push(status);
+    } else if (countyId in casesByCounty) {
+      casesByCounty[countyId].push({
+        date: status.date,
+        cases: status.cases,
+        deaths: status.deaths,
+        county: status.county,
+        state: status.state,
+      });
+    } else {
+      casesByCounty[countyId] = [
+        {
+          date: status.date,
+          cases: status.cases,
+          deaths: status.deaths,
+          county: status.county,
+          state: status.state,
+        },
+      ];
+    }
+  });
+
+  const nonReportingCounties = Object.entries(casesByCounty).filter(
+    ([id, list]) => list.length === 1
+  );
+  console.log(`found ${badRecords.length} bad records`);
+  console.log(`found ${nonReportingCounties.length} non-reporting counties`);
+
+  return casesByCounty;
+};
 
 function App() {
   const dispatch = useDispatch();
@@ -41,7 +96,12 @@ function App() {
 
   useEffect(() => {
     const initializeFeatureState = async () => {
-      setCasesByCounty(await fetchUsCasesByCounty());
+      setCasesByCounty(
+        await sortCasesByCounty(
+          fetchUsCasesByCounty(),
+          fetchUsCovidBoundaries('20m')
+        )
+      );
     };
     initializeFeatureState();
   }, []);

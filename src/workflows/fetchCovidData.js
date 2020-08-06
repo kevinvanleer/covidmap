@@ -21,6 +21,11 @@ export const fetchUsCasesByCounty = async () => {
   return response.json();
 };
 
+export const fetchUsCovidBoundaries = async (resolution) => {
+  const response = await fetch(`/api/us-counties?resolution=${resolution}`);
+  return response.json();
+};
+
 export const updateUsCasesByCounty = () => async (dispatch) => {
   dispatch(await fetchUsCasesByCounty());
 };
