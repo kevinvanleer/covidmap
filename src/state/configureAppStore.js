@@ -5,16 +5,20 @@ import loggerMiddleware from './middleware/logger.js';
 import rootReducer from './rootReducer.js';
 
 export default function configureAppStore(preloadedState) {
-  const store = configureStore({
+  const storeConfig = {
     reducer: rootReducer,
-    middleware: [loggerMiddleware, ...getDefaultMiddleware()],
+    middleware: [...getDefaultMiddleware()],
     preloadedState,
-    enhancers: [monitorReducersEnhancer],
-  });
+    enhancers: [],
+  };
 
   if (process.env.NODE_ENV !== 'production' && module.hot) {
     module.hot.accept('./core', () => store.replaceReducer(rootReducer));
+    storeConfig.middleware.push(loggerMiddleware);
+    storeConfig.enhancers.push(monitorReducersEnhancer);
   }
+
+  const store = configureStore(storeConfig);
 
   return store;
 }
