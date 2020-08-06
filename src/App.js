@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
+import { isEmpty } from 'lodash';
 
 import { Details, Legend, About } from './components/structural';
 import { Flexbox } from 'kvl-ui';
@@ -16,30 +17,36 @@ import { layers, sources } from './mapboxConfig.js';
 
 import { setCurrent } from './state/core/time.js';
 
-const sortCasesByCounty = async (casesPromise, lowResPromise) => {
-  const casesByCounty = {};
-  const lowRes = await lowResPromise;
-  lowRes.features.forEach((county) => {
-    casesByCounty[parseInt(county.properties.FEATURE_ID)] = [
-      {
-        date: '2020-01-01',
-        cases: 0,
-        deaths: 0,
-        county: county.properties.NAME,
-        state: county.properties.STATE,
-      },
-    ];
-  });
+const sortCasesByCounty = async (
+  casesPromise,
+  lowResPromise,
+  inputCases = {}
+) => {
+  const sortedCases = inputCases;
+  if (isEmpty(sortedCases)) {
+    const lowRes = await lowResPromise;
+    lowRes.features.forEach((county) => {
+      sortedCases[parseInt(county.properties.FEATURE_ID)] = [
+        {
+          date: '2020-01-01',
+          cases: 0,
+          deaths: 0,
+          county: county.properties.NAME,
+          state: county.properties.STATE,
+        },
+      ];
+    });
+  }
 
   const badRecords = [];
-  const cases = await casesPromise;
-  cases.data.forEach((status) => {
+  const newCases = await casesPromise;
+  newCases.forEach((status) => {
     const countyId = parseInt(status.fips);
 
     if (isNaN(countyId)) {
       badRecords.push(status);
-    } else if (countyId in casesByCounty) {
-      casesByCounty[countyId].push({
+    } else if (countyId in sortedCases) {
+      sortedCases[countyId].push({
         date: status.date,
         cases: status.cases,
         deaths: status.deaths,
@@ -47,7 +54,7 @@ const sortCasesByCounty = async (casesPromise, lowResPromise) => {
         state: status.state,
       });
     } else {
-      casesByCounty[countyId] = [
+      sortedCases[countyId] = [
         {
           date: status.date,
           cases: status.cases,
@@ -59,13 +66,13 @@ const sortCasesByCounty = async (casesPromise, lowResPromise) => {
     }
   });
 
-  const nonReportingCounties = Object.entries(casesByCounty).filter(
+  const nonReportingCounties = Object.entries(sortedCases).filter(
     ([id, list]) => list.length === 1
   );
   console.log(`found ${badRecords.length} bad records`);
   console.log(`found ${nonReportingCounties.length} non-reporting counties`);
 
-  return casesByCounty;
+  return sortedCases;
 };
 
 function App() {
@@ -96,12 +103,25 @@ function App() {
 
   useEffect(() => {
     const initializeFeatureState = async () => {
-      setCasesByCounty(
-        await sortCasesByCounty(
-          fetchUsCasesByCounty(),
-          fetchUsCovidBoundaries('20m')
-        )
-      );
+      let done = false;
+      let startIndex = 0;
+      let pageSize = 1000;
+      let cases = {};
+      const boundaryPromise = fetchUsCovidBoundaries('20m');
+      while (!done) {
+        const casesPromise = fetchUsCasesByCounty(startIndex, pageSize, false);
+        const sortPromise = sortCasesByCounty(
+          casesPromise,
+          boundaryPromise,
+          cases
+        );
+        const newCases = await casesPromise;
+        done = newCases.length < pageSize;
+        startIndex += pageSize;
+        pageSize *= 2;
+        cases = await sortPromise;
+        setCasesByCounty(cases);
+      }
     };
     initializeFeatureState();
   }, []);
