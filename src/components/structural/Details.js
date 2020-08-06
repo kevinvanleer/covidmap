@@ -1,14 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { get, findLast, set } from 'lodash';
+import { get, findLast, set, isEmpty } from 'lodash';
 import { Flexbox, Spacer, Text } from 'kvl-ui';
 
 import AreaChart from '../core/d3AreaChart.js';
 
 export const Details = ({ date, data }) => {
   let recentData = null;
-  if (data) {
+  let deathRate = {};
+  if (!isEmpty(data)) {
     recentData = findLast(
       data,
       (status) => status.date <= date.format('YYYY-MM-DD')
@@ -29,20 +30,20 @@ export const Details = ({ date, data }) => {
           status.date <= moment(date).subtract(8, 'weeks').format('YYYY-MM-DD')
       )
     );
-    set(recentData, 'deathRate.current', recentData.deaths / recentData.cases);
+    set(deathRate, 'current', recentData.deaths / recentData.cases);
     set(
-      recentData,
-      'deathRate.twoWeek',
+      deathRate,
+      'twoWeek',
       recentData.deaths / get(twoWeekLagData, 'cases') || 0
     );
     set(
-      recentData,
-      'deathRate.fourWeek',
+      deathRate,
+      'fourWeek',
       recentData.deaths / get(fourWeekLagData, 'cases') || 0
     );
     set(
-      recentData,
-      'deathRate.eightWeek',
+      deathRate,
+      'eightWeek',
       recentData.deaths / get(eightWeekLagData, 'cases') || 0
     );
   }
@@ -68,10 +69,10 @@ export const Details = ({ date, data }) => {
           <Text>{`cases: ${recentData.cases}`}</Text>
           <Text>{`deaths: ${recentData.deaths}`}</Text>
           <Text>{`death rate:
-          ${(recentData.deathRate.current * 100).toFixed()}% /
-          ${(recentData.deathRate.twoWeek * 100).toFixed()}% /
-          ${(recentData.deathRate.fourWeek * 100).toFixed()}% /
-          ${(recentData.deathRate.eightWeek * 100).toFixed()}%`}</Text>
+          ${(deathRate.current * 100).toFixed()}% /
+          ${(deathRate.twoWeek * 100).toFixed()}% /
+          ${(deathRate.fourWeek * 100).toFixed()}% /
+          ${(deathRate.eightWeek * 100).toFixed()}%`}</Text>
           <AreaChart data={data} />
         </>
       ) : (

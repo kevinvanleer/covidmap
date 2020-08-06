@@ -7,7 +7,12 @@ import rootReducer from './rootReducer.js';
 export default function configureAppStore(preloadedState) {
   const storeConfig = {
     reducer: rootReducer,
-    middleware: [...getDefaultMiddleware()],
+    middleware: [
+      ...getDefaultMiddleware({
+        serializableCheck: false,
+        immutableCheck: false,
+      }),
+    ],
     preloadedState,
     enhancers: [],
   };
