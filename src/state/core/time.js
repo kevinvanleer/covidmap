@@ -30,7 +30,7 @@ export const start = createAsyncThunk('time/startPlayback', ({ dispatch }) =>
 const timeSlice = createSlice({
   name: 'time',
   initialState: {
-    min: parseInt(moment('2020-03-01').format('x')),
+    min: parseInt(moment('2020-01-01').format('x')),
     max: parseInt(moment().subtract(1, 'days').format('x')),
     current: parseInt(moment().subtract(1, 'days').format('x')),
     pause: true,

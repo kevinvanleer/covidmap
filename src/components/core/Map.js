@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import mapboxgl from 'mapbox-gl';
-import { findLast } from 'lodash';
+import { findLast, get } from 'lodash';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoicnVva3ZsIiwiYSI6ImNrZDA3NW9oNTBhanYyeXBjOXBjazloazUifQ.qwtn31dojyeKrFMrcRAjBw';
@@ -16,6 +16,7 @@ const setFeatureState = (map, featureId, mapSource, state, date) => {
     {
       cases: recentData ? parseInt(recentData.cases) : 0,
       deaths: recentData ? parseInt(recentData.deaths) : 0,
+      firstCase: get(state, [1, 'date']) === date,
     }
   );
 };
@@ -58,16 +59,20 @@ const MapboxMap = ({
     });
     setMap(map);
     map.on('load', () => {
-      sources.forEach((source) => map.addSource(source.id, source.config));
-      layers.forEach((layer) => map.addLayer(layer));
-      map.on('sourcedata', () =>
-        setInitialized(
-          sources.reduce(
-            (loaded, source) => loaded && map.isSourceLoaded(source.id),
-            true
+      map.loadImage('/img/coronavirus-green-128.png', (error, image) => {
+        if (error) throw error;
+        map.addImage('corona-green', image);
+        sources.forEach((source) => map.addSource(source.id, source.config));
+        layers.forEach((layer) => map.addLayer(layer));
+        map.on('sourcedata', () =>
+          setInitialized(
+            sources.reduce(
+              (loaded, source) => loaded && map.isSourceLoaded(source.id),
+              true
+            )
           )
-        )
-      );
+        );
+      });
     });
   }, [sources, layers]);
 
@@ -75,6 +80,7 @@ const MapboxMap = ({
     if (initialized && casesByCounty) {
       for (const [key, value] of Object.entries(casesByCounty)) {
         setFeatureState(map, key, 'us-counties', value, date);
+        setFeatureState(map, key, 'us-county-centroids', value, date);
       }
     }
   }, [initialized, date, casesByCounty, map]);

@@ -50,7 +50,7 @@ function App() {
     (newDate) => {
       dispatch(setCurrent(newDate));
     },
-    [dispatch, setCurrent]
+    [dispatch]
   );
 
   return (

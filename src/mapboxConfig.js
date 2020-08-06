@@ -81,12 +81,27 @@ export const layers = [
     },
   },
   {
+    id: 'us-first-case',
+    legendHide: false,
+    type: 'symbol',
+    source: 'us-county-centroids',
+    layout: {
+      'icon-image': 'corona-green',
+      'icon-size': 0.3,
+      'icon-ignore-placement': true,
+    },
+    paint: {
+      'icon-opacity': ['to-number', ['feature-state', 'firstCase']],
+      'icon-color': 'red',
+    },
+  },
+  {
     id: 'us-county-names',
     legendHide: true,
     type: 'symbol',
     source: 'us-county-centroids',
     minzoom: 7,
-    layout: { 'text-field': ['get', 'NAME'] },
+    layout: { 'text-field': ['get', 'NAME'], 'text-ignore-placement': true },
     paint: {
       'text-halo-color': '#fff',
       'text-halo-width': 1,
