@@ -2,8 +2,9 @@ export const sources = [
   {
     id: 'us-counties',
     config: {
-      type: 'geojson',
-      data: '/resources/us-counties-500k.json',
+      type: 'vector',
+      url: 'mapbox://ruokvl.0761cl0n',
+      promoteId: 'FEATURE_ID',
     },
   },
   {
@@ -19,6 +20,7 @@ export const layers = [
     id: 'us-county-total-deaths',
     type: 'fill',
     source: 'us-counties',
+    'source-layer': 'us-counties-500k-a4l482',
     paint: {
       'fill-color': '#f00',
       'fill-opacity': [
@@ -46,6 +48,7 @@ export const layers = [
     id: 'us-county-total-cases',
     type: 'fill',
     source: 'us-counties',
+    'source-layer': 'us-counties-500k-a4l482',
     paint: {
       'fill-color': '#00f',
       'fill-opacity': [
@@ -74,6 +77,7 @@ export const layers = [
     legendHide: true,
     type: 'fill',
     source: 'us-counties',
+    'source-layer': 'us-counties-500k-a4l482',
     paint: {
       'fill-outline-color': '#0f0',
       'fill-color': 'rgba(0, 255, 0, 1)',

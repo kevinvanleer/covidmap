@@ -6,11 +6,19 @@ import { findLast, get } from 'lodash';
 mapboxgl.accessToken =
   'pk.eyJ1IjoicnVva3ZsIiwiYSI6ImNrZDA3NW9oNTBhanYyeXBjOXBjazloazUifQ.qwtn31dojyeKrFMrcRAjBw';
 
-const setFeatureState = (map, featureId, mapSource, state, date) => {
+const setFeatureState = (
+  map,
+  featureId,
+  mapSource,
+  sourceLayer,
+  state,
+  date
+) => {
   const recentData = findLast(state, (status) => status.date <= date);
   map.setFeatureState(
     {
       source: mapSource,
+      sourceLayer: sourceLayer,
       id: parseInt(featureId),
     },
     {
@@ -51,11 +59,13 @@ const MapboxMap = ({
     const lat = 39;
     const lng = -95;
     const zoom = 3;
+
     const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v10',
       center: [lng, lat],
       zoom: zoom,
+      minZoom: 3,
     });
     setMap(map);
     map.on('load', () => {
@@ -79,8 +89,22 @@ const MapboxMap = ({
   useEffect(() => {
     if (initialized && casesByCounty) {
       for (const [key, value] of Object.entries(casesByCounty)) {
-        setFeatureState(map, key, 'us-counties', value, date);
-        setFeatureState(map, key, 'us-county-centroids', value, date);
+        setFeatureState(
+          map,
+          key,
+          'us-counties',
+          'us-counties-500k-a4l482',
+          value,
+          date
+        );
+        setFeatureState(
+          map,
+          key,
+          'us-county-centroids',
+          undefined,
+          value,
+          date
+        );
       }
     }
   }, [initialized, date, casesByCounty, map]);
@@ -91,7 +115,11 @@ const MapboxMap = ({
         if (e.features.length > 0) {
           if (selectedFeature) {
             map.setFeatureState(
-              { source: 'us-counties', id: selectedFeature },
+              {
+                source: 'us-counties',
+                sourceLayer: 'us-counties-500k-a4l482',
+                id: selectedFeature,
+              },
               { active: false }
             );
           }
@@ -100,7 +128,11 @@ const MapboxMap = ({
           );
           setSelectedFeature(theFeature.id);
           map.setFeatureState(
-            { source: 'us-counties', id: parseInt(theFeature.id) },
+            {
+              source: 'us-counties',
+              sourceLayer: 'us-counties-500k-a4l482',
+              id: parseInt(theFeature.id),
+            },
             { active: true }
           );
         }
@@ -108,7 +140,11 @@ const MapboxMap = ({
       map.on('mouseleave', 'us-counties-base', () => {
         if (selectedFeature) {
           map.setFeatureState(
-            { source: 'us-counties', id: selectedFeature },
+            {
+              source: 'us-counties',
+              sourceLayer: 'us-counties-500k-a4l482',
+              id: selectedFeature,
+            },
             { active: false }
           );
           setSelectedFeature(null);
