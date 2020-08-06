@@ -8,44 +8,46 @@ import AreaChart from '../core/d3AreaChart.js';
 
 export const Details = ({ date, data }) => {
   let recentData = null;
-  recentData = findLast(
-    data,
-    (status) => status.date <= date.format('YYYY-MM-DD')
-  );
-  const twoWeekLagData = findLast(
-    data,
-    (status) =>
-      status.date <= moment(date).subtract(2, 'weeks').format('YYYY-MM-DD')
-  );
-  const fourWeekLagData = findLast(
-    data,
-    (status) =>
-      status.date <= moment(date).subtract(4, 'weeks').format('YYYY-MM-DD')
-  );
-  const eightWeekLagData = findLast(
-    data.filter(
+  if (data) {
+    recentData = findLast(
+      data,
+      (status) => status.date <= date.format('YYYY-MM-DD')
+    );
+    const twoWeekLagData = findLast(
+      data,
       (status) =>
-        status.date <= moment(date).subtract(8, 'weeks').format('YYYY-MM-DD')
-    )
-  );
-  set(recentData, 'deathRate.current', recentData.deaths / recentData.cases);
-  set(
-    recentData,
-    'deathRate.twoWeek',
-    recentData.deaths / get(twoWeekLagData, 'cases') || 0
-  );
-  set(
-    recentData,
-    'deathRate.fourWeek',
-    recentData.deaths / get(fourWeekLagData, 'cases') || 0
-  );
-  set(
-    recentData,
-    'deathRate.eightWeek',
-    recentData.deaths / get(eightWeekLagData, 'cases') || 0
-  );
+        status.date <= moment(date).subtract(2, 'weeks').format('YYYY-MM-DD')
+    );
+    const fourWeekLagData = findLast(
+      data,
+      (status) =>
+        status.date <= moment(date).subtract(4, 'weeks').format('YYYY-MM-DD')
+    );
+    const eightWeekLagData = findLast(
+      data.filter(
+        (status) =>
+          status.date <= moment(date).subtract(8, 'weeks').format('YYYY-MM-DD')
+      )
+    );
+    set(recentData, 'deathRate.current', recentData.deaths / recentData.cases);
+    set(
+      recentData,
+      'deathRate.twoWeek',
+      recentData.deaths / get(twoWeekLagData, 'cases') || 0
+    );
+    set(
+      recentData,
+      'deathRate.fourWeek',
+      recentData.deaths / get(fourWeekLagData, 'cases') || 0
+    );
+    set(
+      recentData,
+      'deathRate.eightWeek',
+      recentData.deaths / get(eightWeekLagData, 'cases') || 0
+    );
+  }
 
-  return (
+  return recentData ? (
     <Flexbox
       flexDirection="column"
       position="absolute"
@@ -62,6 +64,7 @@ export const Details = ({ date, data }) => {
       <Spacer height="0.5em" />
       {recentData.cases > 0 ? (
         <>
+          <Text>{`First case: ${get(data, [1, 'date'])}`}</Text>
           <Text>{`cases: ${recentData.cases}`}</Text>
           <Text>{`deaths: ${recentData.deaths}`}</Text>
           <Text>{`death rate:
@@ -75,7 +78,7 @@ export const Details = ({ date, data }) => {
         <Text>No cases reported</Text>
       )}
     </Flexbox>
-  );
+  ) : null;
 };
 
 Details.propTypes = {
