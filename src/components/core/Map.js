@@ -118,13 +118,22 @@ const MapboxMap = ({
             (loaded, source) => loaded && map.isSourceLoaded(source.id),
             true
           );
-          setInitialized(init || initialized);
+          setInitialized(init);
           if (init) map.off('sourcedata', detectLoadedSources);
         };
         map.on('sourcedata', detectLoadedSources);
       });
     }
-  }, [map, sources, layers, initialized]);
+  }, [map, sources, layers]);
+
+  useEffect(() => {
+    if (map && initialized) {
+      layers.forEach((layer) => {
+        if (map.getLayer(layer.id)) map.removeLayer(layer.id);
+        map.addLayer(layer);
+      });
+    }
+  }, [layers, map, initialized]);
 
   useEffect(() => {
     if (initialized && casesByCounty) {
@@ -153,15 +162,6 @@ const MapboxMap = ({
       }
     }
   }, [initialized, date, casesByCounty, map]);
-
-  useEffect(() => {
-    if (map && initialized) {
-      layers.forEach((layer) => {
-        if (map.getLayer(layer.id)) map.removeLayer(layer.id);
-        map.addLayer(layer);
-      });
-    }
-  }, [layers, map, initialized]);
 
   useEffect(() => {
     if (map && initialized) {
