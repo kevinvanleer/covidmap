@@ -52,7 +52,6 @@ function App() {
     [dispatch]
   );
 
-  console.debug(selectedFeature);
   return (
     <>
       <Legend

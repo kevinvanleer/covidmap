@@ -10,7 +10,7 @@ const AreaChart = ({ data }) => {
   const height = 200;
 
   const casesData = Object.assign(
-    data.map(({ date, cases, deaths }) => ({
+    data.slice(1).map(({ date, cases, deaths }) => ({
       date: moment(date),
       cases: cases,
       deaths: deaths,
@@ -24,7 +24,11 @@ const AreaChart = ({ data }) => {
       svg.selectAll('*').remove();
       let x = d3
         .scaleUtc()
-        .domain(d3.extent(casesData, (d) => d.date))
+        //.domain(d3.extent(casesData, (d) => d.date))
+        .domain([
+          moment('2020-01-01', 'YYYY-MM-DD'),
+          moment().subtract(1, 'days'),
+        ])
         .range([margin.left, width - margin.right]);
 
       let yc = d3
@@ -42,12 +46,15 @@ const AreaChart = ({ data }) => {
         */
 
       let xAxis = (g) =>
-        g.attr('transform', `translate(0,${height - margin.bottom})`).call(
-          d3
-            .axisBottom(x)
-            .ticks(width / 80)
-            .tickSizeOuter(0)
-        );
+        g
+          .attr('transform', `translate(0,${height - margin.bottom})`)
+          .call(
+            d3
+              .axisBottom(x)
+              .ticks(5)
+              .tickFormat(d3.timeFormat('%b'))
+              .tickSizeOuter(0)
+          );
 
       let ycAxis = (g) =>
         g
