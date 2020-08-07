@@ -85,6 +85,21 @@ export const layers = [
     },
   },
   {
+    id: 'us-hotspots',
+    legendHide: false,
+    type: 'symbol',
+    source: 'us-county-centroids',
+    layout: {
+      'icon-image': 'corona-red',
+      'icon-size': 0.3,
+      'icon-ignore-placement': true,
+    },
+    paint: {
+      'icon-opacity': ['to-number', ['feature-state', 'hotspot']],
+      'icon-color': 'red',
+    },
+  },
+  {
     id: 'us-first-case',
     legendHide: false,
     type: 'symbol',

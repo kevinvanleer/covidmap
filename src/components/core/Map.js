@@ -1,10 +1,34 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import mapboxgl from 'mapbox-gl';
 import { findLast, get } from 'lodash';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoicnVva3ZsIiwiYSI6ImNrZDA3NW9oNTBhanYyeXBjOXBjazloazUifQ.qwtn31dojyeKrFMrcRAjBw';
+
+const centroidState = (twoWeeksBefore) => (state, date) => {
+  const recentData = findLast(state, (status) => status.date <= date);
+  const twoWeeksPrior = findLast(
+    state,
+    (status) => status.date <= twoWeeksBefore
+  );
+  return {
+    firstCase: get(state, [1, 'date']) === date,
+    hotspot:
+      parseInt(get(recentData, 'cases', 0)) /
+        parseInt(get(twoWeeksPrior, 'cases', 0)) >
+        1.2 && parseInt(get(recentData, 'cases', 0)) > 100,
+  };
+};
+
+const choroplethState = (state, date) => {
+  const recentData = findLast(state, (status) => status.date <= date);
+  return {
+    cases: parseInt(get(recentData, 'cases', 0)),
+    deaths: parseInt(get(recentData, 'deaths', 0)),
+  };
+};
 
 const setFeatureState = (
   map,
@@ -12,20 +36,16 @@ const setFeatureState = (
   mapSource,
   sourceLayer,
   state,
-  date
+  date,
+  stateFunc
 ) => {
-  const recentData = findLast(state, (status) => status.date <= date);
   map.setFeatureState(
     {
       source: mapSource,
       sourceLayer: sourceLayer,
       id: parseInt(featureId),
     },
-    {
-      cases: recentData ? parseInt(recentData.cases) : 0,
-      deaths: recentData ? parseInt(recentData.deaths) : 0,
-      firstCase: get(state, [1, 'date']) === date,
-    }
+    stateFunc(state, date)
   );
 };
 
@@ -68,26 +88,42 @@ const MapboxMap = ({
       minZoom: 3,
     });
     setMap(map);
-    map.on('load', () => {
-      map.loadImage('/img/coronavirus-green-128.png', (error, image) => {
-        if (error) throw error;
-        map.addImage('corona-green', image);
-        sources.forEach((source) => map.addSource(source.id, source.config));
-        layers.forEach((layer) => map.addLayer(layer));
-        map.on('sourcedata', () =>
-          setInitialized(
-            sources.reduce(
-              (loaded, source) => loaded && map.isSourceLoaded(source.id),
-              true
-            )
+    map.on('load', async () => {
+      await Promise.all([
+        new Promise((resolve, reject) =>
+          map.loadImage('/img/coronavirus-green-128.png', (error, image) => {
+            if (error) reject(error);
+            map.addImage('corona-green', image);
+            resolve();
+          })
+        ),
+        new Promise((resolve, reject) =>
+          map.loadImage('/img/coronavirus-red-128.png', (error, image) => {
+            if (error) reject(error);
+            map.addImage('corona-red', image);
+            resolve();
+          })
+        ),
+      ]);
+
+      sources.forEach((source) => map.addSource(source.id, source.config));
+      layers.forEach((layer) => map.addLayer(layer));
+      map.on('sourcedata', () =>
+        setInitialized(
+          sources.reduce(
+            (loaded, source) => loaded && map.isSourceLoaded(source.id),
+            true
           )
-        );
-      });
+        )
+      );
     });
   }, [sources, layers]);
 
   useEffect(() => {
     if (initialized && casesByCounty) {
+      const twoWeeksAgo = moment(date)
+        .subtract(2, 'weeks')
+        .format('YYYY-MM-DD');
       for (const [key, value] of Object.entries(casesByCounty)) {
         setFeatureState(
           map,
@@ -95,7 +131,8 @@ const MapboxMap = ({
           'us-counties',
           'us-counties-500k-a4l482',
           value,
-          date
+          date,
+          choroplethState
         );
         setFeatureState(
           map,
@@ -103,7 +140,8 @@ const MapboxMap = ({
           'us-county-centroids',
           undefined,
           value,
-          date
+          date,
+          centroidState(twoWeeksAgo)
         );
       }
     }
