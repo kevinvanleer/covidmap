@@ -91,7 +91,7 @@ export const layers = [
     source: 'us-county-centroids',
     layout: {
       'icon-image': 'corona-red',
-      'icon-size': 0.3,
+      'icon-size': ['interpolate', ['linear'], ['zoom'], 3, 0.1, 20, 1],
       'icon-ignore-placement': true,
     },
     paint: {
@@ -106,7 +106,7 @@ export const layers = [
     source: 'us-county-centroids',
     layout: {
       'icon-image': 'corona-green',
-      'icon-size': 0.3,
+      'icon-size': ['interpolate', ['linear'], ['zoom'], 3, 0.3, 20, 1],
       'icon-ignore-placement': true,
     },
     paint: {
