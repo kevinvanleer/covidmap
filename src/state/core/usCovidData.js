@@ -51,7 +51,7 @@ const usCovidDataSlice = createSlice({
       state.badRecords = action.payload;
     },
     setTotals: (state, action) => {
-      state.totals = action.payload;
+      state.totals = action.payload.data;
     },
   },
 });

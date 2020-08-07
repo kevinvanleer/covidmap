@@ -6,14 +6,15 @@ import { Flexbox, Spacer, Text } from 'kvl-ui';
 
 import AreaChart from '../core/d3AreaChart.js';
 
-export const Details = ({ date, data }) => {
+export const Details = ({ date, entity }) => {
+  const data = entity.data;
   let recentData = null;
   let deathRate = {};
   if (!isEmpty(data)) {
     recentData = findLast(
       data,
       (status) => status.date <= date.format('YYYY-MM-DD')
-    );
+    ) || { deaths: 0, cases: 0 };
     const twoWeekLagData = findLast(
       data,
       (status) =>
@@ -25,10 +26,9 @@ export const Details = ({ date, data }) => {
         status.date <= moment(date).subtract(4, 'weeks').format('YYYY-MM-DD')
     );
     const eightWeekLagData = findLast(
-      data.filter(
-        (status) =>
-          status.date <= moment(date).subtract(8, 'weeks').format('YYYY-MM-DD')
-      )
+      data,
+      (status) =>
+        status.date <= moment(date).subtract(8, 'weeks').format('YYYY-MM-DD')
     );
     set(deathRate, 'current', recentData.deaths / recentData.cases);
     set(
@@ -60,20 +60,24 @@ export const Details = ({ date, data }) => {
       padding="1em"
       pointerEvents="none"
     >
-      <Text fontSize="label">{`${recentData.county}, ${recentData.state}`}</Text>
+      <Text fontSize="label">{entity.displayName}</Text>
       <Text fontSize="detail">{`reporting on ${recentData.date}`}</Text>
       <Spacer height="0.5em" />
       {recentData.cases > 0 ? (
         <>
-          <Text>{`First case: ${get(data, [1, 'date'])}`}</Text>
-          <Text>{`cases: ${recentData.cases}`}</Text>
-          <Text>{`deaths: ${recentData.deaths}`}</Text>
+          <Text>{`First case: ${get(entity.data, [1, 'date'])}`}</Text>
+          <Text>{`cases: ${new Intl.NumberFormat('en-US').format(
+            get(recentData, 'cases', 0)
+          )}`}</Text>
+          <Text>{`deaths: ${new Intl.NumberFormat('en-US').format(
+            get(recentData, 'deaths', 0)
+          )}`}</Text>
           <Text>{`death rate:
           ${(deathRate.current * 100).toFixed()}% /
           ${(deathRate.twoWeek * 100).toFixed()}% /
           ${(deathRate.fourWeek * 100).toFixed()}% /
           ${(deathRate.eightWeek * 100).toFixed()}%`}</Text>
-          <AreaChart data={data} />
+          <AreaChart data={entity.data} />
         </>
       ) : (
         <Text>No cases reported</Text>
@@ -84,5 +88,5 @@ export const Details = ({ date, data }) => {
 
 Details.propTypes = {
   date: PropTypes.object,
-  data: PropTypes.array,
+  entity: PropTypes.object,
 };

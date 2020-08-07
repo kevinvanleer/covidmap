@@ -2,6 +2,7 @@ import {
   addBoundaries,
   insertStatus,
   appendBadRecords,
+  setTotals,
 } from '../state/core/usCovidData.js';
 
 /*
@@ -30,6 +31,11 @@ export const fetchUsCasesByCounty = async (startIndex, pageSize, reverse) => {
   return response.json();
 };
 
+export const fetchUsTotals = async () => {
+  const response = await fetch(`/api/us-totals`);
+  return response.json();
+};
+
 export const fetchUsCovidBoundaries = async (resolution) => {
   const response = await fetch(`/api/us-counties?resolution=${resolution}`);
   return response.json();
@@ -43,10 +49,8 @@ const sortCasesByCounty = (newCases) => async (dispatch) => {
     const countyId = parseInt(status.fips);
 
     if (isNaN(countyId)) {
-      //dispatch(appendBadRecord(status));
       badRecords.push(status);
     } else {
-      //dispatch(appendStatus(status));
       const countyId = parseInt(status.fips);
 
       if (countyId in newStatus) {
@@ -89,6 +93,8 @@ export const initializeFeatureState = () => async (dispatch) => {
   let startIndex = 0;
   let pageSize = 1000;
 
+  const totalsPromise = fetchUsTotals();
+
   const boundaries = await fetchUsCovidBoundaries('20m');
   const boundaryStates = {};
   boundaries.features.forEach((boundary) => {
@@ -111,4 +117,6 @@ export const initializeFeatureState = () => async (dispatch) => {
     startIndex += pageSize;
     pageSize *= 2;
   }
+
+  dispatch(setTotals(await totalsPromise));
 };

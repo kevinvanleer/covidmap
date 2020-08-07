@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import mapboxgl from 'mapbox-gl';
@@ -63,15 +63,17 @@ const MapboxMap = ({
   const [initialized, setInitialized] = useState(false);
   const mapContainer = useRef(null);
 
-  useMemo(() => {
+  useEffect(() => {
     if (map && initialized) {
-      layers.forEach((layer) =>
-        map.setLayoutProperty(
-          layer.id,
-          'visibility',
-          activeLayers.includes(layer.id) ? 'visible' : 'none'
-        )
-      );
+      layers.forEach((layer) => {
+        if (map.getLayer(layer.id)) {
+          map.setLayoutProperty(
+            layer.id,
+            'visibility',
+            activeLayers.includes(layer.id) ? 'visible' : 'none'
+          );
+        }
+      });
     }
   }, [map, initialized, layers, activeLayers]);
 
@@ -149,7 +151,15 @@ const MapboxMap = ({
 
   useEffect(() => {
     if (map && initialized) {
-      layers.forEach((layer) => map.addLayer(layer));
+      layers.forEach((layer) => {
+        if (map.getLayer(layer.id)) map.removeLayer(layer.id);
+        map.addLayer(layer);
+      });
+    }
+  }, [layers, map, initialized]);
+
+  useEffect(() => {
+    if (map && initialized) {
       map.on('mousemove', 'us-counties-base', (e) => {
         if (e.features.length > 0) {
           if (selectedFeature) {

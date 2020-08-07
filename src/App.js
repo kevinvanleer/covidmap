@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
+import { get } from 'lodash';
 
 import { Details, Legend, About } from './components/structural';
 import { Flexbox } from 'kvl-ui';
@@ -16,6 +17,7 @@ import { setCurrent } from './state/core/time.js';
 function App() {
   const dispatch = useDispatch();
   const date = useSelector((state) => moment(state.core.time.current, 'x'));
+  const totals = useSelector((state) => state.core.usCovidData.totals);
   const casesByCounty = useSelector(
     (state) => state.core.usCovidData.casesByCounty
   );
@@ -52,6 +54,17 @@ function App() {
     [dispatch]
   );
 
+  const detailsData = selectedFeature
+    ? {
+        displayName: `${get(casesByCounty, [
+          selectedFeature,
+          0,
+          'county',
+        ])}, ${get(casesByCounty, [selectedFeature, 0, 'state'])}`,
+        data: casesByCounty[selectedFeature],
+      }
+    : { displayName: 'United States of America', data: totals };
+
   return (
     <>
       <Legend
@@ -62,9 +75,7 @@ function App() {
         setDate={onSetDate}
         onShowAbout={() => onShowAbout(true)}
       />
-      {selectedFeature ? (
-        <Details date={moment(date)} data={casesByCounty[selectedFeature]} />
-      ) : null}
+      <Details date={moment(date)} entity={detailsData} />
       <FullscreenMap
         date={date.format('YYYY-MM-DD')}
         sources={sources}
