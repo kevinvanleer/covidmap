@@ -90,36 +90,41 @@ const MapboxMap = ({
       minZoom: 3,
     });
     setMap(map);
-    map.on('load', async () => {
-      await Promise.all([
-        new Promise((resolve, reject) =>
-          map.loadImage('/img/coronavirus-green-128.png', (error, image) => {
-            if (error) reject(error);
-            map.addImage('corona-green', image);
-            resolve();
-          })
-        ),
-        new Promise((resolve, reject) =>
-          map.loadImage('/img/coronavirus-red-128.png', (error, image) => {
-            if (error) reject(error);
-            map.addImage('corona-red', image);
-            resolve();
-          })
-        ),
-      ]);
+  }, []);
 
-      sources.forEach((source) => map.addSource(source.id, source.config));
-      const detectLoadedSources = () => {
-        const init = sources.reduce(
-          (loaded, source) => loaded && map.isSourceLoaded(source.id),
-          true
-        );
-        setInitialized(init || initialized);
-        if (init) map.off('sourcedata', detectLoadedSources);
-      };
-      map.on('sourcedata', detectLoadedSources);
-    });
-  }, [sources, layers]);
+  useEffect(() => {
+    if (map) {
+      map.on('load', async () => {
+        await Promise.all([
+          new Promise((resolve, reject) =>
+            map.loadImage('/img/coronavirus-green-128.png', (error, image) => {
+              if (error) reject(error);
+              map.addImage('corona-green', image);
+              resolve();
+            })
+          ),
+          new Promise((resolve, reject) =>
+            map.loadImage('/img/coronavirus-red-128.png', (error, image) => {
+              if (error) reject(error);
+              map.addImage('corona-red', image);
+              resolve();
+            })
+          ),
+        ]);
+
+        sources.forEach((source) => map.addSource(source.id, source.config));
+        const detectLoadedSources = () => {
+          const init = sources.reduce(
+            (loaded, source) => loaded && map.isSourceLoaded(source.id),
+            true
+          );
+          setInitialized(init || initialized);
+          if (init) map.off('sourcedata', detectLoadedSources);
+        };
+        map.on('sourcedata', detectLoadedSources);
+      });
+    }
+  }, [map, sources, layers, initialized]);
 
   useEffect(() => {
     if (initialized && casesByCounty) {
