@@ -17,7 +17,7 @@ function App() {
   const dispatch = useDispatch();
   const date = useSelector((state) => moment(state.core.time.current, 'x'));
   const casesByCounty = useSelector(
-    (state) => state.core.covidByCounty.casesByCounty
+    (state) => state.core.usCovidData.casesByCounty
   );
   const [activeLayers, setActiveLayers] = useState(
     layers.map((layer) => layer.id)

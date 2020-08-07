@@ -1,8 +1,8 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import covidByCounty from './covidByCounty.js';
+import usCovidData from './usCovidData.js';
 import time from './time.js';
 
 export default combineReducers({
-  covidByCounty,
+  usCovidData,
   time,
 });

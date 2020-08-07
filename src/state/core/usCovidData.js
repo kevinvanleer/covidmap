@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const covidByCountySlice = createSlice({
-  name: 'covidByCounty',
-  initialState: { casesByCounty: {}, badRecords: [] },
+const usCovidDataSlice = createSlice({
+  name: 'usCovidData',
+  initialState: { totals: [], casesByCounty: {}, badRecords: [] },
   reducers: {
     load: (state, action) => {
       state.casesByCounty = action.payload;
@@ -50,6 +50,9 @@ const covidByCountySlice = createSlice({
     appendBadRecords: (state, action) => {
       state.badRecords = action.payload;
     },
+    setTotals: (state, action) => {
+      state.totals = action.payload;
+    },
   },
 });
 
@@ -60,5 +63,6 @@ export const {
   appendBadRecords,
   addBoundary,
   addBoundaries,
-} = covidByCountySlice.actions;
-export default covidByCountySlice.reducer;
+  setTotals,
+} = usCovidDataSlice.actions;
+export default usCovidDataSlice.reducer;

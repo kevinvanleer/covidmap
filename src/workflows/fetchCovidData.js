@@ -2,7 +2,7 @@ import {
   addBoundaries,
   insertStatus,
   appendBadRecords,
-} from '../state/core/covidByCounty.js';
+} from '../state/core/usCovidData.js';
 
 /*
 const covidByCountyUrl =
