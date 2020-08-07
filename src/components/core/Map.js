@@ -107,15 +107,15 @@ const MapboxMap = ({
       ]);
 
       sources.forEach((source) => map.addSource(source.id, source.config));
-      layers.forEach((layer) => map.addLayer(layer));
-      map.on('sourcedata', () =>
-        setInitialized(
-          sources.reduce(
-            (loaded, source) => loaded && map.isSourceLoaded(source.id),
-            true
-          )
-        )
-      );
+      const detectLoadedSources = () => {
+        const init = sources.reduce(
+          (loaded, source) => loaded && map.isSourceLoaded(source.id),
+          true
+        );
+        setInitialized(init || initialized);
+        if (init) map.off('sourcedata', detectLoadedSources);
+      };
+      map.on('sourcedata', detectLoadedSources);
     });
   }, [sources, layers]);
 
@@ -149,6 +149,7 @@ const MapboxMap = ({
 
   useEffect(() => {
     if (map && initialized) {
+      layers.forEach((layer) => map.addLayer(layer));
       map.on('mousemove', 'us-counties-base', (e) => {
         if (e.features.length > 0) {
           if (selectedFeature) {
