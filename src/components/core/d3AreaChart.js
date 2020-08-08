@@ -4,7 +4,7 @@ import * as d3 from 'd3';
 import moment from 'moment';
 import { last } from 'lodash';
 
-const AreaChart = ({ data }) => {
+const AreaChart = ({ data, currentDate, currentValue }) => {
   const d3svg = useRef(null);
   const width = 300;
   const height = 200;
@@ -17,6 +17,7 @@ const AreaChart = ({ data }) => {
     })),
     { y: 'Cases' }
   );
+
   useEffect(() => {
     const margin = { top: 20, right: 20, bottom: 30, left: 30 };
     if (data && d3svg.current) {
@@ -110,6 +111,26 @@ const AreaChart = ({ data }) => {
       svg.append('g').call(xAxis);
       svg.append('g').call(ycAxis);
       //svg.append('g').call(ymAxis);
+
+      const radius = 2;
+      const markerColor = '#ccc';
+      svg
+        .append('line')
+        .attr('x1', x(currentDate))
+        .attr('x2', x(currentDate))
+        .attr('y1', height - margin.bottom)
+        .attr('y2', yc(currentValue) + radius)
+        .style('stroke-width', 1)
+        .style('stroke', markerColor)
+        .style('fill', 'none');
+      svg
+        .append('circle')
+        .attr('cx', x(currentDate))
+        .attr('cy', yc(currentValue))
+        .attr('r', radius)
+        .style('stroke-width', 1)
+        .style('stroke', markerColor)
+        .style('fill', 'none');
     }
   }, [data, casesData]);
 
@@ -127,6 +148,8 @@ const AreaChart = ({ data }) => {
 
 AreaChart.propTypes = {
   data: PropTypes.array,
+  currentDate: PropTypes.object,
+  currentValue: PropTypes.number,
 };
 
 export default AreaChart;

@@ -77,7 +77,11 @@ export const Details = ({ date, entity }) => {
           ${(deathRate.twoWeek * 100).toFixed()}% /
           ${(deathRate.fourWeek * 100).toFixed()}% /
           ${(deathRate.eightWeek * 100).toFixed()}%`}</Text>
-          <AreaChart data={entity.data} />
+          <AreaChart
+            data={entity.data}
+            currentDate={date}
+            currentValue={get(recentData, 'cases', 0)}
+          />
         </>
       ) : (
         <Text>No cases reported</Text>

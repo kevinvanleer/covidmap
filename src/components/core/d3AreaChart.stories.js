@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import { action } from '@storybook/addon-actions';
 import AreaChart from './d3AreaChart.js';
 
@@ -692,4 +693,10 @@ export default {
   title: 'AreaChart',
 };
 
-export const Basic = () => <AreaChart data={covidData} />;
+export const Basic = () => (
+  <AreaChart
+    data={covidData}
+    currentDate={moment(covidData[covidData.length / 2].date, 'YYYY-MM-DD')}
+    currentValue={covidData[covidData.length / 2].cases}
+  />
+);
