@@ -6,7 +6,26 @@ import { Flexbox, Spacer, Text } from 'kvl-ui';
 
 import AreaChart from '../core/d3AreaChart.js';
 
-export const Details = ({ date, entity }) => {
+const Stats = ({ collapsed, entity, deathRate, recentData }) => {
+  return !collapsed ? (
+    <>
+      <Text>{`First case: ${get(entity.data, [1, 'date'])}`}</Text>
+      <Text>{`cases: ${new Intl.NumberFormat('en-US').format(
+        get(recentData, 'cases', 0)
+      )}`}</Text>
+      <Text>{`deaths: ${new Intl.NumberFormat('en-US').format(
+        get(recentData, 'deaths', 0)
+      )}`}</Text>
+      <Text>{`death rate:
+          ${(deathRate.current * 100).toFixed()}% /
+          ${(deathRate.twoWeek * 100).toFixed()}% /
+          ${(deathRate.fourWeek * 100).toFixed()}% /
+          ${(deathRate.eightWeek * 100).toFixed()}%`}</Text>
+    </>
+  ) : null;
+};
+
+export const Details = ({ date, entity, collapsed }) => {
   const data = entity.data;
   let recentData = null;
   let deathRate = {};
@@ -62,34 +81,18 @@ export const Details = ({ date, entity }) => {
   }
 
   return recentData ? (
-    <Flexbox
-      flexDirection="column"
-      position="absolute"
-      zIndex={10}
-      left="1em"
-      top="1em"
-      backgroundColor="#444"
-      color="#eee"
-      padding="1em"
-      pointerEvents="none"
-    >
+    <Flexbox flexDirection="column">
       <Text fontSize="label">{entity.displayName}</Text>
       <Text fontSize="detail">{`reporting on ${recentData.date}`}</Text>
       <Spacer height="0.5em" />
       {!isEmpty(data) ? (
         <>
-          <Text>{`First case: ${get(entity.data, [1, 'date'])}`}</Text>
-          <Text>{`cases: ${new Intl.NumberFormat('en-US').format(
-            get(recentData, 'cases', 0)
-          )}`}</Text>
-          <Text>{`deaths: ${new Intl.NumberFormat('en-US').format(
-            get(recentData, 'deaths', 0)
-          )}`}</Text>
-          <Text>{`death rate:
-          ${(deathRate.current * 100).toFixed()}% /
-          ${(deathRate.twoWeek * 100).toFixed()}% /
-          ${(deathRate.fourWeek * 100).toFixed()}% /
-          ${(deathRate.eightWeek * 100).toFixed()}%`}</Text>
+          <Stats
+            deathRate={deathRate}
+            collapsed={collapsed}
+            entity={entity}
+            recentData={recentData}
+          />
           <AreaChart
             data={data}
             currentDate={date}
@@ -106,4 +109,5 @@ export const Details = ({ date, entity }) => {
 Details.propTypes = {
   date: PropTypes.object,
   entity: PropTypes.object,
+  collapsed: PropTypes.bool,
 };

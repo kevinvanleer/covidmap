@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-import { get } from 'lodash';
+import { get, last } from 'lodash';
 
-import { Details, Legend, About } from './components/structural';
+import { ControlPanel, About } from './components/structural';
 import { Flexbox } from 'kvl-ui';
 
 import { initializeFeatureState } from './workflows/fetchCovidData.js';
@@ -56,26 +56,25 @@ function App() {
 
   const detailsData = selectedFeature
     ? {
-        displayName: `${get(casesByCounty, [
-          selectedFeature,
-          0,
-          'county',
-        ])}, ${get(casesByCounty, [selectedFeature, 0, 'state'])}`,
+        displayName: `${get(
+          last(casesByCounty[selectedFeature]),
+          'county'
+        )}, ${get(last(casesByCounty[selectedFeature]), 'state')}`,
         data: casesByCounty[selectedFeature],
       }
     : { displayName: 'United States of America', data: totals };
 
   return (
     <>
-      <Legend
+      <ControlPanel
         layers={layers}
         activeLayers={activeLayers}
         updateActiveLayers={updateActiveLayers}
         date={moment(date)}
-        setDate={onSetDate}
+        onSetDate={onSetDate}
         onShowAbout={() => onShowAbout(true)}
+        detailsData={detailsData}
       />
-      <Details date={moment(date)} entity={detailsData} />
       <FullscreenMap
         date={date.format('YYYY-MM-DD')}
         sources={sources}

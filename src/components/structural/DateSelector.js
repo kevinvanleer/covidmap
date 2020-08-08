@@ -25,7 +25,9 @@ export const DateSelector = ({ date, setDate }) => {
         <Button
           id="button-legend-play-pause"
           onClick={() => dispatch(togglePlayPause())}
-        >{`>`}</Button>
+        >
+          <Text color="#eee">{`>`}</Text>
+        </Button>
         <Spacer flexGrow={1} />
         <Text>{moment(timeState.current, 'x').format('YYYY-MM-DD')}</Text>
       </Flexbox>

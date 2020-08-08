@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import moment from 'moment';
-import { last } from 'lodash';
+import { last, get } from 'lodash';
 
 const AreaChart = ({ data, currentDate, currentValue }) => {
   const d3svg = useRef(null);
@@ -34,7 +34,7 @@ const AreaChart = ({ data, currentDate, currentValue }) => {
 
       let yc = d3
         .scaleLinear()
-        .domain([0, Math.max(last(casesData).cases, 10)])
+        .domain([0, Math.max(get(last(casesData), 'cases'), 10)])
         .nice()
         .range([height - margin.bottom, margin.top]);
 
