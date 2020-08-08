@@ -688,6 +688,8 @@ const covidData = [
   },
 ];
 
+const current = covidData.find((r) => r.date === '2020-05-01');
+
 export default {
   component: AreaChart,
   title: 'AreaChart',
@@ -696,7 +698,7 @@ export default {
 export const Basic = () => (
   <AreaChart
     data={covidData}
-    currentDate={moment(covidData[covidData.length / 2].date, 'YYYY-MM-DD')}
-    currentValue={covidData[covidData.length / 2].cases}
+    currentDate={moment(current.date, 'YYYY-MM-DD')}
+    currentValue={current.cases}
   />
 );

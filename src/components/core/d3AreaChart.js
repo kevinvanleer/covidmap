@@ -24,7 +24,7 @@ const AreaChart = ({ data, currentDate, currentValue }) => {
       let svg = d3.select(d3svg.current);
       svg.selectAll('*').remove();
       let x = d3
-        .scaleUtc()
+        .scaleTime()
         //.domain(d3.extent(casesData, (d) => d.date))
         .domain([
           moment('2020-01-01', 'YYYY-MM-DD'),
