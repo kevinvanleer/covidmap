@@ -96,6 +96,7 @@ export const Details = ({ date, entity, collapsed }) => {
           <AreaChart
             data={data}
             currentDate={date}
+            height={collapsed ? 100 : undefined}
             currentValue={parseInt(get(recentData, 'cases', 0))}
           />
         </>

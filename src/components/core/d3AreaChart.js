@@ -4,10 +4,11 @@ import * as d3 from 'd3';
 import moment from 'moment';
 import { last, get } from 'lodash';
 
-const AreaChart = ({ data, currentDate, currentValue }) => {
+const AreaChart = ({ height, data, currentDate, currentValue }) => {
   const d3svg = useRef(null);
   const width = 300;
-  const height = 200;
+
+  const yTicks = height * (7 / 200);
 
   const casesData = Object.assign(
     data.slice(1).map(({ date, cases, deaths }) => ({
@@ -19,7 +20,7 @@ const AreaChart = ({ data, currentDate, currentValue }) => {
   );
 
   useEffect(() => {
-    const margin = { top: 20, right: 20, bottom: 30, left: 30 };
+    const margin = { top: 20, right: 0, bottom: 30, left: 30 };
     if (data && d3svg.current) {
       let svg = d3.select(d3svg.current);
       svg.selectAll('*').remove();
@@ -60,7 +61,7 @@ const AreaChart = ({ data, currentDate, currentValue }) => {
       let ycAxis = (g) =>
         g
           .attr('transform', `translate(${margin.left},0)`)
-          .call(d3.axisLeft(yc).ticks(7, 's'))
+          .call(d3.axisLeft(yc).ticks(yTicks, 's'))
           .call((g) => g.select('.domain').remove())
           .call((g) =>
             g
@@ -147,9 +148,14 @@ const AreaChart = ({ data, currentDate, currentValue }) => {
 };
 
 AreaChart.propTypes = {
+  height: PropTypes.number,
   data: PropTypes.array,
   currentDate: PropTypes.object,
   currentValue: PropTypes.number,
+};
+
+AreaChart.defaultProps = {
+  height: 200,
 };
 
 export default AreaChart;

@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import Slider from 'rc-slider';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 import 'rc-slider/assets/index.css';
 
 import { Text, Flexbox, Button, Spacer } from 'kvl-ui';
@@ -26,7 +28,10 @@ export const DateSelector = ({ date, setDate }) => {
           id="button-legend-play-pause"
           onClick={() => dispatch(togglePlayPause())}
         >
-          <Text color="#eee">{timeState.rate === 0 ? `>` : `||`}</Text>
+          <FontAwesomeIcon
+            color="#eee"
+            icon={timeState.rate === 0 ? faPlay : faPause}
+          />
         </Button>
         <Spacer flexGrow={1} />
         <Text>{moment(timeState.current, 'x').format('YYYY-MM-DD')}</Text>

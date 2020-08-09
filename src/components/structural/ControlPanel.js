@@ -2,8 +2,14 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { get } from 'lodash';
-import { Flexbox, Spacer, Text, Button } from 'kvl-ui';
-import { Details, Legend, DateSelector } from '.';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faMinusSquare,
+  faPlusSquare,
+  faInfoCircle,
+} from '@fortawesome/free-solid-svg-icons';
+import { Flexbox, Spacer, Text, SquareButton } from 'kvl-ui';
+import { Details, Legend, DateSelector, DrawerButton } from '.';
 import { FloatingPanel } from '../presentation/FloatingPanel';
 
 export const ControlPanel = ({
@@ -18,17 +24,17 @@ export const ControlPanel = ({
   const [collapsed, setCollapsed] = useState(false);
   return (
     <FloatingPanel right="1em" top="1em">
-      <Button
-        flexGrow={0}
-        color="white"
-        onClick={() => setCollapsed(!collapsed)}
-      >
-        {collapsed ? (
-          <Text color="#eee">vvv</Text>
-        ) : (
-          <Text color="#eee">^^^</Text>
-        )}
-      </Button>
+      <Flexbox alignItems="center">
+        <Text fontSize="heading">COVID-19</Text>
+        <Spacer width="1em" flexGrow={1} />
+        <DrawerButton
+          id="button-covidmap-control-panel-collapse"
+          flexGrow={0}
+          color="white"
+          onClick={() => setCollapsed(!collapsed)}
+          collapsed={collapsed}
+        />
+      </Flexbox>
       {!collapsed ? (
         <Legend
           layers={layers}
@@ -40,14 +46,17 @@ export const ControlPanel = ({
       <Details date={moment(date)} entity={detailsData} collapsed={collapsed} />
       <Spacer height="1em" />
       <DateSelector date={date} setDate={onSetDate} />
-      {!collapsed ? (
-        <>
-          <Spacer height="1em" />
-          <Button id="covidmap-show-about-box" onClick={onShowAbout}>
-            <Text color="#eee">About</Text>
-          </Button>
-        </>
-      ) : null}
+      <Flexbox>
+        <Spacer flexGrow={1} />
+        {!collapsed ? (
+          <>
+            <Spacer height="1em" />
+            <SquareButton id="covidmap-show-about-box" onClick={onShowAbout}>
+              <FontAwesomeIcon color="#eee" icon={faInfoCircle} />
+            </SquareButton>
+          </>
+        ) : null}
+      </Flexbox>
     </FloatingPanel>
   );
 };

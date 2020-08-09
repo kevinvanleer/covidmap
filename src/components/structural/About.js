@@ -9,6 +9,7 @@ export const About = ({ onHide }) => (
     color="#eee"
     padding="1em"
     maxWidth="80ch"
+    margin="1em"
   >
     <Text fontSize="heading">About this visualization</Text>
     <Spacer height="0.5em" />
