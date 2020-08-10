@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import moment from 'moment';
-import { last, get } from 'lodash';
+import { last, get, isEmpty } from 'lodash';
 
 const AreaChart = ({
   height,
@@ -41,7 +41,7 @@ const AreaChart = ({
 
       let yc = d3
         .scaleLinear()
-        .domain([0, Math.max(get(last(casesData), 'cases'), 10)])
+        .domain([0, Math.max(get(last(casesData), 'cases', 0), 10)])
         .nice()
         .range([height - margin.bottom, margin.top]);
 
@@ -121,23 +121,25 @@ const AreaChart = ({
 
       const radius = 2;
       const markerColor = '#ccc';
-      svg
-        .append('line')
-        .attr('x1', x(currentDate))
-        .attr('x2', x(currentDate))
-        .attr('y1', height - margin.bottom)
-        .attr('y2', yc(currentValue) + radius)
-        .style('stroke-width', 1)
-        .style('stroke', markerColor)
-        .style('fill', 'none');
-      svg
-        .append('circle')
-        .attr('cx', x(currentDate))
-        .attr('cy', yc(currentValue))
-        .attr('r', radius)
-        .style('stroke-width', 1)
-        .style('stroke', markerColor)
-        .style('fill', 'none');
+      if (!isEmpty(data)) {
+        svg
+          .append('line')
+          .attr('x1', x(currentDate))
+          .attr('x2', x(currentDate))
+          .attr('y1', height - margin.bottom)
+          .attr('y2', yc(currentValue) + radius)
+          .style('stroke-width', 1)
+          .style('stroke', markerColor)
+          .style('fill', 'none');
+        svg
+          .append('circle')
+          .attr('cx', x(currentDate))
+          .attr('cy', yc(currentValue))
+          .attr('r', radius)
+          .style('stroke-width', 1)
+          .style('stroke', markerColor)
+          .style('fill', 'none');
+      }
 
       if (showIntercept && casesData[0]) {
         svg
@@ -157,6 +159,17 @@ const AreaChart = ({
           .attr('text-anchor', 'middle')
           .attr('font-family', 'sans-serif')
           .attr('font-size', '10px')
+          .attr('fill', '#eee');
+      }
+      if (isEmpty(data)) {
+        svg
+          .append('text')
+          .attr('x', width / 2)
+          .attr('y', height / 2)
+          .text('No data')
+          .attr('text-anchor', 'middle')
+          .attr('font-family', 'sans-serif')
+          .attr('font-size', '20px')
           .attr('fill', '#eee');
       }
     }
@@ -192,6 +205,8 @@ AreaChart.propTypes = {
 
 AreaChart.defaultProps = {
   height: 200,
+  data: [],
+  currentValue: 0,
 };
 
 export default AreaChart;

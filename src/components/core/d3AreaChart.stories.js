@@ -10,6 +10,8 @@ export default {
   title: 'AreaChart',
 };
 
+export const Default = () => <AreaChart />;
+
 export const Basic = () => (
   <AreaChart
     data={covidData}
