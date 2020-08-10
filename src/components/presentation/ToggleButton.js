@@ -1,6 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Flexbox, Spacer, Text, SquareButton } from 'kvl-ui';
+import { SquareButton } from 'kvl-ui';
 
 export const ToggleButton = ({ id, onClick, icon, active }) => (
   <SquareButton
@@ -11,3 +12,10 @@ export const ToggleButton = ({ id, onClick, icon, active }) => (
     <FontAwesomeIcon icon={icon} color={active ? '#eee' : '#777'} fixedWidth />
   </SquareButton>
 );
+
+ToggleButton.propTypes = {
+  id: PropTypes.string,
+  onClick: PropTypes.func,
+  icon: PropTypes.object,
+  active: PropTypes.bool,
+};

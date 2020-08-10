@@ -33,9 +33,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "lint:css": "stylelint '.src/**/*.js[x]'",
+    "lint": "eslint ./src",
+    "lint:fix": "eslint ./src --fix",
+    "lint:css": "stylelint './src/**/*.js'",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public"
   },

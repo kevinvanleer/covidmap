@@ -4,38 +4,8 @@ import moment from 'moment';
 import { get, findLast, set, isEmpty } from 'lodash';
 import { Flexbox, Spacer, Text } from 'kvl-ui';
 
+import { Stats } from './Stats.js';
 import AreaChart from '../core/d3AreaChart.js';
-
-const Stats = ({
-  collapsed,
-  entity,
-  deathRate,
-  recentData,
-  newCases,
-  ongoingCases,
-}) => {
-  return !collapsed ? (
-    <>
-      <Text>{`Total cases: ${new Intl.NumberFormat('en-US').format(
-        get(recentData, 'cases', 0)
-      )}`}</Text>
-      <Text>{`Total deaths: ${new Intl.NumberFormat('en-US').format(
-        get(recentData, 'deaths', 0)
-      )}`}</Text>
-      <Text>{`New cases: ${new Intl.NumberFormat('en-US').format(
-        newCases
-      )}`}</Text>
-      <Text>{`Ongoing cases: ${new Intl.NumberFormat('en-US').format(
-        ongoingCases
-      )}`}</Text>
-      <Text>{`death rate:
-          ${(deathRate.current * 100).toFixed()}% /
-          ${(deathRate.twoWeek * 100).toFixed()}% /
-          ${(deathRate.fourWeek * 100).toFixed()}% /
-          ${(deathRate.eightWeek * 100).toFixed()}%`}</Text>
-    </>
-  ) : null;
-};
 
 export const Details = ({ date, entity, collapsed }) => {
   const data = entity.data;
