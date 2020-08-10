@@ -145,14 +145,14 @@ const AreaChart = ({
           .attr('x1', x(casesData[0].date))
           .attr('x2', x(casesData[0].date))
           .attr('y1', height - margin.bottom)
-          .attr('y2', height / 2 + margin.top)
+          .attr('y2', height / 2)
           .style('stroke-width', 1)
           .style('stroke', markerColor)
           .style('fill', 'none');
         svg
           .append('text')
           .attr('x', x(casesData[0].date))
-          .attr('y', height / 2 + margin.top - 5)
+          .attr('y', height / 2 - 5)
           .text(casesData[0].date.format('MMM D'))
           .attr('text-anchor', 'middle')
           .attr('font-family', 'sans-serif')
