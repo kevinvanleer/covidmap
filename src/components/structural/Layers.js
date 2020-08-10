@@ -2,14 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Flexbox, Spacer, Text } from 'kvl-ui';
 
-import { LegendItem } from '../presentation/LegendItem.js';
+import { LayerItem } from '../presentation/LayerItem.js';
 
-export const Legend = ({ layers, activeLayers, updateActiveLayers }) => (
+export const Layers = ({ layers, activeLayers, updateActiveLayers }) => (
   <Flexbox flexDirection="column" marginBetween="0.5em">
     <Text fontSize="label">Layers</Text>
     {layers.map((layer) =>
       layer.legendHide ? null : (
-        <LegendItem
+        <LayerItem
           key={layer.id}
           onClick={() => updateActiveLayers(layer.id)}
           label={layer.id}
@@ -20,7 +20,7 @@ export const Legend = ({ layers, activeLayers, updateActiveLayers }) => (
   </Flexbox>
 );
 
-Legend.propTypes = {
+Layers.propTypes = {
   layers: PropTypes.array,
   activeLayers: PropTypes.array,
   updateActiveLayers: PropTypes.func,

@@ -9,7 +9,7 @@ import {
   faInfoCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import { Flexbox, Spacer, Text, SquareButton } from 'kvl-ui';
-import { Details, Legend, DateSelector, DrawerButton } from '.';
+import { Details, Layers, DateSelector, DrawerButton } from '.';
 import { FloatingPanel } from '../presentation/FloatingPanel';
 
 export const ControlPanel = ({
@@ -37,7 +37,7 @@ export const ControlPanel = ({
         />
       </Flexbox>
       {!collapsed ? (
-        <Legend
+        <Layers
           layers={layers}
           activeLayers={activeLayers}
           updateActiveLayers={updateActiveLayers}

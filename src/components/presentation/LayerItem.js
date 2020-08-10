@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Flexbox, Spacer, Text } from 'kvl-ui';
 
-export const LegendItem = styled(({ className, onClick, label, active }) => (
+export const LayerItem = styled(({ className, onClick, label, active }) => (
   <Flexbox alignItems="center" onClick={onClick}>
     <input type="checkbox" checked={active} readOnly />
     <Spacer width="0.5em" />
