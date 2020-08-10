@@ -23,7 +23,7 @@ export const ControlPanel = ({
 }) => {
   const [collapsed, setCollapsed] = useState(false);
   return (
-    <FloatingPanel right="1em" top="1em">
+    <FloatingPanel right="1em" top="1em" backgroundColor="rgba(68,68,68,0.85)">
       <Flexbox alignItems="center">
         <Text fontSize="heading">COVID-19</Text>
         <Spacer width="1em" flexGrow={1} />
@@ -33,6 +33,7 @@ export const ControlPanel = ({
           color="white"
           onClick={() => setCollapsed(!collapsed)}
           collapsed={collapsed}
+          backgroundColor="#777"
         />
       </Flexbox>
       {!collapsed ? (
@@ -44,14 +45,17 @@ export const ControlPanel = ({
       ) : null}
       <Spacer height="1em" />
       <Details date={moment(date)} entity={detailsData} collapsed={collapsed} />
-      <Spacer height="1em" />
       <DateSelector date={date} setDate={onSetDate} />
       <Flexbox>
         <Spacer flexGrow={1} />
         {!collapsed ? (
           <>
             <Spacer height="1em" />
-            <SquareButton id="covidmap-show-about-box" onClick={onShowAbout}>
+            <SquareButton
+              id="covidmap-show-about-box"
+              onClick={onShowAbout}
+              backgroundColor="#777"
+            >
               <FontAwesomeIcon color="#eee" icon={faInfoCircle} />
             </SquareButton>
           </>

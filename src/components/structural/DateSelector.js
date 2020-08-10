@@ -7,14 +7,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 import 'rc-slider/assets/index.css';
 
-import { Text, Flexbox, Button, Spacer } from 'kvl-ui';
+import { Text, Flexbox, SquareButton, Spacer } from 'kvl-ui';
 import { togglePlayPause } from '../../state/core/time.js';
 
 export const DateSelector = ({ date, setDate }) => {
   const dispatch = useDispatch();
   const timeState = useSelector((state) => state.core.time);
   return (
-    <>
+    <Flexbox margin="0 0 0 30px" flexDirection="column">
       <Slider
         min={timeState.min}
         max={timeState.max}
@@ -24,19 +24,20 @@ export const DateSelector = ({ date, setDate }) => {
         value={timeState.current}
       />
       <Flexbox>
-        <Button
+        <SquareButton
           id="button-legend-play-pause"
           onClick={() => dispatch(togglePlayPause())}
+          backgroundColor="#777"
         >
           <FontAwesomeIcon
             color="#eee"
             icon={timeState.rate === 0 ? faPlay : faPause}
           />
-        </Button>
+        </SquareButton>
         <Spacer flexGrow={1} />
         <Text>{moment(timeState.current, 'x').format('YYYY-MM-DD')}</Text>
       </Flexbox>
-    </>
+    </Flexbox>
   );
 };
 
