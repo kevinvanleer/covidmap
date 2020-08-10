@@ -2,10 +2,15 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import { Flexbox, Spacer, Text, SquareButton } from 'kvl-ui';
+import {
+  faInfoCircle,
+  faLayerGroup,
+  faChartBar,
+} from '@fortawesome/free-solid-svg-icons';
+import { Flexbox, Spacer, Text, SquareButton, Divider } from 'kvl-ui';
 import { Details, Layers, DateSelector, DrawerButton } from '.';
 import { FloatingPanel } from '../presentation/FloatingPanel';
+import { ToggleButton } from '../presentation/ToggleButton';
 
 export const ControlPanel = ({
   layers,
@@ -17,6 +22,8 @@ export const ControlPanel = ({
   date,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [hideLayers, setHideLayers] = useState(false);
+  const [hideDetails, setHideDetails] = useState(false);
   return (
     <FloatingPanel
       width="min-content"
@@ -25,27 +32,57 @@ export const ControlPanel = ({
       backgroundColor="rgba(68,68,68,0.85)"
     >
       <Flexbox alignItems="center">
-        <Text fontSize="heading">COVID-19</Text>
+        <Text nowrap fontSize="heading">
+          COVID-19
+        </Text>
         <Spacer width="1em" flexGrow={1} />
-        <DrawerButton
-          id="button-covidmap-control-panel-collapse"
-          flexGrow={0}
-          color="white"
-          onClick={() => setCollapsed(!collapsed)}
-          collapsed={collapsed}
-          backgroundColor="#777"
-        />
+        <Flexbox marginBetween="0.2em" alignItems="center">
+          <ToggleButton
+            id="button-covidmap-control-panel-hide-layers"
+            flexGrow={0}
+            onClick={() => setHideLayers(!hideLayers)}
+            icon={faLayerGroup}
+            active={!hideLayers}
+            backgroundColor="#777"
+          />
+          <ToggleButton
+            id="button-covidmap-control-panel-hide-details"
+            flexGrow={0}
+            onClick={() => setHideDetails(!hideDetails)}
+            icon={faChartBar}
+            active={!hideDetails}
+            backgroundColor="#777"
+          />
+          <DrawerButton
+            id="button-covidmap-control-panel-collapse"
+            flexGrow={0}
+            color="white"
+            onClick={() => setCollapsed(!collapsed)}
+            collapsed={collapsed}
+            backgroundColor="#777"
+          />
+        </Flexbox>
       </Flexbox>
-      {!collapsed ? (
-        <Layers
-          layers={layers}
-          activeLayers={activeLayers}
-          updateActiveLayers={updateActiveLayers}
+      <Divider horizontal margin="0.5em 0" />
+      {!hideLayers ? (
+        <>
+          <Layers
+            layers={layers}
+            activeLayers={activeLayers}
+            updateActiveLayers={updateActiveLayers}
+            collapsed={collapsed}
+          />
+          <Divider horizontal margin="1em 0 0.5em 0" />
+        </>
+      ) : null}
+      {!hideDetails ? (
+        <Details
+          date={moment(date)}
+          entity={detailsData}
+          collapsed={collapsed}
         />
       ) : null}
-      <Spacer height="1em" />
-      <Details date={moment(date)} entity={detailsData} collapsed={collapsed} />
-      <DateSelector date={date} setDate={onSetDate} />
+      <DateSelector date={date} setDate={onSetDate} withChart={!hideDetails} />
       <Flexbox>
         <Spacer flexGrow={1} />
         {!collapsed ? (

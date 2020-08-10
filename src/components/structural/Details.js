@@ -6,15 +6,27 @@ import { Flexbox, Spacer, Text } from 'kvl-ui';
 
 import AreaChart from '../core/d3AreaChart.js';
 
-const Stats = ({ collapsed, entity, deathRate, recentData }) => {
+const Stats = ({
+  collapsed,
+  entity,
+  deathRate,
+  recentData,
+  newCases,
+  ongoingCases,
+}) => {
   return !collapsed ? (
     <>
-      <Text>{`First case: ${get(entity.data, [1, 'date'])}`}</Text>
-      <Text>{`cases: ${new Intl.NumberFormat('en-US').format(
+      <Text>{`Total cases: ${new Intl.NumberFormat('en-US').format(
         get(recentData, 'cases', 0)
       )}`}</Text>
-      <Text>{`deaths: ${new Intl.NumberFormat('en-US').format(
+      <Text>{`Total deaths: ${new Intl.NumberFormat('en-US').format(
         get(recentData, 'deaths', 0)
+      )}`}</Text>
+      <Text>{`New cases: ${new Intl.NumberFormat('en-US').format(
+        newCases
+      )}`}</Text>
+      <Text>{`Ongoing cases: ${new Intl.NumberFormat('en-US').format(
+        ongoingCases
       )}`}</Text>
       <Text>{`death rate:
           ${(deathRate.current * 100).toFixed()}% /
@@ -29,12 +41,19 @@ export const Details = ({ date, entity, collapsed }) => {
   const data = entity.data;
   let recentData = null;
   let deathRate = {};
+  let newCases = 0;
+  let ongoingCases = 0;
 
   if (!isEmpty(data)) {
     recentData = findLast(
       data,
       (status) => status.date <= date.format('YYYY-MM-DD')
     ) || { deaths: 0, cases: 0 };
+    const yesterday = findLast(
+      data,
+      (status) =>
+        status.date <= moment(date).subtract(1, 'days').format('YYYY-MM-DD')
+    );
     const twoWeekLagData = findLast(
       data,
       (status) =>
@@ -66,6 +85,9 @@ export const Details = ({ date, entity, collapsed }) => {
       'eightWeek',
       recentData.deaths / get(eightWeekLagData, 'cases') || 0
     );
+    newCases = get(recentData, 'cases', 0) - get(yesterday, 'cases', 0);
+    ongoingCases =
+      get(recentData, 'cases', 0) - get(twoWeekLagData, 'cases', 0);
   } else {
     recentData = {
       date: '2020-01-01',
@@ -82,7 +104,9 @@ export const Details = ({ date, entity, collapsed }) => {
 
   return recentData ? (
     <Flexbox flexDirection="column">
-      <Text fontSize="label">{entity.displayName}</Text>
+      <Text bold fontSize="label">
+        {entity.displayName}
+      </Text>
       <Text fontSize="detail">{`reporting on ${recentData.date}`}</Text>
       <Spacer height="0.5em" />
       <Stats
@@ -90,12 +114,15 @@ export const Details = ({ date, entity, collapsed }) => {
         collapsed={collapsed}
         entity={entity}
         recentData={recentData}
+        newCases={newCases}
+        ongoingCases={ongoingCases}
       />
       <AreaChart
         data={data}
         currentDate={date}
         height={collapsed ? 100 : undefined}
         currentValue={parseInt(get(recentData, 'cases', 0))}
+        showIntercept={true}
       />
     </Flexbox>
   ) : null;

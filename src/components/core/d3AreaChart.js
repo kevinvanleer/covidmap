@@ -4,7 +4,13 @@ import * as d3 from 'd3';
 import moment from 'moment';
 import { last, get } from 'lodash';
 
-const AreaChart = ({ height, data, currentDate, currentValue }) => {
+const AreaChart = ({
+  height,
+  data,
+  currentDate,
+  currentValue,
+  showIntercept,
+}) => {
   const d3svg = useRef(null);
   const width = 300;
 
@@ -132,6 +138,27 @@ const AreaChart = ({ height, data, currentDate, currentValue }) => {
         .style('stroke-width', 1)
         .style('stroke', markerColor)
         .style('fill', 'none');
+
+      if (showIntercept && casesData[0]) {
+        svg
+          .append('line')
+          .attr('x1', x(casesData[0].date))
+          .attr('x2', x(casesData[0].date))
+          .attr('y1', height - margin.bottom)
+          .attr('y2', height / 2 + margin.top)
+          .style('stroke-width', 1)
+          .style('stroke', markerColor)
+          .style('fill', 'none');
+        svg
+          .append('text')
+          .attr('x', x(casesData[0].date))
+          .attr('y', height / 2 + margin.top - 5)
+          .text(casesData[0].date.format('MMM D'))
+          .attr('text-anchor', 'middle')
+          .attr('font-family', 'sans-serif')
+          .attr('font-size', '10px')
+          .attr('fill', '#eee');
+      }
     }
   }, [data, casesData, height, yTicks, currentDate, currentValue]);
 
@@ -152,6 +179,7 @@ AreaChart.propTypes = {
   data: PropTypes.array,
   currentDate: PropTypes.object,
   currentValue: PropTypes.number,
+  showIntercept: PropTypes.bool,
 };
 
 AreaChart.defaultProps = {

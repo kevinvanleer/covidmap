@@ -10,11 +10,11 @@ import 'rc-slider/assets/index.css';
 import { Text, Flexbox, SquareButton, Spacer } from 'kvl-ui';
 import { togglePlayPause } from '../../state/core/time.js';
 
-export const DateSelector = ({ date, setDate }) => {
+export const DateSelector = ({ date, setDate, withChart }) => {
   const dispatch = useDispatch();
   const timeState = useSelector((state) => state.core.time);
   return (
-    <Flexbox margin="0 0 0 30px" flexDirection="column">
+    <Flexbox margin={withChart ? '0 0 0 30px' : '0'} flexDirection="column">
       <Slider
         min={timeState.min}
         max={timeState.max}
@@ -44,4 +44,5 @@ export const DateSelector = ({ date, setDate }) => {
 DateSelector.propTypes = {
   date: PropTypes.object,
   setDate: PropTypes.func,
+  withChart: PropTypes.bool,
 };

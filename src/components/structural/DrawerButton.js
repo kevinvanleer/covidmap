@@ -6,15 +6,11 @@ import { SquareButton } from 'kvl-ui';
 
 export const DrawerButton = ({ collapsed, ...props }) => (
   <SquareButton {...props}>
-    {collapsed ? (
-      <>
-        <FontAwesomeIcon color="#eee" icon={faPlusSquare} />
-      </>
-    ) : (
-      <>
-        <FontAwesomeIcon color="#eee" icon={faMinusSquare} />
-      </>
-    )}
+    <FontAwesomeIcon
+      color="#eee"
+      icon={collapsed ? faPlusSquare : faMinusSquare}
+      fixedWidth
+    />
   </SquareButton>
 );
 

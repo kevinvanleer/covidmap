@@ -18,6 +18,15 @@ export const Basic = () => (
   />
 );
 
+export const ShowIntercept = () => (
+  <AreaChart
+    data={covidData}
+    currentDate={moment(current.date, 'YYYY-MM-DD')}
+    currentValue={parseInt(current.cases)}
+    showIntercept={true}
+  />
+);
+
 export const Short = () => (
   <AreaChart
     data={covidData}
