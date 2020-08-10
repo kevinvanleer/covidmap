@@ -76,5 +76,11 @@
   },
   "lint-staged": {
     "*": "eslint --fix"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "yarn run lint && yarn run lint:css"
+    }
   }
 }
