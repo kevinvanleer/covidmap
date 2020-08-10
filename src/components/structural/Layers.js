@@ -1,22 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Flexbox, Spacer, Text } from 'kvl-ui';
+import { Flexbox, Text, Spacer } from 'kvl-ui';
 
 import { LayerItem } from '../presentation/LayerItem.js';
 
 export const Layers = ({ layers, activeLayers, updateActiveLayers }) => (
-  <Flexbox flexDirection="column" marginBetween="0.5em">
+  <Flexbox flexDirection="column">
     <Text fontSize="label">Layers</Text>
-    {layers.map((layer) =>
-      layer.legendHide ? null : (
-        <LayerItem
-          key={layer.id}
-          onClick={() => updateActiveLayers(layer.id)}
-          label={layer.id}
-          active={activeLayers.includes(layer.id)}
-        />
-      )
-    )}
+    <Spacer height="0.5em" />
+    <Flexbox flexWrap="wrap" wrapMargin="0.5em">
+      {layers.map((layer) =>
+        layer.legend === undefined ? null : (
+          <LayerItem
+            key={layer.id}
+            onClick={() => updateActiveLayers(layer.id)}
+            config={layer.legend}
+            active={activeLayers.includes(layer.id)}
+          />
+        )
+      )}
+    </Flexbox>
   </Flexbox>
 );
 

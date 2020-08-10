@@ -85,24 +85,18 @@ export const Details = ({ date, entity, collapsed }) => {
       <Text fontSize="label">{entity.displayName}</Text>
       <Text fontSize="detail">{`reporting on ${recentData.date}`}</Text>
       <Spacer height="0.5em" />
-      {!isEmpty(data) ? (
-        <>
-          <Stats
-            deathRate={deathRate}
-            collapsed={collapsed}
-            entity={entity}
-            recentData={recentData}
-          />
-          <AreaChart
-            data={data}
-            currentDate={date}
-            height={collapsed ? 100 : undefined}
-            currentValue={parseInt(get(recentData, 'cases', 0))}
-          />
-        </>
-      ) : (
-        <Text>No cases reported</Text>
-      )}
+      <Stats
+        deathRate={deathRate}
+        collapsed={collapsed}
+        entity={entity}
+        recentData={recentData}
+      />
+      <AreaChart
+        data={data}
+        currentDate={date}
+        height={collapsed ? 100 : undefined}
+        currentValue={parseInt(get(recentData, 'cases', 0))}
+      />
     </Flexbox>
   ) : null;
 };

@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { get } from 'lodash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faMinusSquare,
-  faPlusSquare,
-  faInfoCircle,
-} from '@fortawesome/free-solid-svg-icons';
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { Flexbox, Spacer, Text, SquareButton } from 'kvl-ui';
 import { Details, Layers, DateSelector, DrawerButton } from '.';
 import { FloatingPanel } from '../presentation/FloatingPanel';
@@ -23,7 +18,12 @@ export const ControlPanel = ({
 }) => {
   const [collapsed, setCollapsed] = useState(false);
   return (
-    <FloatingPanel right="1em" top="1em" backgroundColor="rgba(68,68,68,0.85)">
+    <FloatingPanel
+      width="min-content"
+      right="1em"
+      top="1em"
+      backgroundColor="rgba(68,68,68,0.85)"
+    >
       <Flexbox alignItems="center">
         <Text fontSize="heading">COVID-19</Text>
         <Spacer width="1em" flexGrow={1} />
@@ -63,4 +63,14 @@ export const ControlPanel = ({
       </Flexbox>
     </FloatingPanel>
   );
+};
+
+ControlPanel.propTypes = {
+  layers: PropTypes.array,
+  activeLayers: PropTypes.array,
+  updateActiveLayers: PropTypes.func,
+  detailsData: PropTypes.object,
+  onShowAbout: PropTypes.func,
+  onSetDate: PropTypes.func,
+  date: PropTypes.object,
 };

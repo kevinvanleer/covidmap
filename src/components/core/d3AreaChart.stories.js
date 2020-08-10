@@ -1,6 +1,5 @@
 import React from 'react';
 import moment from 'moment';
-import { action } from '@storybook/addon-actions';
 import AreaChart from './d3AreaChart.js';
 import { covidData } from '../../test/caseData.js';
 

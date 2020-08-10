@@ -133,7 +133,7 @@ const AreaChart = ({ height, data, currentDate, currentValue }) => {
         .style('stroke', markerColor)
         .style('fill', 'none');
     }
-  }, [data, casesData]);
+  }, [data, casesData, height, yTicks, currentDate, currentValue]);
 
   return (
     <svg

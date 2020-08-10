@@ -109,6 +109,7 @@ export const initializeFeatureState = () => async (dispatch) => {
     ];
   });
   dispatch(addBoundaries(boundaryStates));
+  dispatch(setTotals(await totalsPromise));
 
   while (!done) {
     const newCases = await fetchUsCasesByCounty(startIndex, pageSize, true);
@@ -117,6 +118,4 @@ export const initializeFeatureState = () => async (dispatch) => {
     startIndex += pageSize;
     pageSize *= 2;
   }
-
-  dispatch(setTotals(await totalsPromise));
 };

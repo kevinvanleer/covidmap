@@ -1,3 +1,10 @@
+import {
+  faSkullCrossbones,
+  faVirus,
+  faViruses,
+  faHeadSideCough,
+} from '@fortawesome/free-solid-svg-icons';
+
 export const sources = [
   {
     id: 'us-counties',
@@ -17,6 +24,10 @@ export const sources = [
 ];
 export const layers = [
   {
+    legend: {
+      label: 'Deaths',
+      icon: faSkullCrossbones,
+    },
     id: 'us-county-total-deaths',
     type: 'fill',
     source: 'us-counties',
@@ -45,6 +56,10 @@ export const layers = [
     },
   },
   {
+    legend: {
+      label: 'Cases',
+      icon: faHeadSideCough,
+    },
     id: 'us-county-total-cases',
     type: 'fill',
     source: 'us-counties',
@@ -74,7 +89,6 @@ export const layers = [
   },
   {
     id: 'us-counties-base',
-    legendHide: true,
     type: 'fill',
     source: 'us-counties',
     'source-layer': 'us-counties-500k-a4l482',
@@ -85,8 +99,11 @@ export const layers = [
     },
   },
   {
+    legend: {
+      label: 'Hotspots',
+      icon: faViruses,
+    },
     id: 'us-hotspots',
-    legendHide: false,
     type: 'symbol',
     source: 'us-county-centroids',
     layout: {
@@ -100,8 +117,11 @@ export const layers = [
     },
   },
   {
+    legend: {
+      label: 'Onset',
+      icon: faVirus,
+    },
     id: 'us-first-case',
-    legendHide: false,
     type: 'symbol',
     source: 'us-county-centroids',
     layout: {
@@ -116,7 +136,6 @@ export const layers = [
   },
   {
     id: 'us-county-names',
-    legendHide: true,
     type: 'symbol',
     source: 'us-county-centroids',
     minzoom: 7,
