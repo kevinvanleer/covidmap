@@ -160,7 +160,15 @@ const AreaChart = ({
           .attr('fill', '#eee');
       }
     }
-  }, [data, casesData, height, yTicks, currentDate, currentValue]);
+  }, [
+    data,
+    casesData,
+    height,
+    yTicks,
+    currentDate,
+    currentValue,
+    showIntercept,
+  ]);
 
   return (
     <svg

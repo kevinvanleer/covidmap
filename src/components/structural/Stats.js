@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
-import { get, findLast, set, isEmpty } from 'lodash';
-import { Flexbox, Spacer, Text } from 'kvl-ui';
+import { get } from 'lodash';
+import { Text } from 'kvl-ui';
 
 export const Stats = ({
   collapsed,
