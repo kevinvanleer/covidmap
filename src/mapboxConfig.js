@@ -93,9 +93,18 @@ export const layers = [
     source: 'us-counties',
     'source-layer': 'us-counties-500k-a4l482',
     paint: {
-      'fill-outline-color': '#0f0',
-      'fill-color': 'rgba(0, 255, 0, 1)',
-      'fill-opacity': ['to-number', ['feature-state', 'active']],
+      'fill-color': 'transparent',
+    },
+  },
+  {
+    id: 'us-counties-outline-base',
+    type: 'line',
+    source: 'us-counties',
+    'source-layer': 'us-counties-500k-a4l482',
+    paint: {
+      'line-color': '#e842dc',
+      'line-width': ['interpolate', ['linear'], ['zoom'], 3, 2, 10, 4],
+      'line-opacity': ['to-number', ['feature-state', 'active']],
     },
   },
   {
