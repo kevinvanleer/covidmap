@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import mapboxgl from 'mapbox-gl';
@@ -61,6 +61,8 @@ const MapboxMap = ({
 }) => {
   const [map, setMap] = useState(null);
   const [initialized, setInitialized] = useState(false);
+  const [hold, setHold] = useState(false);
+  const [hoveredFeatures, setHoveredFeatures] = useState([]);
   const mapContainer = useRef(null);
 
   useEffect(() => {
@@ -163,49 +165,98 @@ const MapboxMap = ({
     }
   }, [initialized, date, casesByCounty, map]);
 
-  useEffect(() => {
-    if (map && initialized) {
-      map.on('mousemove', 'us-counties-base', (e) => {
-        if (e.features.length > 0) {
-          if (selectedFeature) {
-            map.setFeatureState(
-              {
-                source: 'us-counties',
-                sourceLayer: 'us-counties-500k-a4l482',
-                id: selectedFeature,
-              },
-              { active: false }
-            );
-          }
+  const selectFeature = (theMap, featureId, selected) => {
+    if (featureId != null) {
+      theMap.setFeatureState(
+        {
+          source: 'us-counties',
+          sourceLayer: 'us-counties-500k-a4l482',
+          id: featureId,
+        },
+        { active: selected }
+      );
+    }
+  };
+
+  const selectNewFeature = (theMap, featureId) => {
+    if (featureId !== selectedFeature) {
+      selectFeature(map, selectedFeature, false);
+    }
+    if (featureId != null) {
+      selectFeature(map, featureId, true);
+    }
+    setSelectedFeature(featureId);
+  };
+
+  const onMouseUp = useCallback(
+    (e) => {
+      if (map && initialized) {
+        const theFeature = e.features.find(
+          (feature) => feature.layer.id === 'us-counties-base'
+        );
+        if (theFeature.id === undefined) {
+          selectNewFeature(map, null);
+          setHold(false);
+        } else if (selectedFeature !== theFeature.id) {
+          selectNewFeature(map, parseInt(theFeature.id));
+          setHold(true);
+        } else {
+          setHold(!hold);
+        }
+      }
+    },
+    [map, initialized, hold, selectedFeature, setSelectedFeature]
+  );
+
+  const onMouseMove = useCallback(
+    (e) => {
+      if (map && initialized) {
+        let removeFeatures = hoveredFeatures.slice(0, -1);
+        removeFeatures.forEach((feature) => selectFeature(map, feature, false));
+        let newArray = [...hoveredFeatures.slice(-1)];
+        setHoveredFeatures(newArray);
+        if (e.features.length > 0 && !hold) {
           const theFeature = e.features.find(
             (feature) => feature.layer.id === 'us-counties-base'
           );
-          setSelectedFeature(theFeature.id);
-          map.setFeatureState(
-            {
-              source: 'us-counties',
-              sourceLayer: 'us-counties-500k-a4l482',
-              id: parseInt(theFeature.id),
-            },
-            { active: true }
-          );
+          setHoveredFeatures(newArray.concat([parseInt(theFeature.id)]));
+          selectNewFeature(map, parseInt(theFeature.id));
         }
-      });
-      map.on('mouseleave', 'us-counties-base', () => {
-        if (selectedFeature) {
-          map.setFeatureState(
-            {
-              source: 'us-counties',
-              sourceLayer: 'us-counties-500k-a4l482',
-              id: selectedFeature,
-            },
-            { active: false }
-          );
-          setSelectedFeature(null);
-        }
-      });
+      }
+    },
+    [
+      map,
+      initialized,
+      hold,
+      hoveredFeatures,
+      setHoveredFeatures,
+      selectedFeature,
+      setSelectedFeature,
+    ]
+  );
+
+  const onMouseLeave = useCallback(() => {
+    if (map && initialized) {
+      if (!hold) {
+        selectNewFeature(map, null);
+      }
     }
-  }, [map, selectedFeature, setSelectedFeature, initialized]);
+  }, [map, initialized, hold, selectedFeature, setSelectedFeature]);
+
+  useEffect(() => {
+    if (map && initialized) {
+      map.on('mouseup', 'us-counties-base', onMouseUp);
+      map.on('mousemove', 'us-counties-base', onMouseMove);
+      map.on('mouseleave', 'us-counties-base', onMouseLeave);
+    }
+    return () => {
+      if (map && initialized) {
+        map.off('mouseup', 'us-counties-base', onMouseUp);
+        map.off('mousemove', 'us-counties-base', onMouseMove);
+        map.off('mouseleave', 'us-counties-base', onMouseLeave);
+      }
+    };
+  }, [map, initialized, onMouseUp, onMouseMove, onMouseLeave]);
 
   return (
     <>
