@@ -14,7 +14,7 @@ export const Link = styled.a`
   }
 
   &:active {
-    color: #38c9e4;
+    color: #1790a7;
   }
 
   &:focus {
@@ -23,5 +23,5 @@ export const Link = styled.a`
 `;
 
 Link.defaultProps = {
-  color: 'white',
+  color: '#38c9e4',
 };

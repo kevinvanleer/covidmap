@@ -44,7 +44,7 @@ export const About = ({ onHide }) => (
     <Text fontSize="detail">Assembled by Kevin Van Leer</Text>
     <Spacer height="1em" />
     <Button id="covidmap-about-hide-self" onClick={onHide}>
-      Dismiss
+      <Text color="#eee">Dismiss</Text>
     </Button>
   </Flexbox>
 );
