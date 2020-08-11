@@ -210,12 +210,12 @@ const MapboxMap = ({
 
   const onMouseMove = useCallback(
     (e) => {
-      if (map && initialized) {
+      if (map && initialized && !hold) {
         let removeFeatures = hoveredFeatures.slice(0, -1);
         removeFeatures.forEach((feature) => selectFeature(map, feature, false));
         let newArray = [...hoveredFeatures.slice(-1)];
         setHoveredFeatures(newArray);
-        if (e.features.length > 0 && !hold) {
+        if (e.features.length > 0) {
           const theFeature = e.features.find(
             (feature) => feature.layer.id === 'us-counties-base'
           );
@@ -236,10 +236,8 @@ const MapboxMap = ({
   );
 
   const onMouseLeave = useCallback(() => {
-    if (map && initialized) {
-      if (!hold) {
-        selectNewFeature(map, null);
-      }
+    if (map && initialized && !hold) {
+      selectNewFeature(map, null);
     }
   }, [map, initialized, hold, selectedFeature, setSelectedFeature]);
 
