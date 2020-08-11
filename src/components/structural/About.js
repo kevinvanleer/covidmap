@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Flexbox, Spacer, Text, Button } from 'kvl-ui';
 
+import { Link } from '../presentation/Link';
+
 export const About = ({ onHide }) => (
   <Flexbox
     flexDirection="column"
@@ -22,22 +24,22 @@ export const About = ({ onHide }) => (
     <Text fontSize="label">Data sources</Text>
     <Spacer height="0.5em" />
     <Text>US 2010 census county boundaries</Text>
-    <a href="https://eric.clst.org/tech/usgeojson/">
+    <Link href="https://eric.clst.org/tech/usgeojson/">
       <Text fontSize="detail">https://eric.clst.org/tech/usgeojson/</Text>
-    </a>
+    </Link>
     <Spacer height="0.5em" />
     <Text>New York Times COVID-19 US county-level historic data</Text>
-    <a href="https://github.com/nytimes/covid-19-data">
+    <Link href="https://github.com/nytimes/covid-19-data">
       <Text fontSize="detail">https://github.com/nytimes/covid-19-data</Text>
-    </a>
+    </Link>
     <Spacer height="0.5em" />
     <Text>Source code</Text>
-    <a href="https://github.com/kevinvanleer/covidmap">
+    <Link href="https://github.com/kevinvanleer/covidmap">
       <Text fontSize="detail">https://github.com/kevinvanleer/covidmap</Text>
-    </a>
-    <a href="https://github.com/kevinvanleer/coviddata">
+    </Link>
+    <Link href="https://github.com/kevinvanleer/coviddata">
       <Text fontSize="detail">https://github.com/kevinvanleer/coviddata</Text>
-    </a>
+    </Link>
     <Spacer height="0.5em" />
     <Text fontSize="detail">Assembled by Kevin Van Leer</Text>
     <Spacer height="1em" />
