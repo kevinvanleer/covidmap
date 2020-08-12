@@ -270,7 +270,7 @@ const MapboxMap = ({
             position: 'absolute',
             top: '50%',
             margin: '0 auto',
-            zIndex: 100,
+            zIndex: 10,
             width: '100%',
             textAlign: 'center',
             fontSize: '2em',

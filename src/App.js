@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { get, last } from 'lodash';
 
-import { ControlPanel, About } from './components/structural';
+import { ControlPanel, About, AliveStatusWait } from './components/structural';
 import { Flexbox } from 'kvl-ui';
 
 import { initializeFeatureState } from './workflows/fetchCovidData.js';
@@ -16,6 +16,9 @@ import { setCurrent } from './state/core/time.js';
 
 function App() {
   const dispatch = useDispatch();
+  const aliveStatus = useSelector(
+    (state) => state.core.apiServerStatus.aliveCheck
+  );
   const date = useSelector((state) => moment(state.core.time.current, 'x'));
   const totals = useSelector((state) => state.core.usCovidData.totals);
   const selectedFeature = useSelector((state) => state.ui.map.selectedFeature);
@@ -64,7 +67,7 @@ function App() {
       }
     : { displayName: 'United States of America', data: totals };
 
-  return (
+  return aliveStatus.success ? (
     <>
       <ControlPanel
         layers={layers}
@@ -88,6 +91,8 @@ function App() {
         </Flexbox>
       ) : null}
     </>
+  ) : (
+    <AliveStatusWait status={aliveStatus} />
   );
 }
 

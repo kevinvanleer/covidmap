@@ -30,6 +30,7 @@ export const ControlPanel = ({
       right="1em"
       top="1em"
       backgroundColor="rgba(68,68,68,0.85)"
+      zIndex={100}
     >
       <Flexbox alignItems="center">
         <Text nowrap fontSize="heading">

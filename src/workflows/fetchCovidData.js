@@ -5,6 +5,12 @@ import {
   setTotals,
 } from '../state/core/usCovidData.js';
 
+import {
+  aliveCheckPending,
+  aliveCheckPassed,
+  aliveCheckFailed,
+} from '../state/core/apiServerStatus.js';
+
 export const fetchUsCasesByCounty = async (startIndex, pageSize, reverse) => {
   const response = await fetch(
     `/api/us-cases-by-county?startIndex=${startIndex}&pageSize=${pageSize}&reverse=${reverse}`
@@ -20,6 +26,10 @@ export const fetchUsTotals = async () => {
 export const fetchUsCovidBoundaries = async (resolution) => {
   const response = await fetch(`/api/us-counties?resolution=${resolution}`);
   return response.json();
+};
+
+export const fetchAliveCheck = async () => {
+  return fetch(`/api/alive`);
 };
 
 const sortCasesByCounty = (newCases) => async (dispatch) => {
@@ -64,6 +74,18 @@ export const initializeFeatureState = () => async (dispatch) => {
   let done = false;
   let startIndex = 0;
   let pageSize = 1000;
+
+  dispatch(aliveCheckPending());
+  try {
+    const aliveResponse = await fetchAliveCheck();
+    if (aliveResponse.ok) {
+      dispatch(aliveCheckPassed(await aliveResponse.text()));
+    } else {
+      dispatch(aliveCheckFailed(aliveResponse.error(aliveResponse.error())));
+    }
+  } catch (e) {
+    dispatch(aliveCheckFailed(e));
+  }
 
   const totalsPromise = fetchUsTotals();
 
