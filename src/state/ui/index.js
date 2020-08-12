@@ -1,8 +1,6 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import core from './core';
-import ui from './ui';
+import map from './map.js';
 
 export default combineReducers({
-  core,
-  ui,
+  map,
 });

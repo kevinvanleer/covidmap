@@ -16,11 +16,31 @@ export const About = ({ onHide }) => (
     <Text fontSize="heading">About this visualization</Text>
     <Spacer height="0.5em" />
     <Text>
-      This visualization depicts COVID-19 cases and deaths since the onset of
-      the pandemic. The geographic visuals are rendered with MapBox. The charts
-      are built with D3.
+      COVID-19 cases and deaths are displayed as blue and red choropleths as
+      reported by the New York Times. Onset, the date of the first case in each
+      county are represented by green icons. Hotspots are displays as red icons.
+      The geographic visuals are rendered with MapBox. The charts are built with
+      D3.
     </Text>
-    <Spacer height="0.5em" />
+    <Spacer height="1em" />
+    <Text fontSize="label">Statistics explained</Text>
+    <Spacer height="0.2em" />
+    <Text>
+      Hotspots are those counties that have at least 100 cases and in which
+      total cases have increased 20% in the past two weeks.
+    </Text>
+    <Spacer height="0.3em" />
+    <Text>
+      New cases are those reported on most recent day for the county, typically
+      yesterday.
+    </Text>
+    <Spacer height="0.3em" />
+    <Text>
+      Ongoing cases is an estimate represented by cases reported within the past
+      two weeks.
+    </Text>
+
+    <Spacer height="1em" />
     <Text fontSize="label">Data sources</Text>
     <Spacer height="0.5em" />
     <Text>US 2010 census county boundaries</Text>
@@ -41,7 +61,10 @@ export const About = ({ onHide }) => (
       <Text fontSize="detail">https://github.com/kevinvanleer/coviddata</Text>
     </Link>
     <Spacer height="0.5em" />
-    <Text fontSize="detail">Assembled by Kevin Van Leer</Text>
+    <Text fontSize="detail">
+      Assembled by Kevin Van Leer. Feedback welcome at:
+    </Text>
+    <Link href="mailto:kevin.vanleer@gmail.com">kevin.vanleer@gmail.com</Link>
     <Spacer height="1em" />
     <Button id="covidmap-about-hide-self" onClick={onHide}>
       <Text color="#eee">Dismiss</Text>

@@ -1,13 +1,20 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { get, findLast, set, isEmpty } from 'lodash';
-import { Flexbox, Spacer, Text } from 'kvl-ui';
+import { Flexbox, Spacer, Text, SquareButton } from 'kvl-ui';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFlagUsa } from '@fortawesome/free-solid-svg-icons';
 
 import { Stats } from './Stats.js';
 import AreaChart from '../core/d3AreaChart.js';
 
+import { releaseHold, setSelectedFeature } from '../../state/ui/map.js';
+
 export const Details = ({ date, entity, collapsed }) => {
+  const dispatch = useDispatch();
+  const selectedFeature = useSelector((state) => state.ui.map.selectedFeature);
   const data = entity.data;
   let recentData = null;
   let deathRate = {};
@@ -72,21 +79,43 @@ export const Details = ({ date, entity, collapsed }) => {
     };
   }
 
+  const closeStats = useCallback(() => {
+    dispatch(releaseHold());
+    dispatch(setSelectedFeature(null));
+  }, [dispatch]);
+
   return recentData ? (
     <Flexbox flexDirection="column">
-      <Text bold fontSize="label">
-        {entity.displayName}
-      </Text>
-      <Text fontSize="detail">{`reporting on ${recentData.date}`}</Text>
-      <Spacer height="0.5em" />
-      <Stats
-        deathRate={deathRate}
-        collapsed={collapsed}
-        entity={entity}
-        recentData={recentData}
-        newCases={newCases}
-        ongoingCases={ongoingCases}
-      />
+      <Flexbox inline>
+        <Flexbox flexDirection="column">
+          <Text bold fontSize="label">
+            {entity.displayName}
+          </Text>
+          <Text fontSize="detail">{`reporting on ${recentData.date}`}</Text>
+          <Spacer height="0.5em" />
+          <Stats
+            deathRate={deathRate}
+            collapsed={collapsed}
+            entity={entity}
+            recentData={recentData}
+            newCases={newCases}
+            ongoingCases={ongoingCases}
+          />
+        </Flexbox>
+        <Spacer flexGrow={1} />
+        {selectedFeature != null ? (
+          <Flexbox flexDirection="column">
+            <SquareButton
+              id="covid19-button-close-stats"
+              onClick={closeStats}
+              backgroundColor="#777"
+            >
+              <FontAwesomeIcon color="#eee" icon={faFlagUsa} fixedWidth />
+            </SquareButton>
+            <Spacer flexGrow={1} />
+          </Flexbox>
+        ) : null}
+      </Flexbox>
       <AreaChart
         data={data}
         currentDate={date}

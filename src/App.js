@@ -18,13 +18,13 @@ function App() {
   const dispatch = useDispatch();
   const date = useSelector((state) => moment(state.core.time.current, 'x'));
   const totals = useSelector((state) => state.core.usCovidData.totals);
+  const selectedFeature = useSelector((state) => state.ui.map.selectedFeature);
   const casesByCounty = useSelector(
     (state) => state.core.usCovidData.casesByCounty
   );
   const [activeLayers, setActiveLayers] = useState(
     layers.map((layer) => layer.id)
   );
-  const [selectedFeature, setSelectedFeature] = useState(null);
   const [showAbout, setShowAbout] = useState(false);
 
   const onShowAbout = useCallback((show) => {
@@ -79,8 +79,6 @@ function App() {
         date={date.format('YYYY-MM-DD')}
         sources={sources}
         layers={layers}
-        selectedFeature={selectedFeature}
-        setSelectedFeature={setSelectedFeature}
         activeLayers={activeLayers}
         casesByCounty={casesByCounty}
       />

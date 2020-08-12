@@ -1,8 +1,11 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import mapboxgl from 'mapbox-gl';
 import { findLast, get } from 'lodash';
+
+import { setHold, setSelectedFeature } from '../../state/ui/map.js';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoicnVva3ZsIiwiYSI6ImNrZDA3NW9oNTBhanYyeXBjOXBjazloazUifQ.qwtn31dojyeKrFMrcRAjBw';
@@ -54,14 +57,14 @@ const MapboxMap = ({
   activeLayers,
   layers,
   date,
-  selectedFeature,
-  setSelectedFeature,
   casesByCounty,
   ...props
 }) => {
+  const dispatch = useDispatch();
+  const hold = useSelector((state) => state.ui.map.hold);
+  const selectedFeature = useSelector((state) => state.ui.map.selectedFeature);
   const [map, setMap] = useState(null);
   const [initialized, setInitialized] = useState(false);
-  const [hold, setHold] = useState(false);
   const [hoveredFeatures, setHoveredFeatures] = useState([]);
   const mapContainer = useRef(null);
 
@@ -165,7 +168,7 @@ const MapboxMap = ({
     }
   }, [initialized, date, casesByCounty, map]);
 
-  const selectFeature = (theMap, featureId, selected) => {
+  const selectFeature = useCallback((theMap, featureId, selected) => {
     if (featureId != null) {
       theMap.setFeatureState(
         {
@@ -176,17 +179,20 @@ const MapboxMap = ({
         { active: selected }
       );
     }
-  };
+  }, []);
 
-  const selectNewFeature = (theMap, featureId) => {
-    if (featureId !== selectedFeature) {
-      selectFeature(map, selectedFeature, false);
-    }
-    if (featureId != null) {
-      selectFeature(map, featureId, true);
-    }
-    setSelectedFeature(featureId);
-  };
+  const selectNewFeature = useCallback(
+    (theMap, featureId) => {
+      if (featureId !== selectedFeature) {
+        selectFeature(theMap, selectedFeature, false);
+      }
+      if (featureId != null) {
+        selectFeature(theMap, featureId, true);
+      }
+      dispatch(setSelectedFeature(featureId));
+    },
+    [dispatch, selectFeature, selectedFeature]
+  );
 
   const onMouseUp = useCallback(
     (e) => {
@@ -196,16 +202,16 @@ const MapboxMap = ({
         );
         if (theFeature.id === undefined) {
           selectNewFeature(map, null);
-          setHold(false);
+          dispatch(setHold(false));
         } else if (selectedFeature !== theFeature.id) {
           selectNewFeature(map, parseInt(theFeature.id));
-          setHold(true);
+          dispatch(setHold(true));
         } else {
-          setHold(!hold);
+          dispatch(setHold(!hold));
         }
       }
     },
-    [map, initialized, hold, selectedFeature, setSelectedFeature]
+    [map, initialized, hold, selectNewFeature, dispatch, selectedFeature]
   );
 
   const onMouseMove = useCallback(
@@ -230,8 +236,8 @@ const MapboxMap = ({
       hold,
       hoveredFeatures,
       setHoveredFeatures,
-      selectedFeature,
-      setSelectedFeature,
+      selectNewFeature,
+      selectFeature,
     ]
   );
 
@@ -239,7 +245,7 @@ const MapboxMap = ({
     if (map && initialized && !hold) {
       selectNewFeature(map, null);
     }
-  }, [map, initialized, hold, selectedFeature, setSelectedFeature]);
+  }, [map, initialized, hold, selectNewFeature]);
 
   useEffect(() => {
     if (map && initialized) {
@@ -284,8 +290,6 @@ MapboxMap.propTypes = {
   sources: PropTypes.array,
   layers: PropTypes.array,
   date: PropTypes.string,
-  selectedFeature: PropTypes.number,
-  setSelectedFeature: PropTypes.func,
   casesByCounty: PropTypes.object,
 };
 
