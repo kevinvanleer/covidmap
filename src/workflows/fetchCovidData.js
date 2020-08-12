@@ -5,25 +5,6 @@ import {
   setTotals,
 } from '../state/core/usCovidData.js';
 
-/*
-const covidByCountyUrl =
-  'https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv';
-
-export const fetchUsCovidByCounty = () => (dispatch) => {
-  Papa.parse(covidByCountyUrl, {
-    download: true,
-    complete: (result) => {
-      dispatch(load(result.data));
-    },
-  });
-};
-
-export const updateUsCasesByCounty = () => async (dispatch) => {
-  dispatch(await fetchUsCasesByCounty());
-};
-
-*/
-
 export const fetchUsCasesByCounty = async (startIndex, pageSize, reverse) => {
   const response = await fetch(
     `/api/us-cases-by-county?startIndex=${startIndex}&pageSize=${pageSize}&reverse=${reverse}`
@@ -77,15 +58,6 @@ const sortCasesByCounty = (newCases) => async (dispatch) => {
 
   dispatch(insertStatus(newStatus));
   dispatch(appendBadRecords(badRecords));
-  /*
-  const nonReportingCounties = Object.entries(sortedCases).filter(
-    ([id, list]) => list.length === 1
-  );
-  console.log(`found ${badRecords.length} bad records`);
-  console.log(`found ${nonReportingCounties.length} non-reporting counties`);
-  */
-
-  //return sortedCases;
 };
 
 export const initializeFeatureState = () => async (dispatch) => {
