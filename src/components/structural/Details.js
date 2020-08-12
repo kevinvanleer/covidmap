@@ -104,16 +104,13 @@ export const Details = ({ date, entity, collapsed }) => {
         </Flexbox>
         <Spacer flexGrow={1} />
         {selectedFeature != null ? (
-          <Flexbox flexDirection="column">
-            <SquareButton
-              id="covid19-button-close-stats"
-              onClick={closeStats}
-              backgroundColor="#777"
-            >
-              <FontAwesomeIcon color="#eee" icon={faFlagUsa} fixedWidth />
-            </SquareButton>
-            <Spacer flexGrow={1} />
-          </Flexbox>
+          <SquareButton
+            id="covid19-button-close-stats"
+            onClick={closeStats}
+            backgroundColor="#777"
+          >
+            <FontAwesomeIcon color="#eee" icon={faFlagUsa} fixedWidth />
+          </SquareButton>
         ) : null}
       </Flexbox>
       <AreaChart

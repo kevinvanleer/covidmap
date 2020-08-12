@@ -9256,9 +9256,9 @@ known-css-properties@^0.19.0:
   resolved "https://registry.yarnpkg.com/known-css-properties/-/known-css-properties-0.19.0.tgz#5d92b7fa16c72d971bda9b7fe295bdf61836ee5b"
   integrity sha512-eYboRV94Vco725nKMlpkn3nV2+96p9c3gKXRsYqAJSswSENvBhN7n5L+uDhY58xQa0UukWsDMTGELzmD8Q+wTA==
 
-"kvl-ui@https://github.com/kevinvanleer/kvl-ui.git#v0.0.4":
-  version "0.0.4"
-  resolved "https://github.com/kevinvanleer/kvl-ui.git#313b1a5ce46cf5cf0e1abf49a2556b2a4099a7ca"
+"kvl-ui@https://github.com/kevinvanleer/kvl-ui.git#v0.0.5":
+  version "0.0.5"
+  resolved "https://github.com/kevinvanleer/kvl-ui.git#afabc2c4c0be08771bdd45043e54b225aee91cb3"
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^1.2.30"
     "@fortawesome/react-fontawesome" "^0.1.11"
