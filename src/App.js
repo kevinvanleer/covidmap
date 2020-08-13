@@ -86,7 +86,7 @@ function App() {
         casesByCounty={casesByCounty}
       />
       {showAbout ? (
-        <Flexbox position="absolute" zIndex={10}>
+        <Flexbox position="absolute" zIndex={100}>
           <About onHide={() => onShowAbout(false)} />
         </Flexbox>
       ) : null}
