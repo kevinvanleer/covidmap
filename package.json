@@ -1,6 +1,6 @@
 {
   "name": "covidmap",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "proxy": "http://localhost:3003",
   "dependencies": {
@@ -32,8 +32,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint ./src",
-    "lint:fix": "eslint ./src --fix",
+    "lint": "eslint ./src/**/*.js",
+    "lint:fix": "eslint ./src/**/*.js --fix",
     "lint:css": "stylelint './src/**/*.js'",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
