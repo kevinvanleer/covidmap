@@ -75,29 +75,13 @@ const MapboxMap = ({
   const dispatch = useDispatch();
   const hold = useSelector((state) => state.ui.map.hold);
   const selectedFeature = useSelector((state) => state.ui.map.selectedFeature);
-  const dataProgress = useSelector(
-    (state) => state.request.usCasesByCounty.progress
-  );
   const map = useSelector((state) => state.ui.map.map);
-  const mapLoading = useSelector(
-    (state) => state.ui.map.mapLoadStatus.status !== loadingStatus.complete
-  );
-  const sourcesLoading = useSelector(
-    (state) => state.ui.map.sourcesLoadStatus.status !== loadingStatus.complete
-  );
   const initialized = useSelector(
     (state) => state.ui.map.sourcesLoadStatus.status === loadingStatus.complete
   );
 
   const [hoveredFeatures, setHoveredFeatures] = useState([]);
   const mapContainer = useRef(null);
-
-  let loadingMessage = null;
-  let progress = sourcesLoading || mapLoading ? 0 : dataProgress;
-  if (dataProgress < 1) loadingMessage = 'Downloading pandemic statistics...';
-  if (dataProgress === 0) loadingMessage = 'Requesting pandemic statistics...';
-  if (sourcesLoading) loadingMessage = 'Downloading boundary tiles...';
-  if (mapLoading) loadingMessage = 'Initializing base map...';
 
   useEffect(() => {
     if (map && initialized) {
@@ -301,25 +285,7 @@ const MapboxMap = ({
     };
   }, [map, initialized, onMouseUp, onMouseMove, onMouseLeave]);
 
-  return (
-    <>
-      {loadingMessage && (
-        <Flexbox position="absolute" bottom="0.5em" left="6.5em" zIndex={10}>
-          <LoadingIndicator progress={progress}>
-            <Text
-              fontSize="1.2em"
-              style={{
-                textShadow: '0px 0px 2px #00e',
-              }}
-            >
-              {loadingMessage}
-            </Text>
-          </LoadingIndicator>
-        </Flexbox>
-      )}
-      <div ref={mapContainer} {...props} />
-    </>
-  );
+  return <div ref={mapContainer} {...props} />;
 };
 
 MapboxMap.propTypes = {
