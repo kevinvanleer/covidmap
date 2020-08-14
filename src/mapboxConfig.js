@@ -102,7 +102,7 @@ export const layers = [
     source: 'us-counties',
     'source-layer': 'us-counties-500k-a4l482',
     paint: {
-      'line-color': '#e842dc',
+      'line-color': ['case', ['feature-state', 'hold'], '#0f0', '#e842dc'],
       'line-width': ['interpolate', ['linear'], ['zoom'], 3, 2, 10, 4],
       'line-opacity': ['to-number', ['feature-state', 'active']],
     },

@@ -171,26 +171,29 @@ const MapboxMap = ({
     }
   }, [initialized, date, casesByCounty, map]);
 
-  const selectFeature = useCallback((theMap, featureId, selected) => {
-    if (featureId != null) {
-      theMap.setFeatureState(
-        {
-          source: 'us-counties',
-          sourceLayer: 'us-counties-500k-a4l482',
-          id: featureId,
-        },
-        { active: selected }
-      );
-    }
-  }, []);
+  const selectFeature = useCallback(
+    (theMap, featureId, selected, hold = false) => {
+      if (featureId != null) {
+        theMap.setFeatureState(
+          {
+            source: 'us-counties',
+            sourceLayer: 'us-counties-500k-a4l482',
+            id: featureId,
+          },
+          { active: selected, hold }
+        );
+      }
+    },
+    []
+  );
 
   const selectNewFeature = useCallback(
-    (theMap, featureId) => {
+    (theMap, featureId, hold) => {
       if (featureId !== selectedFeature) {
-        selectFeature(theMap, selectedFeature, false);
+        selectFeature(theMap, selectedFeature, false, hold);
       }
       if (featureId != null) {
-        selectFeature(theMap, featureId, true);
+        selectFeature(theMap, featureId, true, hold);
       }
       dispatch(setSelectedFeature(featureId));
     },
@@ -204,12 +207,13 @@ const MapboxMap = ({
           (feature) => feature.layer.id === 'us-counties-base'
         );
         if (theFeature.id === undefined) {
-          selectNewFeature(map, null);
+          selectNewFeature(map, null, false);
           dispatch(setHold(false));
         } else if (selectedFeature !== theFeature.id) {
-          selectNewFeature(map, parseInt(theFeature.id));
+          selectNewFeature(map, parseInt(theFeature.id), true);
           dispatch(setHold(true));
         } else {
+          selectNewFeature(map, parseInt(theFeature.id), !hold);
           dispatch(setHold(!hold));
         }
       }
