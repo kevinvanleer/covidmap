@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,6 +14,11 @@ import { FloatingPanel } from '../presentation/FloatingPanel';
 import { ToggleButton } from '../presentation/ToggleButton';
 import { LoadingIndicator } from '../presentation/LoadingIndicator';
 import { loadingStatus } from '../../state/util/loadingStatus.js';
+import {
+  hideLayers,
+  hideDetails,
+  collapse,
+} from '../../state/ui/controlPanel.js';
 
 export const ControlPanel = ({
   layers,
@@ -24,9 +29,14 @@ export const ControlPanel = ({
   onSetDate,
   date,
 }) => {
-  const [collapsed, setCollapsed] = useState(false);
-  const [hideLayers, setHideLayers] = useState(false);
-  const [hideDetails, setHideDetails] = useState(false);
+  const dispatch = useDispatch();
+  const collapsed = useSelector((state) => state.ui.controlPanel.collapsed);
+  const layersHidden = useSelector(
+    (state) => state.ui.controlPanel.layersHidden
+  );
+  const detailsHidden = useSelector(
+    (state) => state.ui.controlPanel.detailsHidden
+  );
   const mapLoading = useSelector(
     (state) => state.ui.map.mapLoadStatus.status !== loadingStatus.complete
   );
@@ -61,31 +71,31 @@ export const ControlPanel = ({
           <ToggleButton
             id="button-covidmap-control-panel-hide-layers"
             flexGrow={0}
-            onClick={() => setHideLayers(!hideLayers)}
+            onClick={() => dispatch(hideLayers(!layersHidden))}
             icon={faLayerGroup}
-            active={!hideLayers}
+            active={!layersHidden}
             backgroundColor="#777"
           />
           <ToggleButton
             id="button-covidmap-control-panel-hide-details"
             flexGrow={0}
-            onClick={() => setHideDetails(!hideDetails)}
+            onClick={() => dispatch(hideDetails(!detailsHidden))}
             icon={faChartBar}
-            active={!hideDetails}
+            active={!detailsHidden}
             backgroundColor="#777"
           />
           <DrawerButton
             id="button-covidmap-control-panel-collapse"
             flexGrow={0}
             color="white"
-            onClick={() => setCollapsed(!collapsed)}
+            onClick={() => dispatch(collapse(!collapsed))}
             collapsed={collapsed}
             backgroundColor="#777"
           />
         </Flexbox>
       </Flexbox>
       <Divider horizontal margin="0.5em 0" />
-      {!hideLayers ? (
+      {!layersHidden ? (
         <>
           <Layers
             layers={layers}
@@ -96,14 +106,18 @@ export const ControlPanel = ({
           <Divider horizontal margin="1em 0 0.5em 0" />
         </>
       ) : null}
-      {!hideDetails ? (
+      {!detailsHidden ? (
         <Details
           date={moment(date)}
           entity={detailsData}
           collapsed={collapsed}
         />
       ) : null}
-      <DateSelector date={date} setDate={onSetDate} withChart={!hideDetails} />
+      <DateSelector
+        date={date}
+        setDate={onSetDate}
+        withChart={!detailsHidden}
+      />
       <Flexbox alignItems="flex-end">
         <LoadingIndicator progress={progress}>
           {loadingMessage}

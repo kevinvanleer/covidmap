@@ -1,36 +1,8 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
-import moment from 'moment';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Flexbox, Spacer, Text, SquareButton, Divider } from 'kvl-ui';
-import { Details, Layers, DateSelector, DrawerButton, Legend } from '.';
+import React from 'react';
+import { Legend } from '.';
 import { FloatingPanel } from '../presentation/FloatingPanel';
-import { ToggleButton } from '../presentation/ToggleButton';
-import { LoadingIndicator } from '../presentation/LoadingIndicator';
-import { loadingStatus } from '../../state/util/loadingStatus.js';
 
-export const LegendBox = ({}) => {
-  const [collapsed, setCollapsed] = useState(false);
-  const [hideLayers, setHideLayers] = useState(false);
-  const [hideDetails, setHideDetails] = useState(false);
-  const mapLoading = useSelector(
-    (state) => state.ui.map.mapLoadStatus.status !== loadingStatus.complete
-  );
-  const sourcesLoading = useSelector(
-    (state) => state.ui.map.sourcesLoadStatus.status !== loadingStatus.complete
-  );
-  const dataProgress = useSelector(
-    (state) => state.request.usCasesByCounty.progress
-  );
-
-  let loadingMessage = null;
-  let progress = sourcesLoading || mapLoading ? 0 : dataProgress;
-  if (dataProgress < 1) loadingMessage = 'Downloading pandemic statistics...';
-  if (dataProgress === 0) loadingMessage = 'Requesting pandemic statistics...';
-  if (sourcesLoading) loadingMessage = 'Downloading boundary tiles...';
-  if (mapLoading) loadingMessage = 'Initializing base map...';
-
+export const LegendBox = () => {
   const legendConfig = [
     {
       name: 'Deaths',

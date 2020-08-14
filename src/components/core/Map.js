@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import mapboxgl from 'mapbox-gl';
 import { findLast, get } from 'lodash';
-import { Flexbox, Text } from 'kvl-ui';
 
 import {
   setHold,
@@ -14,11 +13,8 @@ import {
   mapFinishedLoading,
   beginLoadingSources,
   sourcesFinishedLoading,
-  layersFinishedLoading,
 } from '../../state/ui/map.js';
 import { loadingStatus } from '../../state/util/loadingStatus.js';
-
-import { LoadingIndicator } from '../presentation/LoadingIndicator.js';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoicnVva3ZsIiwiYSI6ImNrZDA3NW9oNTBhanYyeXBjOXBjazloazUifQ.qwtn31dojyeKrFMrcRAjBw';
@@ -111,7 +107,7 @@ const MapboxMap = ({
       minZoom: 3,
     });
     dispatch(beginLoadingMap(map));
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (map) {
@@ -149,7 +145,7 @@ const MapboxMap = ({
         map.on('sourcedata', detectLoadedSources);
       });
     }
-  }, [map, sources, layers]);
+  }, [map, sources, layers, dispatch]);
 
   useEffect(() => {
     if (map && initialized) {
