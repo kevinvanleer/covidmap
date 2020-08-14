@@ -1,7 +1,6 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
-import { Flexbox, Spacer, Text, SquareButton } from 'kvl-ui';
+import { Flexbox, Text } from 'kvl-ui';
 
 export const AliveStatusWait = ({ status }) => (
   <Flexbox
