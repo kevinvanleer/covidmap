@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import mapboxgl from 'mapbox-gl';
 import { findLast, get } from 'lodash';
+import { Flexbox, Text } from 'kvl-ui';
 
 import {
   setHold,
@@ -303,9 +304,18 @@ const MapboxMap = ({
   return (
     <>
       {loadingMessage && (
-        <LoadingIndicator progress={progress}>
-          {loadingMessage}
-        </LoadingIndicator>
+        <Flexbox position="absolute" bottom="0.5em" left="6.5em" zIndex={10}>
+          <LoadingIndicator progress={progress}>
+            <Text
+              fontSize="1.2em"
+              style={{
+                textShadow: '0px 0px 2px #00e',
+              }}
+            >
+              {loadingMessage}
+            </Text>
+          </LoadingIndicator>
+        </Flexbox>
       )}
       <div ref={mapContainer} {...props} />
     </>
