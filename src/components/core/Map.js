@@ -63,9 +63,6 @@ const MapboxMap = ({
   const dispatch = useDispatch();
   const hold = useSelector((state) => state.ui.map.hold);
   const selectedFeature = useSelector((state) => state.ui.map.selectedFeature);
-  const dataLoaded = useSelector(
-    (state) => state.request.usCasesByCounty.success
-  );
   const dataProgress = useSelector(
     (state) => state.request.usCasesByCounty.progress
   );
