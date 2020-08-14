@@ -1,15 +1,17 @@
+import { get } from 'lodash';
 import {
   addBoundaries,
   insertStatus,
   appendBadRecords,
   setTotals,
 } from '../state/core/usCovidData.js';
-
 import {
   aliveCheckPending,
   aliveCheckPassed,
   aliveCheckFailed,
 } from '../state/core/apiServerStatus.js';
+
+import * as usCasesByCountyStatus from '../state/request/usCasesByCounty.js';
 
 export const fetchUsCasesByCounty = async (startIndex, pageSize, reverse) => {
   const response = await fetch(
@@ -105,11 +107,25 @@ export const initializeFeatureState = () => async (dispatch) => {
   dispatch(addBoundaries(boundaryStates));
   dispatch(setTotals(await totalsPromise));
 
-  while (!done) {
-    const newCases = await fetchUsCasesByCounty(startIndex, pageSize, true);
-    dispatch(sortCasesByCounty(newCases));
-    done = newCases.length < pageSize;
-    startIndex += pageSize;
-    pageSize *= 2;
+  try {
+    dispatch(usCasesByCountyStatus.requestPending(0));
+    while (!done) {
+      const newCases = await fetchUsCasesByCounty(startIndex, pageSize, true);
+      const data = newCases.data || newCases;
+      dispatch(sortCasesByCounty(data));
+      done = data.length < pageSize;
+      startIndex += pageSize;
+      pageSize *= 2;
+      if (!done) {
+        dispatch(
+          usCasesByCountyStatus.requestPending(
+            startIndex / get(newCases, 'meta.totalCount', NaN)
+          )
+        );
+      }
+    }
+    dispatch(usCasesByCountyStatus.requestSucceeded());
+  } catch (e) {
+    dispatch(usCasesByCountyStatus.requestFailed(e));
   }
 };

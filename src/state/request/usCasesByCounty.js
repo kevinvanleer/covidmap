@@ -9,15 +9,17 @@ const usCasesByCountySlice = createSlice({
     success: null,
     result: null,
     object: null,
+    progress: null,
   },
   reducers: {
-    requestPending: (state) => {
+    requestPending: (state, action) => {
       state.pending = true;
       state.error = null;
       state.complete = false;
       state.success = null;
       state.result = null;
       state.object = null;
+      state.progress = action.payload;
     },
     requestSucceeded: (state, action) => {
       state.pending = false;
@@ -26,6 +28,7 @@ const usCasesByCountySlice = createSlice({
       state.success = true;
       state.result = action.payload;
       state.object = null;
+      state.progress = 1;
     },
     requestFailed: (state, action) => {
       state.pending = false;
@@ -34,6 +37,7 @@ const usCasesByCountySlice = createSlice({
       state.success = false;
       state.result = action.payload;
       state.object = null;
+      state.progress = null;
     },
   },
 });
