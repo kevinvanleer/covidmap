@@ -91,7 +91,11 @@ export const Details = ({ date, entity, collapsed }) => {
           <Text bold fontSize="label">
             {entity.displayName}
           </Text>
-          <Text fontSize="detail">{`reporting on ${recentData.date}`}</Text>
+          <Text fontSize="detail">
+            {recentData.date
+              ? `reporting on ${recentData.date}`
+              : 'no reported cases'}
+          </Text>
           <Spacer height="0.5em" />
           <Stats
             deathRate={deathRate}
