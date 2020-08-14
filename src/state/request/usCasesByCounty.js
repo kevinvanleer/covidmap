@@ -19,7 +19,7 @@ const usCasesByCountySlice = createSlice({
       state.success = null;
       state.result = null;
       state.object = null;
-      state.progress = action.payload;
+      state.progress = action.payload || 0;
     },
     requestSucceeded: (state, action) => {
       state.pending = false;
