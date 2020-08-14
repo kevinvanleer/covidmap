@@ -16,6 +16,8 @@ import {
 } from '../../state/ui/map.js';
 import { loadingStatus } from '../../state/util/loadingStatus.js';
 
+import { LoadingIndicator } from '../presentation/LoadingIndicator.js';
+
 mapboxgl.accessToken =
   'pk.eyJ1IjoicnVva3ZsIiwiYSI6ImNrZDA3NW9oNTBhanYyeXBjOXBjazloazUifQ.qwtn31dojyeKrFMrcRAjBw';
 
@@ -76,12 +78,25 @@ const MapboxMap = ({
     (state) => state.request.usCasesByCounty.progress
   );
   const map = useSelector((state) => state.ui.map.map);
+  const mapLoading = useSelector(
+    (state) => state.ui.map.mapLoadStatus.status !== loadingStatus.complete
+  );
+  const sourcesLoading = useSelector(
+    (state) => state.ui.map.sourcesLoadStatus.status !== loadingStatus.complete
+  );
   const initialized = useSelector(
     (state) => state.ui.map.sourcesLoadStatus.status === loadingStatus.complete
   );
 
   const [hoveredFeatures, setHoveredFeatures] = useState([]);
   const mapContainer = useRef(null);
+
+  let loadingMessage = null;
+  let progress = sourcesLoading || mapLoading ? 0 : dataProgress;
+  if (dataProgress < 1) loadingMessage = 'Downloading pandemic statistics...';
+  if (dataProgress === 0) loadingMessage = 'Requesting pandemic statistics...';
+  if (sourcesLoading) loadingMessage = 'Downloading boundary tiles...';
+  if (mapLoading) loadingMessage = 'Initializing base map...';
 
   useEffect(() => {
     if (map && initialized) {
@@ -287,21 +302,10 @@ const MapboxMap = ({
 
   return (
     <>
-      {(!initialized || dataProgress === 0) && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            margin: '0 auto',
-            zIndex: 10,
-            width: '100%',
-            textAlign: 'center',
-            fontSize: '2em',
-            textShadow: '0px 0px 2px #00e',
-          }}
-        >
-          Rendering visualization...
-        </div>
+      {loadingMessage && (
+        <LoadingIndicator progress={progress}>
+          {loadingMessage}
+        </LoadingIndicator>
       )}
       <div ref={mapContainer} {...props} />
     </>
