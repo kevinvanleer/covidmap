@@ -39,7 +39,11 @@ export const About = ({ onHide }) => (
       Ongoing cases is an estimate represented by cases reported within the past
       two weeks.
     </Text>
-
+    <Spacer height="0.3em" />
+    <Text>
+      Death rate compares the current number of deaths to the total number of
+      cases two weeks prior.
+    </Text>
     <Spacer height="1em" />
     <Text fontSize="label">Data sources</Text>
     <Spacer height="0.5em" />
