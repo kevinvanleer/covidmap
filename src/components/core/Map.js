@@ -5,7 +5,15 @@ import moment from 'moment';
 import mapboxgl from 'mapbox-gl';
 import { findLast, get } from 'lodash';
 
-import { setHold, setSelectedFeature } from '../../state/ui/map.js';
+import {
+  setHold,
+  setSelectedFeature,
+  beginMapInitialization,
+  beginLoadingMap,
+  mapFinishedLoading,
+  beginLoadingSources,
+  sourcesFinishedLoading,
+} from '../../state/ui/map.js';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoicnVva3ZsIiwiYSI6ImNrZDA3NW9oNTBhanYyeXBjOXBjazloazUifQ.qwtn31dojyeKrFMrcRAjBw';
@@ -66,7 +74,7 @@ const MapboxMap = ({
   const dataProgress = useSelector(
     (state) => state.request.usCasesByCounty.progress
   );
-  const [map, setMap] = useState(null);
+  const map = useSelector((state) => state.ui.map.map);
   const [initialized, setInitialized] = useState(false);
   const [hoveredFeatures, setHoveredFeatures] = useState([]);
   const mapContainer = useRef(null);
@@ -89,7 +97,7 @@ const MapboxMap = ({
     const lat = 39;
     const lng = -95;
     const zoom = 3;
-
+    dispatch(beginMapInitialization());
     const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v10',
@@ -97,7 +105,7 @@ const MapboxMap = ({
       zoom: zoom,
       minZoom: 3,
     });
-    setMap(map);
+    dispatch(beginLoadingMap(map));
   }, []);
 
   useEffect(() => {
