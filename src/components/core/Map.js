@@ -14,6 +14,7 @@ import {
   beginLoadingSources,
   sourcesFinishedLoading,
 } from '../../state/ui/map.js';
+import { loadingStatus } from '../../state/util/loadingStatus.js';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoicnVva3ZsIiwiYSI6ImNrZDA3NW9oNTBhanYyeXBjOXBjazloazUifQ.qwtn31dojyeKrFMrcRAjBw';
@@ -75,7 +76,10 @@ const MapboxMap = ({
     (state) => state.request.usCasesByCounty.progress
   );
   const map = useSelector((state) => state.ui.map.map);
-  const [initialized, setInitialized] = useState(false);
+  const initialized = useSelector(
+    (state) => state.ui.map.sourcesLoadStatus.status === loadingStatus.complete
+  );
+
   const [hoveredFeatures, setHoveredFeatures] = useState([]);
   const mapContainer = useRef(null);
 
@@ -111,6 +115,8 @@ const MapboxMap = ({
   useEffect(() => {
     if (map) {
       map.on('load', async () => {
+        dispatch(mapFinishedLoading());
+        dispatch(beginLoadingSources());
         await Promise.all([
           new Promise((resolve, reject) =>
             map.loadImage('/img/coronavirus-green-128.png', (error, image) => {
@@ -134,8 +140,10 @@ const MapboxMap = ({
             (loaded, source) => loaded && map.isSourceLoaded(source.id),
             true
           );
-          setInitialized(init);
-          if (init) map.off('sourcedata', detectLoadedSources);
+          if (init) {
+            map.off('sourcedata', detectLoadedSources);
+            dispatch(sourcesFinishedLoading());
+          }
         };
         map.on('sourcedata', detectLoadedSources);
       });
