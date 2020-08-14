@@ -14,6 +14,7 @@ import {
   mapFinishedLoading,
   beginLoadingSources,
   sourcesFinishedLoading,
+  layersFinishedLoading,
 } from '../../state/ui/map.js';
 import { loadingStatus } from '../../state/util/loadingStatus.js';
 

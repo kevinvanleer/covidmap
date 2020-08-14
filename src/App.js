@@ -3,7 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { get, last } from 'lodash';
 
-import { ControlPanel, About, AliveStatusWait } from './components/structural';
+import {
+  ControlPanel,
+  About,
+  AliveStatusWait,
+  LegendBox,
+} from './components/structural';
 import { Flexbox } from 'kvl-ui';
 
 import { initializeFeatureState } from './workflows/fetchCovidData.js';
@@ -85,6 +90,7 @@ function App() {
         activeLayers={activeLayers}
         casesByCounty={casesByCounty}
       />
+      <LegendBox />
       {showAbout ? (
         <Flexbox position="absolute" zIndex={100}>
           <About onHide={() => onShowAbout(false)} />
