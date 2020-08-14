@@ -25,11 +25,7 @@ export const Stats = ({
       <Text>{`Ongoing cases: ${new Intl.NumberFormat('en-US').format(
         ongoingCases
       )}`}</Text>
-      <Text>{`death rate:
-          ${(deathRate.current * 100).toFixed()}% /
-          ${(deathRate.twoWeek * 100).toFixed()}% /
-          ${(deathRate.fourWeek * 100).toFixed()}% /
-          ${(deathRate.eightWeek * 100).toFixed()}%`}</Text>
+      <Text>{`Death rate: ${(deathRate.twoWeek * 100).toFixed()}%`}</Text>
     </>
   ) : null;
 };
