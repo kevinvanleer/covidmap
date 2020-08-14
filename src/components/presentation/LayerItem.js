@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Flexbox, Spacer, Text, SquareButton } from 'kvl-ui';
+import { CompactLegend as Legend } from '../structural/CompactLegend.js';
 
 export const LayerItem = styled(
   ({ className, onClick, config, active, collapsed }) => (
@@ -21,9 +22,12 @@ export const LayerItem = styled(
       {!collapsed ? (
         <>
           <Spacer width="0.5em" />
-          <Text fontSize="label" bold={active} className={className}>
-            {config.label}
-          </Text>
+          <Flexbox flexDirection="column">
+            <Text fontSize="label" bold={active} className={className}>
+              {config.label}
+            </Text>
+            {config.gradient && <Legend {...config} />}
+          </Flexbox>
         </>
       ) : null}
     </Flexbox>

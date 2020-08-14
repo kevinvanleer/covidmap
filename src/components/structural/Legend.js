@@ -15,7 +15,7 @@ const prettyPrint = (number) => {
 
 const boxDimension = '1.5rem';
 
-export const Legend = ({ fillColor, gradient }) => (
+export const Legend = ({ label, fillColor, gradient }) => (
   <Flexbox flexDirection="column" color="#222" backgroundColor="#eee">
     <Flexbox flexDirection="row">
       {gradient.map((step) => (
@@ -45,6 +45,7 @@ export const Legend = ({ fillColor, gradient }) => (
 );
 
 Legend.propTypes = {
+  label: PropTypes.string,
   fillColor: PropTypes.string,
   gradient: PropTypes.array,
 };

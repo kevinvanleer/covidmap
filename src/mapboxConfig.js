@@ -5,6 +5,53 @@ import {
   faHeadSideCough,
 } from '@fortawesome/free-solid-svg-icons';
 
+const legendConfig = {
+  deaths: {
+    name: 'Deaths',
+    color: '#f00',
+    gradient: [
+      {
+        magnitude: 10,
+        opacity: 0.2,
+      },
+      {
+        magnitude: 100,
+        opacity: 0.4,
+      },
+      {
+        magnitude: 1000,
+        opacity: 0.7,
+      },
+      {
+        magnitude: 2000,
+        opacity: 0.8,
+      },
+    ],
+  },
+  cases: {
+    name: 'Cases',
+    color: '#00f',
+    gradient: [
+      {
+        magnitude: 10,
+        opacity: 0.1,
+      },
+      {
+        magnitude: 100,
+        opacity: 0.2,
+      },
+      {
+        magnitude: 10000,
+        opacity: 0.4,
+      },
+      {
+        magnitude: 200000,
+        opacity: 0.8,
+      },
+    ],
+  },
+};
+
 export const sources = [
   {
     id: 'us-counties',
@@ -27,6 +74,8 @@ export const layers = [
     legend: {
       label: 'Deaths',
       icon: faSkullCrossbones,
+      fillColor: legendConfig.deaths.color,
+      gradient: legendConfig.deaths.gradient,
     },
     id: 'us-county-total-deaths',
     type: 'fill',
@@ -59,6 +108,8 @@ export const layers = [
     legend: {
       label: 'Cases',
       icon: faHeadSideCough,
+      fillColor: legendConfig.cases.color,
+      gradient: legendConfig.cases.gradient,
     },
     id: 'us-county-total-cases',
     type: 'fill',
