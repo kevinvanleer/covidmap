@@ -1,11 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+let mql = window.matchMedia('(max-width: 600px)');
+
 const controlPanelSlice = createSlice({
   name: 'controlPanel',
   initialState: {
-    layersHidden: false,
-    detailsHidden: false,
-    collapsed: false,
+    layersHidden: mql.matches,
+    detailsHidden: mql.matches,
+    collapsed: mql.matches,
   },
   reducers: {
     collapse: (state, action) => {
