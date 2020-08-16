@@ -68,6 +68,14 @@ export const ControlPanel = ({
         </Text>
         <Spacer width="1em" flexGrow={1} />
         <Flexbox marginBetween="0.2em" alignItems="center">
+          <SquareButton
+            id="covidmap-show-about-box"
+            onClick={onShowAbout}
+            backgroundColor="#777"
+          >
+            <FontAwesomeIcon color="#eee" icon={faInfoCircle} />
+          </SquareButton>
+          <Spacer width="0.1em" flexGrow={1} />
           <ToggleButton
             id="button-covidmap-control-panel-hide-layers"
             flexGrow={0}
@@ -84,6 +92,7 @@ export const ControlPanel = ({
             active={!detailsHidden}
             backgroundColor="#777"
           />
+          <Spacer width="0.1em" flexGrow={1} />
           <DrawerButton
             id="button-covidmap-control-panel-collapse"
             flexGrow={0}
@@ -122,19 +131,6 @@ export const ControlPanel = ({
         <LoadingIndicator progress={progress}>
           {loadingMessage}
         </LoadingIndicator>
-        <Spacer flexGrow={1} />
-        {!collapsed ? (
-          <>
-            <Spacer height="1em" />
-            <SquareButton
-              id="covidmap-show-about-box"
-              onClick={onShowAbout}
-              backgroundColor="#777"
-            >
-              <FontAwesomeIcon color="#eee" icon={faInfoCircle} />
-            </SquareButton>
-          </>
-        ) : null}
       </Flexbox>
     </FloatingPanel>
   );
