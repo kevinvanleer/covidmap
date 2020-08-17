@@ -11,21 +11,40 @@ const controlPanelSlice = createSlice({
   },
   reducers: {
     collapse: (state, action) => {
+      if (
+        !action.payload &&
+        state.collapsed &&
+        state.layersHidden &&
+        state.detailsHidden
+      ) {
+        state.layersHidden = false;
+        state.detailsHidden = false;
+      }
       state.collapsed = action.payload;
     },
     expand: (state) => {
+      if (state.collapsed && state.layersHidden && state.detailsHidden) {
+        state.layersHidden = false;
+        state.detailsHidden = false;
+      }
       state.collapsed = false;
     },
     showLayers: (state) => {
       state.layersHidden = false;
     },
     hideLayers: (state, action) => {
+      if (action.payload && state.detailsHidden) {
+        state.collapsed = true;
+      }
       state.layersHidden = action.payload;
     },
     showDetails: (state) => {
       state.detailsHidden = false;
     },
     hideDetails: (state, action) => {
+      if (action.payload && state.layersHidden) {
+        state.collapsed = true;
+      }
       state.detailsHidden = action.payload;
     },
   },
