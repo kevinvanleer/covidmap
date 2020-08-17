@@ -96,7 +96,7 @@ function App() {
       />
       {collapsed || layersHidden ? <LegendBox /> : null}
       {showAbout ? (
-        <Flexbox position="absolute" zIndex={100}>
+        <Flexbox position="absolute" zIndex={100} maxHeight="100%">
           <About onHide={() => onShowAbout(false)} />
         </Flexbox>
       ) : null}
