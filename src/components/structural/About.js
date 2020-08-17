@@ -53,9 +53,15 @@ export const About = ({ onHide }) => (
         <Text fontSize="detail">https://eric.clst.org/tech/usgeojson/</Text>
       </Link>
       <Spacer height="0.5em" />
-      <Text>New York Times COVID-19 US county-level historic data</Text>
+      <Text>
+        Cases and deaths, The New York Times, based on reports from state and
+        local health agencies:
+      </Text>
       <Link href="https://github.com/nytimes/covid-19-data">
         <Text fontSize="detail">https://github.com/nytimes/covid-19-data</Text>
+      </Link>
+      <Link href="https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html">
+        <Text fontSize="detail">New York Times interactive tracking page</Text>
       </Link>
       <Spacer height="0.5em" />
       <Text>Source code</Text>
