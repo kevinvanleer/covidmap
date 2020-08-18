@@ -90,13 +90,14 @@ export const initializeFeatureState = () => async (dispatch) => {
   }
 
   const totalsPromise = fetchUsTotals();
+  const populationPromise = fetchUsPopulation();
 
   const boundaries = await fetchUsCovidBoundaries('20m');
   const boundaryStates = {};
   boundaries.features.forEach((boundary) => {
     boundaryStates[parseInt(boundary.properties.FEATURE_ID)] = [
       {
-        date: '2020-01-01',
+        date: undefined,
         cases: 0,
         deaths: 0,
         county: boundary.properties.NAME,

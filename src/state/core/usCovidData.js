@@ -2,7 +2,17 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const usCovidDataSlice = createSlice({
   name: 'usCovidData',
-  initialState: { totals: [], casesByCounty: {}, badRecords: [] },
+  initialState: {
+    totals: [
+      {
+        date: undefined,
+        cases: 0,
+        deaths: 0,
+      },
+    ],
+    casesByCounty: {},
+    badRecords: [],
+  },
   reducers: {
     load: (state, action) => {
       state.casesByCounty = action.payload;
@@ -14,7 +24,7 @@ const usCovidDataSlice = createSlice({
       const boundary = action.payload;
       state.casesByCounty[parseInt(boundary.properties.FEATURE_ID)] = [
         {
-          date: '2020-01-01',
+          date: undefined,
           cases: 0,
           deaths: 0,
           county: boundary.properties.NAME,
@@ -51,7 +61,14 @@ const usCovidDataSlice = createSlice({
       state.badRecords = action.payload;
     },
     setTotals: (state, action) => {
-      state.totals = action.payload.data;
+      state.totals = [
+        {
+          date: undefined,
+          cases: 0,
+          deaths: 0,
+        },
+        ...action.payload.data,
+      ];
     },
   },
 });
