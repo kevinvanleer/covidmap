@@ -4,6 +4,7 @@ import {
   insertStatus,
   appendBadRecords,
   setTotals,
+  setPopulation,
 } from '../state/core/usCovidData.js';
 import {
   aliveCheckPending,
@@ -22,6 +23,11 @@ export const fetchUsCasesByCounty = async (startIndex, pageSize, reverse) => {
 
 export const fetchUsTotals = async () => {
   const response = await fetch(`/api/us-totals`);
+  return response.json();
+};
+
+export const fetchUsPopulation = async () => {
+  const response = await fetch(`/resources/us-estimated-population-2019.json`);
   return response.json();
 };
 
@@ -107,6 +113,7 @@ export const initializeFeatureState = () => async (dispatch) => {
   });
   dispatch(addBoundaries(boundaryStates));
   dispatch(setTotals(await totalsPromise));
+  dispatch(setPopulation(await populationPromise));
 
   try {
     dispatch(usCasesByCountyStatus.requestPending(0));

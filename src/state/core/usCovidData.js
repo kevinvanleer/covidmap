@@ -70,6 +70,9 @@ const usCovidDataSlice = createSlice({
         ...action.payload.data,
       ];
     },
+    setPopulation: (state, action) => {
+      state.population = action.payload.population;
+    },
   },
 });
 
@@ -81,5 +84,6 @@ export const {
   addBoundary,
   addBoundaries,
   setTotals,
+  setPopulation,
 } = usCovidDataSlice.actions;
 export default usCovidDataSlice.reducer;
