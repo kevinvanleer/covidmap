@@ -83,5 +83,9 @@
       "pre-commit": "lint-staged",
       "pre-push": "yarn run lint && yarn run lint:css"
     }
+  },
+  "engines": {
+    "node": "13.14.x",
+    "yarn": "1.22.x"
   }
 }
