@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { loadingStatus, loadStatusDefaults } from '../util/loadingStatus.js';
+import { layerGroups, layers } from '../../mapboxConfig.js';
 
 const mapSlice = createSlice({
   name: 'map',
@@ -10,6 +11,9 @@ const mapSlice = createSlice({
     sourcesLoadStatus: { ...loadStatusDefaults },
     layersLoadStatus: { ...loadStatusDefaults },
     map: null,
+    layerGroups: layerGroups,
+    layers: layers,
+    selectedLayerGroup: layerGroups[0],
   },
   reducers: {
     hold: (state) => {
@@ -48,6 +52,9 @@ const mapSlice = createSlice({
     layersFinishedLoading: (state) => {
       state.layersLoadStatus.status = loadingStatus.complete;
     },
+    selectLayerGroup: (state, action) => {
+      state.selectedLayerGroup = action.payload;
+    },
   },
 });
 
@@ -63,5 +70,6 @@ export const {
   sourcesFinishedLoading,
   beingLoadingLayers,
   layersFinishedLoading,
+  selectLayerGroup,
 } = mapSlice.actions;
 export default mapSlice.reducer;

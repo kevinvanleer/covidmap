@@ -10,9 +10,13 @@ export const Stats = ({
   recentData,
   newCases,
   ongoingCases,
+  population,
 }) => {
   return !collapsed ? (
     <>
+      <Text>{`Population: ${new Intl.NumberFormat('en-US').format(
+        get(population, 'POPESTIMATE2019', 0)
+      )}`}</Text>
       <Text>{`Total cases: ${new Intl.NumberFormat('en-US').format(
         get(recentData, 'cases', 0)
       )}`}</Text>
@@ -33,6 +37,7 @@ export const Stats = ({
 Stats.propTypes = {
   collapsed: PropTypes.bool,
   entity: PropTypes.object,
+  population: PropTypes.object,
   deathRate: PropTypes.object,
   recentData: PropTypes.object,
   newCases: PropTypes.number,

@@ -27,20 +27,26 @@ export const About = ({ onHide }) => (
       <Text fontSize="label">Statistics explained</Text>
       <Spacer height="0.2em" />
       <Text>
-        Hotspots are those counties that have at least 100 cases and in which
-        total cases have increased 20% in the past two weeks.
+        Hotspots by total cases: Hotspots are those counties that have at least
+        100 cases and in which total cases have increased 20% in the past two
+        weeks.
       </Text>
-      <Spacer height="0.3em" />
+      <Spacer height="0.5em" />
+      <Text>
+        Hotspots Per Capita: Hotspots are those counties in which at least 1% of
+        the population has been infected in the past two weeks.
+      </Text>
+      <Spacer height="0.5em" />
       <Text>
         New cases are those reported on most recent day for the county,
         typically yesterday.
       </Text>
-      <Spacer height="0.3em" />
+      <Spacer height="0.5em" />
       <Text>
         Ongoing cases is an estimate represented by cases reported within the
         past two weeks.
       </Text>
-      <Spacer height="0.3em" />
+      <Spacer height="0.5em" />
       <Text>
         Death rate compares the current number of deaths to the total number of
         cases two weeks prior.
@@ -51,6 +57,11 @@ export const About = ({ onHide }) => (
       <Text>US 2010 census county boundaries</Text>
       <Link href="https://eric.clst.org/tech/usgeojson/">
         <Text fontSize="detail">https://eric.clst.org/tech/usgeojson/</Text>
+      </Link>
+      <Spacer height="0.5em" />
+      <Text>2019 Population Estimates: US Census Bureau</Text>
+      <Link href="https://www2.census.gov/programs-surveys/popest/datasets/2010-2019/counties/totals/co-est2019-alldata.csv">
+        <Text fontSize="detail">Download raw CSV</Text>
       </Link>
       <Spacer height="0.5em" />
       <Text>

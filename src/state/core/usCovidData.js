@@ -12,6 +12,7 @@ const usCovidDataSlice = createSlice({
     ],
     casesByCounty: {},
     badRecords: [],
+    population: {},
   },
   reducers: {
     load: (state, action) => {
@@ -71,7 +72,11 @@ const usCovidDataSlice = createSlice({
       ];
     },
     setPopulation: (state, action) => {
-      state.population = action.payload.population;
+      let newState = {};
+      action.payload.population.forEach(
+        (record) => (newState[record.FIPS] = record)
+      );
+      state.population = newState;
     },
   },
 });

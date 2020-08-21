@@ -15,6 +15,8 @@ import { releaseHold, setSelectedFeature } from '../../state/ui/map.js';
 export const Details = ({ date, entity, collapsed }) => {
   const dispatch = useDispatch();
   const selectedFeature = useSelector((state) => state.ui.map.selectedFeature);
+  const populations = useSelector((state) => state.core.usCovidData.population);
+  const population = populations[selectedFeature];
   const data = entity.data;
   let recentData = null;
   let deathRate = {};
@@ -98,6 +100,7 @@ export const Details = ({ date, entity, collapsed }) => {
           </Text>
           <Spacer height="0.5em" />
           <Stats
+            population={population}
             deathRate={deathRate}
             collapsed={collapsed}
             entity={entity}

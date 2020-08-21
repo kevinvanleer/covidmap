@@ -19,7 +19,7 @@ import { loadingStatus } from '../../state/util/loadingStatus.js';
 mapboxgl.accessToken =
   'pk.eyJ1IjoicnVva3ZsIiwiYSI6ImNrZDA3NW9oNTBhanYyeXBjOXBjazloazUifQ.qwtn31dojyeKrFMrcRAjBw';
 
-const centroidState = (twoWeeksBefore) => (state, date) => {
+const centroidState = (twoWeeksBefore, population) => (state, date) => {
   const recentData = findLast(state, (status) => status.date <= date);
   const twoWeeksPrior = findLast(
     state,
@@ -31,14 +31,26 @@ const centroidState = (twoWeeksBefore) => (state, date) => {
       parseInt(get(recentData, 'cases', 0)) /
         parseInt(get(twoWeeksPrior, 'cases', 0)) >
         1.2 && parseInt(get(recentData, 'cases', 0)) > 100,
+    perCapitaHotspot:
+      (parseInt(get(recentData, 'cases', 0)) -
+        parseInt(get(twoWeeksPrior, 'cases', 0))) /
+        parseInt(population) >
+      0.01,
   };
 };
 
-const choroplethState = (state, date) => {
+const choroplethState = (population) => (state, date) => {
   const recentData = findLast(state, (status) => status.date <= date);
   return {
+    casesPerCapita:
+      population > 0 ? parseInt(get(recentData, 'cases', 0)) / population : 0,
+    deathsPerCapita:
+      population > 0 ? parseInt(get(recentData, 'deaths', 0)) / population : 0,
     cases: parseInt(get(recentData, 'cases', 0)),
     deaths: parseInt(get(recentData, 'deaths', 0)),
+    deathRate:
+      parseInt(get(recentData, 'deaths', 0)) /
+      parseInt(get(recentData, 'cases', 0)),
   };
 };
 
@@ -76,9 +88,14 @@ const MapboxMap = ({
   const initialized = useSelector(
     (state) => state.ui.map.sourcesLoadStatus.status === loadingStatus.complete
   );
-
+  const population = useSelector((state) => state.core.usCovidData.population);
+  const selectedGroup = useSelector((state) => state.ui.map.selectedLayerGroup);
   const [hoveredFeatures, setHoveredFeatures] = useState([]);
   const mapContainer = useRef(null);
+
+  const filteredActiveLayers = activeLayers.filter((layer) =>
+    selectedGroup.layers.includes(layer)
+  );
 
   useEffect(() => {
     if (map && initialized) {
@@ -87,18 +104,19 @@ const MapboxMap = ({
           map.setLayoutProperty(
             layer.id,
             'visibility',
-            activeLayers.includes(layer.id) ? 'visible' : 'none'
+            filteredActiveLayers.includes(layer.id) ? 'visible' : 'none'
           );
         }
       });
     }
-  }, [map, initialized, layers, activeLayers]);
+  }, [map, initialized, layers, filteredActiveLayers]);
 
   useEffect(() => {
     const lat = 39;
     const lng = -95;
     const zoom = 3;
     dispatch(beginMapInitialization());
+    mapboxgl.clearStorage();
     const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v10',
@@ -169,7 +187,7 @@ const MapboxMap = ({
           'us-counties-500k-a4l482',
           value,
           date,
-          choroplethState
+          choroplethState(get(population, [key, 'POPESTIMATE2019']))
         );
         setFeatureState(
           map,
@@ -178,11 +196,11 @@ const MapboxMap = ({
           undefined,
           value,
           date,
-          centroidState(twoWeeksAgo)
+          centroidState(twoWeeksAgo, get(population, [key, 'POPESTIMATE2019']))
         );
       }
     }
-  }, [initialized, date, casesByCounty, map]);
+  }, [initialized, date, casesByCounty, map, population]);
 
   const selectFeature = useCallback(
     (theMap, featureId, selected, hold = false) => {
