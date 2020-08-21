@@ -4621,7 +4621,7 @@ color-string@^1.5.2:
     color-name "^1.0.0"
     simple-swizzle "^0.2.2"
 
-color@^3.0.0, color@^3.1.2:
+color@^3.0.0:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/color/-/color-3.1.2.tgz#68148e7f85d41ad7649c5fa8c8106f098d229e10"
   integrity sha512-vXTJhHebByxZn3lDvDJYw4lR5+uB3vuoHsuYA5AKuxRVn5wzzIfQKGLBmgdVRHKTJYeK5rvJcHnrd0Li49CFpg==
@@ -9304,16 +9304,9 @@ known-css-properties@^0.19.0:
   resolved "https://registry.yarnpkg.com/known-css-properties/-/known-css-properties-0.19.0.tgz#5d92b7fa16c72d971bda9b7fe295bdf61836ee5b"
   integrity sha512-eYboRV94Vco725nKMlpkn3nV2+96p9c3gKXRsYqAJSswSENvBhN7n5L+uDhY58xQa0UukWsDMTGELzmD8Q+wTA==
 
-"kvl-ui@https://github.com/kevinvanleer/kvl-ui.git#v0.0.5":
-  version "0.0.5"
-  resolved "https://github.com/kevinvanleer/kvl-ui.git#afabc2c4c0be08771bdd45043e54b225aee91cb3"
-  dependencies:
-    "@fortawesome/fontawesome-svg-core" "^1.2.30"
-    "@fortawesome/react-fontawesome" "^0.1.11"
-    color "^3.1.2"
-    lodash "^4.17.19"
-    react "^16.0.0"
-    styled-components "^5.1.1"
+"kvl-ui@https://github.com/kevinvanleer/kvl-ui.git":
+  version "0.1.0"
+  resolved "https://github.com/kevinvanleer/kvl-ui.git#76ccc66f45b536f03a02743a3906bd4e4f7e9482"
 
 last-call-webpack-plugin@^3.0.0:
   version "3.0.0"
@@ -12550,7 +12543,7 @@ react-textarea-autosize@^7.1.0:
     "@babel/runtime" "^7.1.2"
     prop-types "^15.6.0"
 
-react@^16.0.0, react@^16.13.1, react@^16.8.3:
+react@^16.13.1, react@^16.8.3:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react/-/react-16.13.1.tgz#2e818822f1a9743122c063d6410d85c1e3afe48e"
   integrity sha512-YMZQQq32xHLX0bz5Mnibv1/LHb3Sqzngu7xstSM+vrkE5Kzr9xE0yMByK5kMoTK30YVJE61WfbxIFFvfeDKT1w==
