@@ -1,54 +1,19 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { get } from 'lodash';
 import { Legend } from '.';
 import { FloatingPanel } from '../presentation/FloatingPanel';
 
 export const LegendBox = () => {
-  const legendConfig = [
-    {
-      name: 'Deaths',
-      color: '#f00',
-      gradient: [
-        {
-          magnitude: 10,
-          opacity: 0.2,
-        },
-        {
-          magnitude: 100,
-          opacity: 0.4,
-        },
-        {
-          magnitude: 1000,
-          opacity: 0.7,
-        },
-        {
-          magnitude: 2000,
-          opacity: 0.8,
-        },
-      ],
-    },
-    {
-      name: 'Cases',
-      color: '#00f',
-      gradient: [
-        {
-          magnitude: 10,
-          opacity: 0.1,
-        },
-        {
-          magnitude: 100,
-          opacity: 0.2,
-        },
-        {
-          magnitude: 10000,
-          opacity: 0.4,
-        },
-        {
-          magnitude: 200000,
-          opacity: 0.8,
-        },
-      ],
-    },
-  ];
+  const layers = useSelector((state) => state.ui.map.layers);
+  const selectedGroup = useSelector((state) => state.ui.map.selectedLayerGroup);
+  const legendConfig = layers
+    .filter(
+      (layer) =>
+        selectedGroup.layers.includes(layer.id) && get(layer, 'legend.gradient')
+    )
+    .map((layer) => layer.legend);
+
   return (
     <FloatingPanel
       flexDirection="row"
@@ -62,7 +27,11 @@ export const LegendBox = () => {
       marginBetween="1.5em"
     >
       {legendConfig.map((cfg) => (
-        <Legend key={cfg.name} fillColor={cfg.color} gradient={cfg.gradient} />
+        <Legend
+          key={cfg.label}
+          fillColor={cfg.fillColor}
+          gradient={cfg.gradient}
+        />
       ))}
     </FloatingPanel>
   );
