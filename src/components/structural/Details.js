@@ -12,11 +12,15 @@ import AreaChart from '../core/d3AreaChart.js';
 
 import { releaseHold, setSelectedFeature } from '../../state/ui/map.js';
 
+const usPopEst2019 = { POPESTIMATE2019: 328239523 };
+
 export const Details = ({ date, entity, collapsed }) => {
   const dispatch = useDispatch();
   const selectedFeature = useSelector((state) => state.ui.map.selectedFeature);
   const populations = useSelector((state) => state.core.usCovidData.population);
-  const population = populations[selectedFeature];
+  const population = selectedFeature
+    ? populations[selectedFeature]
+    : usPopEst2019;
   const data = entity.data;
   let recentData = null;
   let deathRate = {};
