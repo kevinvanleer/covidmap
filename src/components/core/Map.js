@@ -116,7 +116,6 @@ const MapboxMap = ({
     const lng = -95;
     const zoom = 3;
     dispatch(beginMapInitialization());
-    mapboxgl.clearStorage();
     const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v10',
