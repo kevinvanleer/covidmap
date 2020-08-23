@@ -8,7 +8,7 @@ import {
   faLayerGroup,
   faChartBar,
 } from '@fortawesome/free-solid-svg-icons';
-import { Flexbox, Spacer, Text, SquareButton, Divider } from 'kvl-ui';
+import { Flexbox, Spacer, Text, SquareButton, Divider } from 'kvl-react-ui';
 import { Details, Layers, DateSelector, DrawerButton } from '.';
 import { FloatingPanel } from '../presentation/FloatingPanel';
 import { ToggleButton } from '../presentation/ToggleButton';

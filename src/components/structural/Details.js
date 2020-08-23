@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { get, findLast, set, isEmpty } from 'lodash';
-import { Flexbox, Spacer, Text, SquareButton } from 'kvl-ui';
+import { Flexbox, Spacer, Text, SquareButton } from 'kvl-react-ui';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFlagUsa } from '@fortawesome/free-solid-svg-icons';
 

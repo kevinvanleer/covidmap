@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Flexbox, Text } from 'kvl-ui';
+import { Flexbox, Text } from 'kvl-react-ui';
 
 import { selectLayerGroup } from '../../state/ui/map';
 

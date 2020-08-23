@@ -9,7 +9,7 @@ import {
   AliveStatusWait,
   LegendBox,
 } from './components/structural';
-import { Flexbox } from 'kvl-ui';
+import { Flexbox } from 'kvl-react-ui';
 
 import { initializeFeatureState } from './workflows/fetchCovidData.js';
 

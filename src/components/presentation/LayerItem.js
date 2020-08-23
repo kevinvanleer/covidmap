@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Flexbox, Spacer, Text, SquareButton } from 'kvl-ui';
+import { Flexbox, Spacer, Text, SquareButton } from 'kvl-react-ui';
 import { CompactLegend as Legend } from '../structural/CompactLegend.js';
 
 export const LayerItem = styled(

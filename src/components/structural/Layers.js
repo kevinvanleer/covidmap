@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-import { Flexbox, Text, Spacer } from 'kvl-ui';
+import { Flexbox, Text, Spacer } from 'kvl-react-ui';
 
 import { LayerItem } from '../presentation/LayerItem.js';
 import { GroupSelect } from './GroupSelect.js';

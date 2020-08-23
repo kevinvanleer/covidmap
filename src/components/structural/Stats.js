@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import { Text } from 'kvl-ui';
+import { Text } from 'kvl-react-ui';
 
 export const Stats = ({
   collapsed,

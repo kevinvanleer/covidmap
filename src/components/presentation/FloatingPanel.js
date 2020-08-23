@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Flexbox } from 'kvl-ui';
+import { Flexbox } from 'kvl-react-ui';
 
 export const FloatingPanel = styled(Flexbox)`
   position: absolute;

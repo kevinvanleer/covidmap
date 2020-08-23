@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Flexbox, Text } from 'kvl-ui';
+import { Flexbox, Text } from 'kvl-react-ui';
 
 export const AliveStatusWait = ({ status }) => (
   <Flexbox

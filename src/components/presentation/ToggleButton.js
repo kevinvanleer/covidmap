@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { SquareButton } from 'kvl-ui';
+import { SquareButton } from 'kvl-react-ui';
 
 export const ToggleButton = ({ id, onClick, icon, active }) => (
   <SquareButton

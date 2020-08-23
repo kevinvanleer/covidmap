@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Flexbox, Spacer, Text, Button } from 'kvl-ui';
+import { Flexbox, Spacer, Text, Button } from 'kvl-react-ui';
 
 import { Link } from '../presentation/Link';
 

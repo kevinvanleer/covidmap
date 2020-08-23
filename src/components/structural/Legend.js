@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Flexbox, Text } from 'kvl-ui';
+import { Flexbox, Text } from 'kvl-react-ui';
 
 const prettyPrint = (number) => {
   if (number >= 1e6) {

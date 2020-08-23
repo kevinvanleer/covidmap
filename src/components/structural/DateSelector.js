@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 import 'rc-slider/assets/index.css';
 
-import { Text, Flexbox, SquareButton, Spacer } from 'kvl-ui';
+import { Text, Flexbox, SquareButton, Spacer } from 'kvl-react-ui';
 import { togglePlayPause } from '../../state/core/time.js';
 
 export const DateSelector = ({ date, setDate, withChart }) => {
