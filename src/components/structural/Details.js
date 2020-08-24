@@ -92,8 +92,8 @@ export const Details = ({ date, entity, collapsed }) => {
 
   return recentData ? (
     <Flexbox flexDirection="column">
-      <Flexbox inline>
-        <Flexbox flexDirection="column">
+      <Flexbox>
+        <Flexbox flexDirection="column" flexGrow={1}>
           <Text bold fontSize="label">
             {entity.displayName}
           </Text>
@@ -113,7 +113,6 @@ export const Details = ({ date, entity, collapsed }) => {
             ongoingCases={ongoingCases}
           />
         </Flexbox>
-        <Spacer flexGrow={1} />
         {selectedFeature != null ? (
           <SquareButton
             id="covid19-button-close-stats"
