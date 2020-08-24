@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -13,6 +13,7 @@ import {
   mapFinishedLoading,
   beginLoadingSources,
   sourcesFinishedLoading,
+  setHoveredFeatures,
 } from '../../state/ui/map.js';
 import { loadingStatus } from '../../state/util/loadingStatus.js';
 
@@ -90,7 +91,7 @@ const MapboxMap = ({
   );
   const population = useSelector((state) => state.core.usCovidData.population);
   const selectedGroup = useSelector((state) => state.ui.map.selectedLayerGroup);
-  const [hoveredFeatures, setHoveredFeatures] = useState([]);
+  const hoveredFeatures = useSelector((state) => state.ui.map.hoveredFeatures);
   const mapContainer = useRef(null);
 
   const filteredActiveLayers = activeLayers.filter((layer) =>
@@ -257,12 +258,14 @@ const MapboxMap = ({
         let removeFeatures = hoveredFeatures.slice(0, -1);
         removeFeatures.forEach((feature) => selectFeature(map, feature, false));
         let newArray = [...hoveredFeatures.slice(-1)];
-        setHoveredFeatures(newArray);
+        dispatch(setHoveredFeatures(newArray));
         if (e.features.length > 0) {
           const theFeature = e.features.find(
             (feature) => feature.layer.id === 'us-counties-base'
           );
-          setHoveredFeatures(newArray.concat([parseInt(theFeature.id)]));
+          dispatch(
+            setHoveredFeatures(newArray.concat([parseInt(theFeature.id)]))
+          );
           selectNewFeature(map, parseInt(theFeature.id));
         }
       }
@@ -273,6 +276,7 @@ const MapboxMap = ({
       hold,
       hoveredFeatures,
       setHoveredFeatures,
+      dispatch,
       selectNewFeature,
       selectFeature,
     ]

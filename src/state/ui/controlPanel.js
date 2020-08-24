@@ -8,6 +8,7 @@ const controlPanelSlice = createSlice({
     layersHidden: mql.matches,
     detailsHidden: mql.matches,
     collapsed: mql.matches,
+    showAbout: false,
   },
   reducers: {
     collapse: (state, action) => {
@@ -47,6 +48,9 @@ const controlPanelSlice = createSlice({
       }
       state.detailsHidden = action.payload;
     },
+    setShowAbout: (state, action) => {
+      state.showAbout = action.payload;
+    },
   },
 });
 
@@ -57,5 +61,6 @@ export const {
   showLayers,
   hideDetails,
   showDetails,
+  setShowAbout,
 } = controlPanelSlice.actions;
 export default controlPanelSlice.reducer;

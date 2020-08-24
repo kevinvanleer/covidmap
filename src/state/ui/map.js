@@ -14,6 +14,8 @@ const mapSlice = createSlice({
     layerGroups: layerGroups,
     layers: layers,
     selectedLayerGroup: layerGroups[0],
+    hoveredFeatures: [],
+    activeLayers: layers.map((layer) => layer.id),
   },
   reducers: {
     hold: (state) => {
@@ -55,6 +57,19 @@ const mapSlice = createSlice({
     selectLayerGroup: (state, action) => {
       state.selectedLayerGroup = action.payload;
     },
+    setHoveredFeatures: (state, action) => {
+      state.hoveredFeatures = action.payload;
+    },
+    setActiveLayers: (state, action) => {
+      state.activeLayers = action.payload;
+    },
+    updateActiveLayers: (state, action) => {
+      const layerId = action.payload;
+      const currentState = state.activeLayers.includes(layerId);
+      state.activeLayers = currentState
+        ? state.activeLayers.filter((item) => item !== layerId)
+        : [...state.activeLayers, layerId];
+    },
   },
 });
 
@@ -71,5 +86,8 @@ export const {
   beingLoadingLayers,
   layersFinishedLoading,
   selectLayerGroup,
+  setHoveredFeatures,
+  setActiveLayers,
+  updateActiveLayers,
 } = mapSlice.actions;
 export default mapSlice.reducer;

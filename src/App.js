@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { get, last } from 'lodash';
@@ -18,6 +18,8 @@ import FullscreenMap from './components/presentation/FullscreenMap.js';
 import { layers, sources } from './mapboxConfig.js';
 
 import { setCurrent } from './state/core/time.js';
+import { updateActiveLayers } from './state/ui/map.js';
+import { setShowAbout } from './state/ui/controlPanel.js';
 
 function App() {
   const dispatch = useDispatch();
@@ -25,6 +27,7 @@ function App() {
     (state) => state.core.apiServerStatus.aliveCheck
   );
   const collapsed = useSelector((state) => state.ui.controlPanel.collapsed);
+  const showAbout = useSelector((state) => state.ui.controlPanel.showAbout);
   const layersHidden = useSelector(
     (state) => state.ui.controlPanel.layersHidden
   );
@@ -34,25 +37,20 @@ function App() {
   const casesByCounty = useSelector(
     (state) => state.core.usCovidData.casesByCounty
   );
-  const [activeLayers, setActiveLayers] = useState(
-    layers.map((layer) => layer.id)
-  );
-  const [showAbout, setShowAbout] = useState(false);
+  const activeLayers = useSelector((state) => state.ui.map.activeLayers);
 
-  const onShowAbout = useCallback((show) => {
-    setShowAbout(show);
-  }, []);
-
-  const updateActiveLayers = useCallback(
-    (layerId) => {
-      const currentState = activeLayers.includes(layerId);
-      setActiveLayers(
-        currentState
-          ? activeLayers.filter((item) => item !== layerId)
-          : [...activeLayers, layerId]
-      );
+  const onShowAbout = useCallback(
+    (show) => {
+      dispatch(setShowAbout(show));
     },
-    [activeLayers]
+    [dispatch, setShowAbout]
+  );
+
+  const onUpdateActiveLayers = useCallback(
+    (layerId) => {
+      dispatch(updateActiveLayers(layerId));
+    },
+    [dispatch, updateActiveLayers]
   );
 
   useEffect(() => {
@@ -81,7 +79,7 @@ function App() {
       <ControlPanel
         layers={layers}
         activeLayers={activeLayers}
-        updateActiveLayers={updateActiveLayers}
+        updateActiveLayers={onUpdateActiveLayers}
         date={moment(date)}
         onSetDate={onSetDate}
         onShowAbout={() => onShowAbout(true)}
