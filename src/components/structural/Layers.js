@@ -21,14 +21,8 @@ export const Layers = ({
     <Flexbox flexDirection="column">
       {!collapsed ? (
         <>
-          <Flexbox>
-            <Text bold fontSize="label">
-              Layers
-            </Text>
-            <Spacer width="1em" />
-            <GroupSelect />
-          </Flexbox>
-          <Spacer height="0.5em" />
+          <GroupSelect />
+          <Spacer height="0.7em" />
         </>
       ) : null}
       <Flexbox flexWrap="wrap" wrapMargin="0.5em">

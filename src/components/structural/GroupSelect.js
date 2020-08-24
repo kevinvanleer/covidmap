@@ -25,6 +25,8 @@ export const GroupSelect = () => {
           backgroundColor={selectedGroup.name === group.name && '#777'}
         >
           <Text
+            centerAlign
+            flexGrow={1}
             padding="0.2em"
             key={group.name}
             fontSize="detail"
