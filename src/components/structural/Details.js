@@ -94,14 +94,27 @@ export const Details = ({ date, entity, collapsed }) => {
     <Flexbox flexDirection="column">
       <Flexbox>
         <Flexbox flexDirection="column" flexGrow={1}>
-          <Text bold fontSize="label">
-            {entity.displayName}
-          </Text>
-          <Text fontSize="detail">
-            {recentData.date
-              ? `reporting on ${recentData.date}`
-              : 'no reported cases'}
-          </Text>
+          <Flexbox>
+            <Flexbox flexDirection="column" flexGrow={1}>
+              <Text bold fontSize="label">
+                {entity.displayName}
+              </Text>
+              <Text fontSize="detail">
+                {recentData.date
+                  ? `reporting on ${recentData.date}`
+                  : 'no reported cases'}
+              </Text>
+            </Flexbox>
+            {selectedFeature != null ? (
+              <SquareButton
+                id="covid19-button-close-stats"
+                onClick={closeStats}
+                backgroundColor="#777"
+              >
+                <FontAwesomeIcon color="#eee" icon={faFlagUsa} fixedWidth />
+              </SquareButton>
+            ) : null}
+          </Flexbox>
           <Spacer height="0.5em" />
           <Stats
             population={population}
@@ -113,15 +126,6 @@ export const Details = ({ date, entity, collapsed }) => {
             ongoingCases={ongoingCases}
           />
         </Flexbox>
-        {selectedFeature != null ? (
-          <SquareButton
-            id="covid19-button-close-stats"
-            onClick={closeStats}
-            backgroundColor="#777"
-          >
-            <FontAwesomeIcon color="#eee" icon={faFlagUsa} fixedWidth />
-          </SquareButton>
-        ) : null}
       </Flexbox>
       <AreaChart
         data={data}
