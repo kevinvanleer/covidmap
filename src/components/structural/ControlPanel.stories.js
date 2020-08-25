@@ -1,6 +1,5 @@
 import React from 'react';
 import moment from 'moment';
-import { faCat, faDog } from '@fortawesome/free-solid-svg-icons';
 import { ControlPanel } from './ControlPanel.js';
 import { covidData } from '../../test/caseData.js';
 import { layers } from '../../mapboxConfig.js';

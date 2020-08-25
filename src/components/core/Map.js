@@ -275,7 +275,6 @@ const MapboxMap = ({
       initialized,
       hold,
       hoveredFeatures,
-      setHoveredFeatures,
       dispatch,
       selectNewFeature,
       selectFeature,

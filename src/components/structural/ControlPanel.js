@@ -127,11 +127,14 @@ export const ControlPanel = ({
         setDate={onSetDate}
         withChart={!detailsHidden}
       />
-      <Flexbox alignItems="flex-end">
-        <LoadingIndicator progress={progress}>
-          {loadingMessage}
-        </LoadingIndicator>
-      </Flexbox>
+      {loadingMessage ? (
+        <Flexbox flexDirection="column">
+          <Spacer height="1em" />
+          <LoadingIndicator progress={progress}>
+            {loadingMessage}
+          </LoadingIndicator>
+        </Flexbox>
+      ) : null}
     </FloatingPanel>
   );
 };
