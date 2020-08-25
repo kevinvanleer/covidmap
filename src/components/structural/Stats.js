@@ -97,7 +97,7 @@ export const Stats = ({
           <StatsItem
             value={parseInt(ongoingCases)}
             label="ongoing cases"
-            popupDescription="Cases reported in the past 14 days"
+            popupDescription="Cases reported within 14 days of the current date"
             showPopup={showPopup.ongoing}
             onShowPopup={() => onShowPopup('ongoing', !showPopup.ongoing)}
             bottom
@@ -108,7 +108,7 @@ export const Stats = ({
           <StatsItem
             value={parseInt(get(recentData, 'deaths', 0))}
             label="total deaths"
-            popupDescription="As reported by The New York Times"
+            popupDescription="Total deaths as reported by The New York Times on the current date"
             showPopup={showPopup.deaths}
             onShowPopup={() => onShowPopup('deaths', !showPopup.deaths)}
             middle
@@ -117,7 +117,7 @@ export const Stats = ({
           <StatsItem
             value={parseInt(get(recentData, 'cases', 0))}
             label="total cases"
-            popupDescription="As reported by The New York Times"
+            popupDescription="Total cases as reported by The New York Times on the current date"
             showPopup={showPopup.cases}
             onShowPopup={() => onShowPopup('cases', !showPopup.cases)}
             bottom
