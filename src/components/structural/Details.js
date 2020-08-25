@@ -2,13 +2,14 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { get, findLast, set, isEmpty } from 'lodash';
+import { get, findLast, findLastIndex, set, isEmpty } from 'lodash';
 import { Flexbox, Spacer, Text, SquareButton } from 'kvl-react-ui';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFlagUsa } from '@fortawesome/free-solid-svg-icons';
 
 import { Stats } from './Stats.js';
 import AreaChart from '../core/d3AreaChart.js';
+import BarChart from '../core/d3BarChart.js';
 
 import { releaseHold, setSelectedFeature } from '../../state/ui/map.js';
 
@@ -16,6 +17,7 @@ const usPopEst2019 = { POPESTIMATE2019: 328239523 };
 
 export const Details = ({ date, entity, collapsed }) => {
   const dispatch = useDispatch();
+  const selectedGroup = useSelector((state) => state.ui.map.selectedLayerGroup);
   const selectedFeature = useSelector((state) => state.ui.map.selectedFeature);
   const populations = useSelector((state) => state.core.usCovidData.population);
   const population = selectedFeature
@@ -26,6 +28,8 @@ export const Details = ({ date, entity, collapsed }) => {
   let deathRate = {};
   let newCases = 0;
   let ongoingCases = 0;
+  let casesPerDay = [];
+  let xLabel = moment.monthsShort(0);
 
   if (!isEmpty(data)) {
     recentData = findLast(
@@ -37,11 +41,12 @@ export const Details = ({ date, entity, collapsed }) => {
       (status) =>
         status.date <= moment(date).subtract(1, 'days').format('YYYY-MM-DD')
     );
-    const twoWeekLagData = findLast(
+    const twoWeekLagIndex = findLastIndex(
       data,
       (status) =>
         status.date <= moment(date).subtract(2, 'weeks').format('YYYY-MM-DD')
     );
+    const twoWeekLagData = data[twoWeekLagIndex];
     const fourWeekLagData = findLast(
       data,
       (status) =>
@@ -71,6 +76,28 @@ export const Details = ({ date, entity, collapsed }) => {
     newCases = get(recentData, 'cases', 0) - get(yesterday, 'cases', 0);
     ongoingCases =
       get(recentData, 'cases', 0) - get(twoWeekLagData, 'cases', 0);
+
+    if (twoWeekLagIndex >= 0) {
+      xLabel = moment.monthsShort(
+        parseInt(get(twoWeekLagData, 'date', '0-1').split('-')[1]) - 1
+      );
+      for (let idx = twoWeekLagIndex; idx < twoWeekLagIndex + 14; ++idx) {
+        let dateArray = data[idx].date.split('-');
+
+        casesPerDay.push({
+          date:
+            dateArray[2] === '01'
+              ? moment.monthsShort(parseInt(dateArray[1]) - 1)
+              : dateArray[2],
+          value:
+            ((idx === 0
+              ? data[idx].cases
+              : data[idx].cases - data[idx - 1].cases) /
+              get(population, 'POPESTIMATE2019')) *
+            100000,
+        });
+      }
+    }
   } else {
     recentData = {
       date: '2020-01-01',
@@ -127,13 +154,22 @@ export const Details = ({ date, entity, collapsed }) => {
           />
         </Flexbox>
       </Flexbox>
-      <AreaChart
-        data={data}
-        currentDate={date}
-        height={collapsed ? 100 : undefined}
-        currentValue={parseInt(get(recentData, 'cases', 0))}
-        showIntercept={true}
-      />
+      {selectedGroup.name.toLowerCase() === 'total' ? (
+        <AreaChart
+          data={data}
+          currentDate={date}
+          height={collapsed ? 100 : undefined}
+          currentValue={parseInt(get(recentData, 'cases', 0))}
+          showIntercept={true}
+        />
+      ) : (
+        <BarChart
+          data={casesPerDay}
+          height={collapsed ? 100 : undefined}
+          yLabel="cases in 100k"
+          xLabel={xLabel}
+        />
+      )}
     </Flexbox>
   ) : null;
 };
