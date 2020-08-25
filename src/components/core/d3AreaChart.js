@@ -119,9 +119,9 @@ const AreaChart = ({
       svg.append('g').call(ycAxis);
       //svg.append('g').call(ymAxis);
 
-      const radius = 2;
       const markerColor = '#ccc';
-      if (!isEmpty(data)) {
+      if (currentDate && !isEmpty(data)) {
+        const radius = 2;
         svg
           .append('line')
           .attr('x1', x(currentDate))
