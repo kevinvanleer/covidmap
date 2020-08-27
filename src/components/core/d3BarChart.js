@@ -127,6 +127,7 @@ BarChart.propTypes = {
   data: PropTypes.array,
   color: PropTypes.string,
   height: PropTypes.number,
+  xLabel: PropTypes.string,
   yLabel: PropTypes.string,
   activeLayers: PropTypes.array,
   setActiveLayer: PropTypes.func,

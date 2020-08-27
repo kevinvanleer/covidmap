@@ -16,7 +16,7 @@ const prettyPrint = (number) => {
 
 const boxDimension = '1.5rem';
 
-export const CompactLegend = ({ label, fillColor, gradient }) => (
+export const CompactLegend = ({ fillColor, gradient }) => (
   <Flexbox flexDirection="row" backgroundColor="#eee">
     {gradient.map((step) => (
       <Text
@@ -36,7 +36,6 @@ export const CompactLegend = ({ label, fillColor, gradient }) => (
 );
 
 CompactLegend.propTypes = {
-  label: PropTypes.string,
   fillColor: PropTypes.string,
   gradient: PropTypes.array,
 };

@@ -10,7 +10,7 @@ import 'rc-slider/assets/index.css';
 import { Text, Flexbox, SquareButton, Spacer } from 'kvl-react-ui';
 import { togglePlayPause } from '../../state/core/time.js';
 
-export const DateSelector = ({ date, setDate, withChart }) => {
+export const DateSelector = ({ setDate, withChart }) => {
   const dispatch = useDispatch();
   const timeState = useSelector((state) => state.core.time);
   return (
@@ -42,7 +42,6 @@ export const DateSelector = ({ date, setDate, withChart }) => {
 };
 
 DateSelector.propTypes = {
-  date: PropTypes.object,
   setDate: PropTypes.func,
   withChart: PropTypes.bool,
 };

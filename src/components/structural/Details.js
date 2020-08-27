@@ -16,7 +16,6 @@ import { releaseHold, setSelectedFeature } from '../../state/ui/map.js';
 const usPopEst2019 = { POPESTIMATE2019: 328239523 };
 
 const fillCasesPerDay = (endDate, count) => {
-  console.debug('called fillCasesPerDay');
   let fillArray = [];
   for (let idx = 0; idx < count; ++idx) {
     let thisDate = moment(endDate).subtract(idx, 'days');
@@ -40,7 +39,6 @@ const getCasesPerDay = (
   endDate,
   count
 ) => {
-  console.debug('called getCasesPerDay');
   let casesPerDay = [];
   const start = startIndex >= 1 ? startIndex : 1;
   const end = endIndex >= 1 ? endIndex : 1;
@@ -50,7 +48,6 @@ const getCasesPerDay = (
   }
   if (endIndex >= 0) {
     for (let idx = start; idx <= end; ++idx) {
-      console.debug({ data, idx, start, end });
       let dateArray = get(data, [idx, 'date']).split('-');
 
       casesPerDay.push({

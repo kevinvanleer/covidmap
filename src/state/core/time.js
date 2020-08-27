@@ -53,7 +53,7 @@ const timeSlice = createSlice({
       }
       state.current = newTime;
     },
-    togglePlayPause: (state, action) => {
+    togglePlayPause: (state) => {
       state.pause = !state.pause;
       state.rate = state.pause ? 0 : 864000;
     },
