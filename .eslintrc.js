@@ -22,6 +22,7 @@ module.exports = {
     'no-unused-expressions': 'error',
     'no-unused-vars': 'error',
     'unused-imports/no-unused-imports': 'error',
+    'no-console': 'error',
   },
   settings: {
     react: {
