@@ -14,11 +14,14 @@ module.exports = {
     'plugin:prettier/recommended',
     'plugin:eslint-plugin-json/recommended',
   ],
-  plugins: ['prettier'],
+  plugins: ['prettier', 'unused-imports'],
   // add your custom rules here
   rules: {
     'react/prop-types': 1,
     'prettier/prettier': 'error',
+    'no-unused-expressions': 'error',
+    'no-unused-vars': 'error',
+    'unused-imports/no-unused-imports': 'error',
   },
   settings: {
     react: {
