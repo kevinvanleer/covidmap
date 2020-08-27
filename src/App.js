@@ -43,14 +43,14 @@ function App() {
     (show) => {
       dispatch(setShowAbout(show));
     },
-    [dispatch, setShowAbout]
+    [dispatch]
   );
 
   const onUpdateActiveLayers = useCallback(
     (layerId) => {
       dispatch(updateActiveLayers(layerId));
     },
-    [dispatch, updateActiveLayers]
+    [dispatch]
   );
 
   useEffect(() => {

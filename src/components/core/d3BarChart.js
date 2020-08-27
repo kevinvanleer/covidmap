@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
-import Color from 'color';
 import { isEmpty } from 'lodash';
 
 const BarChart = ({
@@ -102,7 +101,16 @@ const BarChart = ({
           .attr('fill', '#eee');
       }
     }
-  }, [data, color, activeLayers, setActiveLayer]);
+  }, [
+    data,
+    color,
+    activeLayers,
+    setActiveLayer,
+    height,
+    xLabel,
+    yLabel,
+    yTicks,
+  ]);
 
   return (
     <svg
