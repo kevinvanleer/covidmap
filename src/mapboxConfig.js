@@ -3,9 +3,70 @@ import {
   faVirus,
   faViruses,
   faHeadSideCough,
+  faBiohazard,
 } from '@fortawesome/free-solid-svg-icons';
 
+/*
+const fluCasesEst2019 = 35.5e6;
+const fluDeathsEst2019 = 34200;
+const fluCasesPerCapita = 35.5 / 328.2;
+const fluDeathsPerCapita = 34200 / 328.2e6;
+*/
+
 export const legendConfig = {
+  casesVsFlu: {
+    name: 'Cases vs Flu',
+    color: '#f00',
+    gradient: [
+      {
+        magnitude: '0%',
+        opacity: 0.8,
+        color: '#3bebff',
+      },
+      {
+        magnitude: '5%',
+        opacity: 0.4,
+        color: '#3bebff',
+      },
+      {
+        magnitude: '10%',
+        color: '#ffd400',
+        opacity: 0,
+      },
+      {
+        magnitude: '15%',
+        color: '#ffd400',
+        opacity: 0.4,
+      },
+      {
+        magnitude: '20%',
+        color: '#ffd400',
+        opacity: 0.8,
+      },
+    ],
+  },
+  infectionRate: {
+    name: 'Infection Rate',
+    color: '#ff9a00',
+    gradient: [
+      {
+        magnitude: '1%',
+        opacity: 0.1,
+      },
+      {
+        magnitude: '2%',
+        opacity: 0.2,
+      },
+      {
+        magnitude: '5%',
+        opacity: 0.5,
+      },
+      {
+        magnitude: '20%',
+        opacity: 0.8,
+      },
+    ],
+  },
   deaths: {
     name: 'Deaths',
     color: '#f00',
@@ -114,6 +175,156 @@ export const sources = [
   },
 ];
 export const layers = [
+  {
+    legend: {
+      label: 'Cases vs Avg',
+      icon: faBiohazard,
+      fillColor: legendConfig.casesVsFlu.color,
+      gradient: legendConfig.casesVsFlu.gradient,
+    },
+    id: 'us-county-cases-vs-avg',
+    type: 'fill',
+    source: 'us-counties',
+    'source-layer': 'us-counties-500k-a4l482',
+    paint: {
+      'fill-color': [
+        'interpolate',
+        ['linear'],
+        ['feature-state', 'casesPerCapita'],
+        0,
+        ['rgba', 58, 235, 255, 0.8],
+        0.01799,
+        ['rgba', 58, 235, 255, 0],
+        0.018,
+        ['rgba', 255, 212, 0, 0],
+        0.18,
+        ['rgba', 255, 212, 0, 0.8],
+        1,
+        ['rgba', 255, 212, 0, 0.8],
+      ],
+    },
+  },
+  {
+    legend: {
+      label: 'Deaths vs Avg',
+      icon: faBiohazard,
+      fillColor: legendConfig.casesVsFlu.color,
+      gradient: legendConfig.casesVsFlu.gradient,
+    },
+    id: 'us-county-deaths-vs-avg',
+    type: 'fill',
+    source: 'us-counties',
+    'source-layer': 'us-counties-500k-a4l482',
+    paint: {
+      'fill-color': [
+        'interpolate',
+        ['linear'],
+        ['feature-state', 'deathsPerCapita'],
+        0,
+        ['rgba', 58, 235, 255, 0.8],
+        5.599e-4,
+        ['rgba', 58, 235, 255, 0],
+        5.6e-4,
+        ['rgba', 255, 212, 0, 0],
+        5.6e-3,
+        ['rgba', 255, 212, 0, 0.8],
+        1,
+        ['rgba', 255, 212, 0, 0.8],
+      ],
+    },
+  },
+  {
+    legend: {
+      label: 'Deaths vs Flu',
+      icon: faBiohazard,
+      fillColor: legendConfig.casesVsFlu.color,
+      gradient: legendConfig.casesVsFlu.gradient,
+    },
+    id: 'us-county-deaths-vs-flu',
+    type: 'fill',
+    source: 'us-counties',
+    'source-layer': 'us-counties-500k-a4l482',
+    paint: {
+      'fill-color': [
+        'interpolate',
+        ['linear'],
+        ['feature-state', 'deathsPerCapita'],
+        0,
+        ['rgba', 58, 235, 255, 0.8],
+        9e-5,
+        ['rgba', 58, 235, 255, 0],
+        1e-4,
+        ['rgba', 255, 212, 0, 0],
+        1e-3,
+        ['rgba', 255, 212, 0, 0.8],
+        1,
+        ['rgba', 255, 212, 0, 0.8],
+      ],
+    },
+  },
+  {
+    legend: {
+      label: 'Cases vs Flu',
+      icon: faBiohazard,
+      fillColor: legendConfig.casesVsFlu.color,
+      gradient: legendConfig.casesVsFlu.gradient,
+    },
+    id: 'us-county-cases-vs-flu',
+    type: 'fill',
+    source: 'us-counties',
+    'source-layer': 'us-counties-500k-a4l482',
+    paint: {
+      'fill-color': [
+        'interpolate',
+        ['linear'],
+        ['feature-state', 'casesPerCapita'],
+        0,
+        ['rgba', 58, 235, 255, 0.8],
+        0.09,
+        ['rgba', 58, 235, 255, 0],
+        0.1,
+        ['rgba', 255, 212, 0, 0],
+        0.2,
+        ['rgba', 255, 212, 0, 0.8],
+        1,
+        ['rgba', 255, 212, 0, 0.8],
+      ],
+    },
+  },
+  {
+    legend: {
+      label: 'Infection rate',
+      icon: faBiohazard,
+      fillColor: legendConfig.infectionRate.color,
+      gradient: legendConfig.infectionRate.gradient,
+    },
+    id: 'us-county-infection-rate',
+    type: 'fill',
+    source: 'us-counties',
+    'source-layer': 'us-counties-500k-a4l482',
+    paint: {
+      'fill-color': legendConfig.infectionRate.color,
+      'fill-opacity': [
+        'interpolate',
+        ['linear'],
+        ['feature-state', 'infectionRate'],
+        0,
+        0,
+        0.01,
+        0.1,
+        0.02,
+        0.2,
+        0.05,
+        0.5,
+        0.1,
+        0.7,
+        0.2,
+        0.8,
+        1,
+        0.8,
+      ],
+    },
+  },
   {
     legend: {
       label: 'Deaths',
@@ -316,7 +527,7 @@ export const layers = [
     source: 'us-county-centroids',
     layout: {
       'icon-image': 'corona-green',
-      'icon-size': ['interpolate', ['linear'], ['zoom'], 3, 0.3, 20, 1],
+      'icon-size': ['interpolate', ['linear'], ['zoom'], 3, 0.2, 20, 1],
       'icon-ignore-placement': true,
     },
     paint: {
@@ -358,6 +569,18 @@ export const layerGroups = [
       'us-county-total-cases',
       'us-hotspots',
       'us-first-case',
+      ...getUniversalLayers(),
+    ],
+  },
+  {
+    name: 'Misc',
+    layers: [
+      'us-county-infection-rate',
+      'us-county-cases-vs-flu',
+      'us-county-cases-vs-avg',
+      'us-county-deaths-vs-flu',
+      'us-county-deaths-vs-avg',
+      'us-per-capita-hotspots',
       ...getUniversalLayers(),
     ],
   },

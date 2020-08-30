@@ -23,7 +23,7 @@ export const Legend = ({ fillColor, gradient }) => (
           key={step.magnitude}
           height={boxDimension}
           width={boxDimension}
-          backgroundColor={fillColor}
+          backgroundColor={step.color || fillColor}
           opacity={step.opacity}
         />
       ))}

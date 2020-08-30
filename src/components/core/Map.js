@@ -52,6 +52,8 @@ const choroplethState = (population) => (state, date) => {
     deathRate:
       parseInt(get(recentData, 'deaths', 0)) /
       parseInt(get(recentData, 'cases', 0)),
+    infectionRate:
+      population > 0 ? parseInt(get(recentData, 'cases', 0)) / population : 0,
   };
 };
 

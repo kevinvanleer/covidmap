@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Flexbox, Text } from 'kvl-react-ui';
+import { Flexbox, Text, Divider } from 'kvl-react-ui';
 
 import { selectLayerGroup } from '../../state/ui/map';
 
@@ -11,30 +11,32 @@ export const GroupSelect = () => {
   let maxLength = 0;
 
   groups.forEach(
-    (group) => (maxLength = Math.max(group.layers.length, maxLength))
+    (group) => (maxLength = Math.max(group.name.length, maxLength))
   );
   return (
     <Flexbox style={{ border: '1px solid #777' }} flexGrow={1}>
-      {groups.map((group) => (
-        <Flexbox
-          flexGrow={1}
-          key={group.name}
-          minWidth={`${maxLength + 5}ch`}
-          justifyContent="center"
-          alignItems="center"
-          backgroundColor={selectedGroup.name === group.name && '#777'}
-        >
-          <Text
-            centerAlign
+      {groups.map((group, idx) => (
+        <React.Fragment key={`${group.name}-${idx}`}>
+          <Flexbox
             flexGrow={1}
-            padding="0.2em"
-            key={group.name}
-            fontSize="detail"
-            onClick={() => dispatch(selectLayerGroup(group))}
+            minWidth={`${maxLength}ch`}
+            justifyContent="center"
+            alignItems="center"
+            backgroundColor={selectedGroup.name === group.name && '#777'}
           >
-            {group.name.toUpperCase()}
-          </Text>
-        </Flexbox>
+            <Text
+              centerAlign
+              flexGrow={1}
+              padding="0.2em"
+              key={group.name}
+              fontSize="detail"
+              onClick={() => dispatch(selectLayerGroup(group))}
+            >
+              {group.name.toUpperCase()}
+            </Text>
+          </Flexbox>
+          {idx !== groups.length - 1 && <Divider vertical />}
+        </React.Fragment>
       ))}
     </Flexbox>
   );

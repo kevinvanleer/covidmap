@@ -11,6 +11,7 @@ export const LayerItem = styled(
         id={`covidmap-button-layer-item-${config.label.toLowerCase()}`}
         onClick={onClick}
         backgroundColor={active ? '#777' : '#333'}
+        title={config.label}
       >
         <FontAwesomeIcon
           size={collapsed ? 'sm' : 'lg'}

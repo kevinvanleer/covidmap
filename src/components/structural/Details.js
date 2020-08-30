@@ -194,20 +194,20 @@ export const Details = ({ date, entity, collapsed }) => {
           />
         </Flexbox>
       </Flexbox>
-      {selectedGroup.name.toLowerCase() === 'total' ? (
+      {selectedGroup.name.toLowerCase() === 'per capita' ? (
+        <BarChart
+          data={casesPerDay}
+          height={collapsed ? 100 : undefined}
+          yLabel="cases in 100k"
+          xLabel={xLabel}
+        />
+      ) : (
         <AreaChart
           data={data}
           currentDate={date}
           height={collapsed ? 100 : undefined}
           currentValue={parseInt(get(recentData, 'cases', 0))}
           showIntercept={true}
-        />
-      ) : (
-        <BarChart
-          data={casesPerDay}
-          height={collapsed ? 100 : undefined}
-          yLabel="cases in 100k"
-          xLabel={xLabel}
         />
       )}
     </Flexbox>
