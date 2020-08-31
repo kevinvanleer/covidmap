@@ -92,7 +92,9 @@ function App() {
         activeLayers={activeLayers}
         casesByCounty={casesByCounty}
       />
-      {collapsed || layersHidden ? <LegendBox /> : null}
+      {collapsed || layersHidden ? (
+        <LegendBox activeLayers={activeLayers} />
+      ) : null}
       {showAbout ? (
         <Flexbox position="absolute" zIndex={100} maxHeight="100%">
           <About onHide={() => onShowAbout(false)} />
