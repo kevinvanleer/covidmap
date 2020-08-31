@@ -19,27 +19,58 @@ export const legendConfig = {
     color: '#f00',
     gradient: [
       {
-        magnitude: '0%',
+        magnitude: 'FLU',
         opacity: 0.8,
         color: '#3bebff',
       },
       {
-        magnitude: '5%',
+        magnitude: '',
         opacity: 0.4,
         color: '#3bebff',
       },
       {
-        magnitude: '10%',
+        magnitude: '0',
         color: '#ffd400',
         opacity: 0,
       },
       {
-        magnitude: '15%',
+        magnitude: '',
         color: '#ffd400',
         opacity: 0.4,
       },
       {
-        magnitude: '20%',
+        magnitude: 'CVD',
+        color: '#ffd400',
+        opacity: 0.8,
+      },
+    ],
+  },
+  casesVsAvg: {
+    name: 'Cases vs Avg',
+    color: '#f00',
+    gradient: [
+      {
+        magnitude: 'LOW',
+        opacity: 0.8,
+        color: '#3bebff',
+      },
+      {
+        magnitude: '',
+        opacity: 0.4,
+        color: '#3bebff',
+      },
+      {
+        magnitude: 'AVG',
+        color: '#ffd400',
+        opacity: 0,
+      },
+      {
+        magnitude: '',
+        color: '#ffd400',
+        opacity: 0.4,
+      },
+      {
+        magnitude: 'HIGH',
         color: '#ffd400',
         opacity: 0.8,
       },
@@ -54,12 +85,12 @@ export const legendConfig = {
         opacity: 0.1,
       },
       {
-        magnitude: '2%',
-        opacity: 0.2,
-      },
-      {
         magnitude: '5%',
         opacity: 0.5,
+      },
+      {
+        magnitude: '10%',
+        opacity: 0.7,
       },
       {
         magnitude: '20%',
@@ -179,8 +210,8 @@ export const layers = [
     legend: {
       label: 'Cases vs Avg',
       icon: faBiohazard,
-      fillColor: legendConfig.casesVsFlu.color,
-      gradient: legendConfig.casesVsFlu.gradient,
+      fillColor: legendConfig.casesVsAvg.color,
+      gradient: legendConfig.casesVsAvg.gradient,
     },
     id: 'us-county-cases-vs-avg',
     type: 'fill',
@@ -208,8 +239,8 @@ export const layers = [
     legend: {
       label: 'Deaths vs Avg',
       icon: faBiohazard,
-      fillColor: legendConfig.casesVsFlu.color,
-      gradient: legendConfig.casesVsFlu.gradient,
+      fillColor: legendConfig.casesVsAvg.color,
+      gradient: legendConfig.casesVsAvg.gradient,
     },
     id: 'us-county-deaths-vs-avg',
     type: 'fill',
