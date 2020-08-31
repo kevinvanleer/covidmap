@@ -197,6 +197,7 @@ const AreaChart = ({
 
 AreaChart.propTypes = {
   height: PropTypes.number,
+  width: PropTypes.number,
   data: PropTypes.array,
   currentDate: PropTypes.object,
   currentValue: PropTypes.number,

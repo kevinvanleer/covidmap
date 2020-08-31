@@ -56,15 +56,34 @@ const getCasesPerDay = (
             ? moment.monthsShort(parseInt(dateArray[1]) - 1)
             : dateArray[2],
         value:
-          ((idx === 0
-            ? data[idx].cases
-            : data[idx].cases - data[idx - 1].cases) /
-            get(population, 'POPESTIMATE2019')) *
-          100000,
+          Math.max(
+            (idx === 0
+              ? data[idx].cases
+              : data[idx].cases - data[idx - 1].cases) /
+              get(population, 'POPESTIMATE2019'),
+            0
+          ) * 1e5,
       });
     }
   }
   return casesPerDay;
+};
+
+const getNationalPerCapitaAverage = (date, totals, population) => {
+  if (totals) {
+    const last = findLast(
+      totals,
+      (status) => status.date <= moment(date).format('YYYY-MM-DD')
+    );
+    const thirty = findLast(
+      totals,
+      (status) =>
+        status.date <= moment(date).subtract(30, 'days').format('YYYY-MM-DD')
+    );
+    const casesPerDay = get(last, 'cases', 0) - get(thirty, 'cases', 0) / 30;
+    return (casesPerDay / population) * 1e3;
+  }
+  return NaN;
 };
 
 export const Details = ({ date, entity, collapsed }) => {
@@ -72,6 +91,7 @@ export const Details = ({ date, entity, collapsed }) => {
   const selectedGroup = useSelector((state) => state.ui.map.selectedLayerGroup);
   const selectedFeature = useSelector((state) => state.ui.map.selectedFeature);
   const populations = useSelector((state) => state.core.usCovidData.population);
+  const totals = useSelector((state) => state.core.usCovidData.totals);
   const population = selectedFeature
     ? populations[selectedFeature]
     : usPopEst2019;
@@ -197,6 +217,11 @@ export const Details = ({ date, entity, collapsed }) => {
       {selectedGroup.name.toLowerCase() === 'per capita' ? (
         <BarChart
           data={casesPerDay}
+          average={getNationalPerCapitaAverage(
+            date,
+            totals,
+            parseInt(get(usPopEst2019, 'POPESTIMATE2019'))
+          )}
           height={collapsed ? 100 : undefined}
           width={325}
           yLabel="cases in 100k"

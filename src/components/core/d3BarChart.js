@@ -5,6 +5,7 @@ import { isEmpty } from 'lodash';
 
 const BarChart = ({
   data,
+  average,
   xLabel,
   yLabel,
   height,
@@ -100,6 +101,27 @@ const BarChart = ({
           .attr('font-size', '20px')
           .attr('fill', '#eee');
       }
+
+      if (average !== undefined) {
+        svg
+          .append('line')
+          .attr('x1', margin.left)
+          .attr('x2', width - margin.right)
+          .attr('y1', y(average))
+          .attr('y2', y(average))
+          .style('stroke-width', 1)
+          .style('stroke', '#ccc')
+          .style('fill', 'none');
+        svg
+          .append('text')
+          .attr('x', margin.left)
+          .attr('y', y(average) + (y(average) < 155 ? 10 : -3))
+          .text('30-DAY NATIONAL AVERAGE')
+          .attr('text-anchor', 'left')
+          .attr('font-family', 'sans-serif')
+          .attr('font-size', '8px')
+          .attr('fill', '#ccc');
+      }
     }
   }, [
     data,
@@ -110,6 +132,7 @@ const BarChart = ({
     xLabel,
     yLabel,
     yTicks,
+    average,
   ]);
 
   return (
@@ -127,6 +150,8 @@ BarChart.propTypes = {
   data: PropTypes.array,
   color: PropTypes.string,
   height: PropTypes.number,
+  width: PropTypes.number,
+  average: PropTypes.number,
   xLabel: PropTypes.string,
   yLabel: PropTypes.string,
   activeLayers: PropTypes.array,
