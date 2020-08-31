@@ -198,6 +198,7 @@ export const Details = ({ date, entity, collapsed }) => {
         <BarChart
           data={casesPerDay}
           height={collapsed ? 100 : undefined}
+          width={325}
           yLabel="cases in 100k"
           xLabel={xLabel}
         />
@@ -206,6 +207,7 @@ export const Details = ({ date, entity, collapsed }) => {
           data={data}
           currentDate={date}
           height={collapsed ? 100 : undefined}
+          width={325}
           currentValue={parseInt(get(recentData, 'cases', 0))}
           showIntercept={true}
         />

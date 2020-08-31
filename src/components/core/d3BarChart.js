@@ -8,12 +8,12 @@ const BarChart = ({
   xLabel,
   yLabel,
   height,
+  width,
   color,
   activeLayers,
   setActiveLayer,
 }) => {
   const d3svg = useRef(null);
-  const width = 300;
   const yTicks = height * (7 / 200);
 
   useEffect(() => {
@@ -138,6 +138,7 @@ BarChart.defaultProps = {
   setActiveLayer: () => null,
   color: 'steelblue',
   height: 200,
+  width: 300,
 };
 
 export default BarChart;

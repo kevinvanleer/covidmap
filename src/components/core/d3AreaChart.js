@@ -6,13 +6,13 @@ import { last, get, isEmpty } from 'lodash';
 
 const AreaChart = ({
   height,
+  width,
   data,
   currentDate,
   currentValue,
   showIntercept,
 }) => {
   const d3svg = useRef(null);
-  const width = 300;
 
   const yTicks = height * (7 / 200);
 
@@ -205,6 +205,7 @@ AreaChart.propTypes = {
 
 AreaChart.defaultProps = {
   height: 200,
+  width: 300,
   data: [],
   currentValue: 0,
 };

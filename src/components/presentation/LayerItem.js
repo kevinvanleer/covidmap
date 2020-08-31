@@ -6,7 +6,7 @@ import { CompactLegend as Legend } from '../structural/CompactLegend.js';
 
 export const LayerItem = styled(
   ({ className, onClick, config, active, collapsed }) => (
-    <Flexbox alignItems="center" onClick={onClick}>
+    <Flexbox flexGrow={collapsed ? 0 : 1} alignItems="center" onClick={onClick}>
       <SquareButton
         id={`covidmap-button-layer-item-${config.label.toLowerCase()}`}
         onClick={onClick}
