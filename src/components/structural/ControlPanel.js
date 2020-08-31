@@ -118,7 +118,7 @@ export const ControlPanel = ({
             updateActiveLayers={updateActiveLayers}
             collapsed={collapsed}
           />
-          <Divider horizontal margin="1em 0 0.5em 0" />
+          <Divider horizontal margin="0.5em 0" />
         </>
       ) : null}
       {!detailsHidden ? (
