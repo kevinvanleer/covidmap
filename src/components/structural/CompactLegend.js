@@ -22,7 +22,7 @@ export const CompactLegend = ({ fillColor, gradient }) => {
 
   return (
     <Flexbox flexDirection="row" backgroundColor="#eee">
-      {gradient.map((step) => {
+      {gradient.map((step, idx) => {
         const backgroundColor = Color(step.color || fillColor);
         const effectiveBackgroundColor = Color(
           backgroundColor.array().map((dim) => 238 - step.opacity * (238 - dim))
@@ -35,7 +35,7 @@ export const CompactLegend = ({ fillColor, gradient }) => {
         );
         return (
           <Text
-            key={step.magnitude}
+            key={`${step.magnitude}-${idx}`}
             height="0.6rem"
             width={boxDimension}
             backgroundColor={backgroundColor.alpha(step.opacity)}
