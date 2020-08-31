@@ -9926,10 +9926,10 @@ known-css-properties@^0.19.0:
   resolved "https://registry.yarnpkg.com/known-css-properties/-/known-css-properties-0.19.0.tgz#5d92b7fa16c72d971bda9b7fe295bdf61836ee5b"
   integrity sha512-eYboRV94Vco725nKMlpkn3nV2+96p9c3gKXRsYqAJSswSENvBhN7n5L+uDhY58xQa0UukWsDMTGELzmD8Q+wTA==
 
-kvl-react-ui@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/kvl-react-ui/-/kvl-react-ui-0.3.1.tgz#fd0f59644d9530c51a6d57c6f8318882c93c3a90"
-  integrity sha512-Ng/ObJ2kvmNlc5jdoumSA97xdp4HjLW1ZivlFXcw5UbDi8s/RivhJ3Ts5tt6zLcCNXKmbqpjHAJnzQxYkVTjYA==
+kvl-react-ui@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/kvl-react-ui/-/kvl-react-ui-0.3.2.tgz#0f49bc959a5a03a2e128a2dffd5d3ed3d828f37f"
+  integrity sha512-oLJ0zaZTMi6MYE4KgKiaNfr3+985p4KwkWX7HZrG58eLR2xosaPr+5GkhwCewS8mRBLJfeUQxFTHVtzdrkTeqg==
 
 last-call-webpack-plugin@^3.0.0:
   version "3.0.0"

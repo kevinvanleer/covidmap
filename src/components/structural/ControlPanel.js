@@ -2,13 +2,19 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faInfoCircle,
   faLayerGroup,
   faChartBar,
 } from '@fortawesome/free-solid-svg-icons';
-import { Flexbox, Spacer, Text, SquareButton, Divider } from 'kvl-react-ui';
+import {
+  Flexbox,
+  Spacer,
+  Text,
+  SquareButton,
+  Divider,
+  Icon,
+} from 'kvl-react-ui';
 import { Details, Layers, DateSelector, DrawerButton } from '.';
 import { FloatingPanel } from '../presentation/FloatingPanel';
 import { ToggleButton } from '../presentation/ToggleButton';
@@ -73,7 +79,7 @@ export const ControlPanel = ({
             onClick={onShowAbout}
             backgroundColor="#777"
           >
-            <FontAwesomeIcon color="#eee" icon={faInfoCircle} />
+            <Icon color="#eee" icon={faInfoCircle} fixedWidth />
           </SquareButton>
           <Spacer width="0.1em" flexGrow={1} />
           <ToggleButton
