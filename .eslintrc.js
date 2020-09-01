@@ -6,7 +6,7 @@ module.exports = {
   },
   parserOptions: {
     parser: 'babel-eslint',
-    ecmaVersion: 2018,
+    ecmaVersion: 2020,
     sourceType: 'module',
   },
   extends: [
@@ -14,7 +14,7 @@ module.exports = {
     'plugin:prettier/recommended',
     'plugin:eslint-plugin-json/recommended',
   ],
-  plugins: ['prettier', 'unused-imports'],
+  plugins: ['prettier', 'unused-imports', 'babel'],
   // add your custom rules here
   rules: {
     'react/prop-types': 1,
