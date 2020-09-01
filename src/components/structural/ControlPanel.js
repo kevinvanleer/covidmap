@@ -29,7 +29,6 @@ import {
 export const ControlPanel = ({
   layers,
   activeLayers,
-  updateActiveLayers,
   detailsData,
   onShowAbout,
   onSetDate,
@@ -115,7 +114,6 @@ export const ControlPanel = ({
           <Layers
             layers={layers}
             activeLayers={activeLayers}
-            updateActiveLayers={updateActiveLayers}
             collapsed={collapsed}
           />
           <Divider horizontal margin="0.5em 0" />
@@ -148,7 +146,6 @@ export const ControlPanel = ({
 ControlPanel.propTypes = {
   layers: PropTypes.array,
   activeLayers: PropTypes.array,
-  updateActiveLayers: PropTypes.func,
   detailsData: PropTypes.object,
   onShowAbout: PropTypes.func,
   onSetDate: PropTypes.func,

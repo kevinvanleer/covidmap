@@ -15,7 +15,9 @@ const mapSlice = createSlice({
     layers: layers,
     selectedLayerGroup: layerGroups[0],
     hoveredFeatures: [],
-    activeLayers: layers.map((layer) => layer.id),
+    activeLayers: layers
+      .filter((layer) => !layer?.legend?.mutex)
+      .map((layer) => layer.id),
   },
   reducers: {
     hold: (state) => {

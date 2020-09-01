@@ -18,7 +18,6 @@ import FullscreenMap from './components/presentation/FullscreenMap.js';
 import { layers, sources } from './mapboxConfig.js';
 
 import { setCurrent } from './state/core/time.js';
-import { updateActiveLayers } from './state/ui/map.js';
 import { setShowAbout } from './state/ui/controlPanel.js';
 
 function App() {
@@ -42,13 +41,6 @@ function App() {
   const onShowAbout = useCallback(
     (show) => {
       dispatch(setShowAbout(show));
-    },
-    [dispatch]
-  );
-
-  const onUpdateActiveLayers = useCallback(
-    (layerId) => {
-      dispatch(updateActiveLayers(layerId));
     },
     [dispatch]
   );
@@ -79,7 +71,6 @@ function App() {
       <ControlPanel
         layers={layers}
         activeLayers={activeLayers}
-        updateActiveLayers={onUpdateActiveLayers}
         date={moment(date)}
         onSetDate={onSetDate}
         onShowAbout={() => onShowAbout(true)}
