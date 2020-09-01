@@ -14,71 +14,71 @@ const fluDeathsPerCapita = 34200 / 328.2e6;
 */
 
 export const legendConfig = {
-  casesVsFlu: {
-    name: 'Cases vs Flu',
-    color: '#f00',
+  covidVsFlu: {
+    name: 'COVID vs Flu',
+    mutex: true,
     gradient: [
       {
         magnitude: 'FLU',
         opacity: 0.8,
-        color: '#3bebff',
+        fillColor: '#3bebff',
       },
       {
         magnitude: '',
         opacity: 0.4,
-        color: '#3bebff',
+        fillColor: '#3bebff',
       },
       {
         magnitude: '0',
-        color: '#ffd400',
+        fillColor: '#ffd400',
         opacity: 0,
       },
       {
         magnitude: '',
-        color: '#ffd400',
+        fillColor: '#ffd400',
         opacity: 0.4,
       },
       {
         magnitude: 'CVD',
-        color: '#ffd400',
+        fillColor: '#ffd400',
         opacity: 0.8,
       },
     ],
   },
   casesVsAvg: {
     name: 'Cases vs Avg',
-    color: '#f00',
+    mutex: true,
     gradient: [
       {
         magnitude: 'LOW',
         opacity: 0.8,
-        color: '#3bebff',
+        fillColor: '#3bebff',
       },
       {
         magnitude: '',
         opacity: 0.4,
-        color: '#3bebff',
+        fillColor: '#3bebff',
       },
       {
         magnitude: 'AVG',
-        color: '#ffd400',
+        fillColor: '#ffd400',
         opacity: 0,
       },
       {
         magnitude: '',
-        color: '#ffd400',
+        fillColor: '#ffd400',
         opacity: 0.4,
       },
       {
         magnitude: 'HIGH',
-        color: '#ffd400',
+        fillColor: '#ffd400',
         opacity: 0.8,
       },
     ],
   },
   infectionRate: {
     name: 'Infection Rate',
-    color: '#ff9a00',
+    fillColor: '#ff9a00',
     gradient: [
       {
         magnitude: '1%',
@@ -100,7 +100,7 @@ export const legendConfig = {
   },
   deaths: {
     name: 'Deaths',
-    color: '#f00',
+    fillColor: '#f00',
     gradient: [
       {
         magnitude: 10,
@@ -122,7 +122,7 @@ export const legendConfig = {
   },
   cases: {
     name: 'Cases',
-    color: '#00f',
+    fillColor: '#00f',
     gradient: [
       {
         magnitude: 10,
@@ -144,7 +144,7 @@ export const legendConfig = {
   },
   deathsPerCapita: {
     name: 'Deaths',
-    color: '#f00',
+    fillColor: '#f00',
     gradient: [
       {
         magnitude: '.01%',
@@ -166,7 +166,7 @@ export const legendConfig = {
   },
   casesPerCapita: {
     name: 'Cases',
-    color: '#00f',
+    fillColor: '#00f',
     gradient: [
       {
         magnitude: '.1%',
@@ -210,8 +210,7 @@ export const layers = [
     legend: {
       label: 'Cases vs Avg',
       icon: faBiohazard,
-      fillColor: legendConfig.casesVsAvg.color,
-      gradient: legendConfig.casesVsAvg.gradient,
+      ...legendConfig.casesVsAvg,
     },
     id: 'us-county-cases-vs-avg',
     type: 'fill',
@@ -239,8 +238,7 @@ export const layers = [
     legend: {
       label: 'Deaths vs Avg',
       icon: faBiohazard,
-      fillColor: legendConfig.casesVsAvg.color,
-      gradient: legendConfig.casesVsAvg.gradient,
+      ...legendConfig.casesVsAvg,
     },
     id: 'us-county-deaths-vs-avg',
     type: 'fill',
@@ -268,8 +266,7 @@ export const layers = [
     legend: {
       label: 'Deaths vs Flu',
       icon: faBiohazard,
-      fillColor: legendConfig.casesVsFlu.color,
-      gradient: legendConfig.casesVsFlu.gradient,
+      ...legendConfig.covidVsFlu,
     },
     id: 'us-county-deaths-vs-flu',
     type: 'fill',
@@ -297,8 +294,7 @@ export const layers = [
     legend: {
       label: 'Cases vs Flu',
       icon: faBiohazard,
-      fillColor: legendConfig.casesVsFlu.color,
-      gradient: legendConfig.casesVsFlu.gradient,
+      ...legendConfig.covidVsFlu,
     },
     id: 'us-county-cases-vs-flu',
     type: 'fill',
@@ -326,15 +322,14 @@ export const layers = [
     legend: {
       label: 'Infection rate',
       icon: faBiohazard,
-      fillColor: legendConfig.infectionRate.color,
-      gradient: legendConfig.infectionRate.gradient,
+      ...legendConfig.infectionRate,
     },
     id: 'us-county-infection-rate',
     type: 'fill',
     source: 'us-counties',
     'source-layer': 'us-counties-500k-a4l482',
     paint: {
-      'fill-color': legendConfig.infectionRate.color,
+      'fill-color': legendConfig.infectionRate.fillColor,
       'fill-opacity': [
         'interpolate',
         ['linear'],
@@ -360,8 +355,7 @@ export const layers = [
     legend: {
       label: 'Deaths',
       icon: faSkullCrossbones,
-      fillColor: legendConfig.deathsPerCapita.color,
-      gradient: legendConfig.deathsPerCapita.gradient,
+      ...legendConfig.deathsPerCapita,
     },
     id: 'us-county-per-capita-deaths',
     type: 'fill',
@@ -394,8 +388,7 @@ export const layers = [
     legend: {
       label: 'Cases',
       icon: faHeadSideCough,
-      fillColor: legendConfig.casesPerCapita.color,
-      gradient: legendConfig.casesPerCapita.gradient,
+      ...legendConfig.casesPerCapita,
     },
     id: 'us-county-per-capita-cases',
     type: 'fill',
@@ -428,8 +421,7 @@ export const layers = [
     legend: {
       label: 'Deaths',
       icon: faSkullCrossbones,
-      fillColor: legendConfig.deaths.color,
-      gradient: legendConfig.deaths.gradient,
+      ...legendConfig.deaths,
     },
     id: 'us-county-total-deaths',
     type: 'fill',
@@ -462,8 +454,7 @@ export const layers = [
     legend: {
       label: 'Cases',
       icon: faHeadSideCough,
-      fillColor: legendConfig.cases.color,
-      gradient: legendConfig.cases.gradient,
+      ...legendConfig.cases,
     },
     id: 'us-county-total-cases',
     type: 'fill',

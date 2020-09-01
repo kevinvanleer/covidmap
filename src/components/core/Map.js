@@ -99,7 +99,6 @@ const MapboxMap = ({
   const filteredActiveLayers = activeLayers.filter((layer) =>
     selectedGroup.layers.includes(layer)
   );
-
   useEffect(() => {
     if (map && initialized) {
       layers.forEach((layer) => {
