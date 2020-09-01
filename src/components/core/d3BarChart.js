@@ -129,6 +129,7 @@ const BarChart = ({
     activeLayers,
     setActiveLayer,
     height,
+    width,
     xLabel,
     yLabel,
     yTicks,

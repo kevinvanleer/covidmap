@@ -177,6 +177,7 @@ const AreaChart = ({
     data,
     casesData,
     height,
+    width,
     yTicks,
     currentDate,
     currentValue,
