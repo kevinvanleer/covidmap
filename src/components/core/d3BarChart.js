@@ -90,6 +90,7 @@ const BarChart = ({
       svg.append('g').call(xAxis);
       svg.append('g').call(yAxis);
 
+      const offset = height - margin.bottom - margin.top + 5;
       if (isEmpty(data)) {
         svg
           .append('text')
@@ -115,7 +116,7 @@ const BarChart = ({
         svg
           .append('text')
           .attr('x', margin.left)
-          .attr('y', y(average) + (y(average) < 155 ? 10 : -3))
+          .attr('y', y(average) + (y(average) < offset ? 10 : -5))
           .text('30-DAY NATIONAL AVERAGE')
           .attr('text-anchor', 'left')
           .attr('font-family', 'sans-serif')
