@@ -122,6 +122,50 @@ export const legendConfig = {
       },
     ],
   },
+  worldDeaths: {
+    name: 'Deaths',
+    fillColor: '#f00',
+    gradient: [
+      {
+        magnitude: 10,
+        opacity: 0.2,
+      },
+      {
+        magnitude: 100,
+        opacity: 0.4,
+      },
+      {
+        magnitude: 1000,
+        opacity: 0.7,
+      },
+      {
+        magnitude: 2000,
+        opacity: 0.8,
+      },
+    ],
+  },
+  worldCases: {
+    name: 'Cases',
+    fillColor: '#00f',
+    gradient: [
+      {
+        magnitude: 10,
+        opacity: 0.1,
+      },
+      {
+        magnitude: 100,
+        opacity: 0.2,
+      },
+      {
+        magnitude: 10000,
+        opacity: 0.4,
+      },
+      {
+        magnitude: 200000,
+        opacity: 0.8,
+      },
+    ],
+  },
   deaths: {
     name: 'Deaths',
     fillColor: '#f00',
@@ -214,6 +258,14 @@ export const legendConfig = {
 
 export const sources = [
   {
+    id: 'world-countries',
+    config: {
+      type: 'vector',
+      url: 'mapbox://ruokvl.d4p3jnf9',
+      promoteId: 'ISO_A2',
+    },
+  },
+  {
     id: 'us-counties',
     config: {
       type: 'vector',
@@ -230,6 +282,56 @@ export const sources = [
   },
 ];
 export const layers = [
+  {
+    id: 'world-cases',
+    type: 'fill',
+    source: 'world-countries',
+    legend: {
+      label: 'Cases',
+      icon: faHeadSideCough,
+      ...legendConfig.worldCases,
+    },
+    'source-layer': 'countries-4bm4v0',
+    paint: {
+      'fill-color': '#00f',
+      'fill-opacity': [
+        'interpolate',
+        ['cubic-bezier', 0.0, 1.0, 0.17, 0.9],
+        ['feature-state', 'cases'],
+        0,
+        0,
+        1e7,
+        0.8,
+        1e10,
+        0.8,
+      ],
+    },
+  },
+  {
+    id: 'world-deaths',
+    legend: {
+      label: 'Deaths',
+      icon: faSkullCrossbones,
+      ...legendConfig.worldDeaths,
+    },
+    type: 'fill',
+    source: 'world-countries',
+    'source-layer': 'countries-4bm4v0',
+    paint: {
+      'fill-color': '#f00',
+      'fill-opacity': [
+        'interpolate',
+        ['cubic-bezier', 0.0, 1.0, 0.17, 0.9],
+        ['feature-state', 'deaths'],
+        0,
+        0,
+        1e7,
+        0.8,
+        1e10,
+        0.8,
+      ],
+    },
+  },
   {
     legend: {
       label: 'Cases vs Avg',
@@ -550,6 +652,17 @@ export const layers = [
     },
   },
   {
+    id: 'countries-outline-base',
+    type: 'line',
+    source: 'world-countries',
+    'source-layer': 'countries-4bm4v0',
+    paint: {
+      'line-color': ['case', ['feature-state', 'hold'], '#0f0', '#e842dc'],
+      'line-width': ['interpolate', ['linear'], ['zoom'], 3, 2, 10, 4],
+      'line-opacity': ['to-number', ['feature-state', 'active']],
+    },
+  },
+  {
     id: 'us-counties-outline-base',
     type: 'line',
     source: 'us-counties',
@@ -664,5 +777,9 @@ export const layerGroups = [
       'us-county-population',
       ...getUniversalLayers(),
     ],
+  },
+  {
+    name: 'World',
+    layers: ['world-deaths', 'world-cases'],
   },
 ];

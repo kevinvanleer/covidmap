@@ -3,11 +3,11 @@ import { createSlice } from '@reduxjs/toolkit';
 const worldCovidDataSlice = createSlice({
   name: 'worldCovidData',
   initialState: {
-    byCounty: [],
+    byCountry: null,
   },
   reducers: {
     load: (state, action) => {
-      state.byCounty = action.payload;
+      state.byCountry = action.payload;
     },
   },
 });
