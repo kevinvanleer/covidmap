@@ -69,7 +69,7 @@ const setFeatureState = (
     {
       source: mapSource,
       sourceLayer: sourceLayer,
-      id: parseInt(featureId),
+      id: featureId,
     },
     stateFunc(state, date)
   );
@@ -93,6 +93,7 @@ const MapboxMap = ({
   const population = useSelector((state) => state.core.usCovidData.population);
   const selectedGroup = useSelector((state) => state.ui.map.selectedLayerGroup);
   const hoveredFeatures = useSelector((state) => state.ui.map.hoveredFeatures);
+  const worldData = useSelector((state) => state.core.worldCovidData.byCountry);
   const mapContainer = useRef(null);
 
   const filteredActiveLayers = activeLayers.filter((layer) =>
@@ -122,7 +123,7 @@ const MapboxMap = ({
       style: 'mapbox://styles/mapbox/light-v10',
       center: [lng, lat],
       zoom: zoom,
-      minZoom: 3,
+      minZoom: 2,
     });
     mapboxgl.clearStorage();
     dispatch(beginLoadingMap(map));
@@ -176,6 +177,38 @@ const MapboxMap = ({
   }, [layers, map, initialized]);
 
   useEffect(() => {
+    if (initialized && worldData) {
+      /*const twoWeeksAgo = moment(date)
+        .subtract(2, 'weeks')
+        .format('YYYY-MM-DD');*/
+      for (const [key, value] of Object.entries(worldData)) {
+        console.debug({ key, value });
+        setFeatureState(
+          map,
+          key,
+          'world-countries',
+          'countries-4bm4v0',
+          value,
+          date,
+          choroplethState()
+        );
+        /*setFeatureState(
+          map,
+          key,
+          'us-county-centroids',
+          undefined,
+          value,
+          date,
+          centroidState(
+            twoWeeksAgo,
+            parseInt(get(population, [key, 'POPESTIMATE2019'], 0))
+          )
+        );*/
+      }
+    }
+  }, [initialized, date, worldData, map, population]);
+
+  useEffect(() => {
     if (initialized && casesByCounty) {
       const twoWeeksAgo = moment(date)
         .subtract(2, 'weeks')
@@ -183,7 +216,7 @@ const MapboxMap = ({
       for (const [key, value] of Object.entries(casesByCounty)) {
         setFeatureState(
           map,
-          key,
+          parseInt(key),
           'us-counties',
           'us-counties-500k-a4l482',
           value,
@@ -194,7 +227,7 @@ const MapboxMap = ({
         );
         setFeatureState(
           map,
-          key,
+          parseInt(key),
           'us-county-centroids',
           undefined,
           value,
@@ -215,7 +248,7 @@ const MapboxMap = ({
           {
             source: 'us-counties',
             sourceLayer: 'us-counties-500k-a4l482',
-            id: featureId,
+            id: parseInt(featureId),
           },
           { active: selected, hold }
         );
