@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useMatomo } from '@datapunt/matomo-tracker-react';
 import moment from 'moment';
 import { get, last } from 'lodash';
 
@@ -21,6 +22,8 @@ import { setCurrent } from './state/core/time.js';
 import { setShowAbout } from './state/ui/controlPanel.js';
 
 function App() {
+  const { enableLinkTracking } = useMatomo();
+
   const dispatch = useDispatch();
   const aliveStatus = useSelector(
     (state) => state.core.apiServerStatus.aliveCheck
@@ -38,6 +41,7 @@ function App() {
   );
   const activeLayers = useSelector((state) => state.ui.map.activeLayers);
 
+  enableLinkTracking();
   const onShowAbout = useCallback(
     (show) => {
       dispatch(setShowAbout(show));

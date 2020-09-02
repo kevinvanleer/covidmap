@@ -6,6 +6,7 @@ import * as serviceWorker from './serviceWorker';
 import { start as startTimeService } from './services/time.js';
 
 import { Provider } from 'react-redux';
+import { AnalyticsProvider } from './AnalyticsProvider.js';
 
 import configureAppStore from './state/configureAppStore.js';
 
@@ -15,9 +16,11 @@ store.dispatch(startTimeService());
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
+    <AnalyticsProvider>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </AnalyticsProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

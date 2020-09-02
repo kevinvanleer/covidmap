@@ -1232,6 +1232,18 @@
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-10.1.0.tgz#f0950bba18819512d42f7197e56c518aa491cf18"
   integrity sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
 
+"@datapunt/matomo-tracker-js@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@datapunt/matomo-tracker-js/-/matomo-tracker-js-0.2.0.tgz#a9907c45f4296d719ec03a6c5151c9ef127e4307"
+  integrity sha512-gj3rOAxQpVFPOvC1N7iht+tfclF/3CuG8FyHBmmvLyKT011DWao+J5Par3wX3hiDupaWulex6TRtFv4bKovtXQ==
+
+"@datapunt/matomo-tracker-react@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@datapunt/matomo-tracker-react/-/matomo-tracker-react-0.2.0.tgz#2407bd90e2c2f036e444bf5acf9422ccb19b64a3"
+  integrity sha512-dnPGX1oUhxbpLwTAkxGt3GFmjfrdV5G//ZkhpugxX0S2ZPuiSQZHvxeM8wQUYmk54M7ISvhWBQOt+VzXdR7spw==
+  dependencies:
+    "@datapunt/matomo-tracker-js" "^0.2.0"
+
 "@emotion/cache@^10.0.27":
   version "10.0.29"
   resolved "https://registry.yarnpkg.com/@emotion/cache/-/cache-10.0.29.tgz#87e7e64f412c060102d589fe7c6dc042e6f9d1e0"
