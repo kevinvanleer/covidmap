@@ -42,10 +42,10 @@ function App() {
   const activeLayers = useSelector((state) => state.ui.map.activeLayers);
 
   // Track page view
+  enableLinkTracking();
   React.useEffect(() => {
-    enableLinkTracking();
     trackPageView();
-  }, [enableLinkTracking, trackPageView]);
+  }, [trackPageView]);
 
   const onShowAbout = useCallback(
     (show) => {
