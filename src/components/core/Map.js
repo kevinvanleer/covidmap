@@ -52,8 +52,7 @@ const choroplethState = (population) => (state, date) => {
     deathRate:
       parseInt(get(recentData, 'deaths', 0)) /
       parseInt(get(recentData, 'cases', 0)),
-    infectionRate:
-      population > 0 ? parseInt(get(recentData, 'cases', 0)) / population : 0,
+    population: population,
   };
 };
 
@@ -188,7 +187,9 @@ const MapboxMap = ({
           'us-counties-500k-a4l482',
           value,
           date,
-          choroplethState(get(population, [key, 'POPESTIMATE2019']))
+          choroplethState(
+            parseInt(get(population, [key, 'POPESTIMATE2019'], 0))
+          )
         );
         setFeatureState(
           map,
@@ -197,7 +198,10 @@ const MapboxMap = ({
           undefined,
           value,
           date,
-          centroidState(twoWeeksAgo, get(population, [key, 'POPESTIMATE2019']))
+          centroidState(
+            twoWeeksAgo,
+            parseInt(get(population, [key, 'POPESTIMATE2019'], 0))
+          )
         );
       }
     }

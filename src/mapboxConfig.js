@@ -4,6 +4,7 @@ import {
   faViruses,
   faHeadSideCough,
   faBiohazard,
+  faUsers,
 } from '@fortawesome/free-solid-svg-icons';
 
 /*
@@ -14,6 +15,29 @@ const fluDeathsPerCapita = 34200 / 328.2e6;
 */
 
 export const legendConfig = {
+  population: {
+    name: 'Population',
+    defaultDisabled: true,
+    fillColor: '#0f0',
+    gradient: [
+      {
+        magnitude: '1000',
+        opacity: 0.04,
+      },
+      {
+        magnitude: '1e4',
+        opacity: 0.08,
+      },
+      {
+        magnitude: '1e5',
+        opacity: 0.4,
+      },
+      {
+        magnitude: '1e6',
+        opacity: 0.8,
+      },
+    ],
+  },
   covidVsFlu: {
     name: 'COVID vs Flu',
     mutex: true,
@@ -208,6 +232,31 @@ export const sources = [
 export const layers = [
   {
     legend: {
+      label: 'Population',
+      icon: faUsers,
+      ...legendConfig.population,
+    },
+    id: 'us-county-population',
+    type: 'fill',
+    source: 'us-counties',
+    'source-layer': 'us-counties-500k-a4l482',
+    paint: {
+      'fill-color': '#0f0',
+      'fill-opacity': [
+        'interpolate',
+        ['cubic-bezier', 0.0, 1.0, 0.17, 0.9],
+        ['feature-state', 'population'],
+        0,
+        0,
+        1e7,
+        0.8,
+        1e10,
+        1,
+      ],
+    },
+  },
+  {
+    legend: {
       label: 'Cases vs Avg',
       icon: faBiohazard,
       ...legendConfig.casesVsAvg,
@@ -222,6 +271,8 @@ export const layers = [
         ['linear'],
         ['feature-state', 'casesPerCapita'],
         0,
+        ['rgba', 58, 235, 255, 0.8],
+        0.0018,
         ['rgba', 58, 235, 255, 0.8],
         0.01799,
         ['rgba', 58, 235, 255, 0],
@@ -251,6 +302,8 @@ export const layers = [
         ['feature-state', 'deathsPerCapita'],
         0,
         ['rgba', 58, 235, 255, 0.8],
+        5.6e-5,
+        ['rgba', 58, 235, 255, 0.8],
         5.599e-4,
         ['rgba', 58, 235, 255, 0],
         5.6e-4,
@@ -278,6 +331,8 @@ export const layers = [
         ['linear'],
         ['feature-state', 'deathsPerCapita'],
         0,
+        ['rgba', 58, 235, 255, 0.8],
+        1e-5,
         ['rgba', 58, 235, 255, 0.8],
         9e-5,
         ['rgba', 58, 235, 255, 0],
@@ -307,6 +362,8 @@ export const layers = [
         ['feature-state', 'casesPerCapita'],
         0,
         ['rgba', 58, 235, 255, 0.8],
+        0.01,
+        ['rgba', 58, 235, 255, 0.8],
         0.09,
         ['rgba', 58, 235, 255, 0],
         0.1,
@@ -333,7 +390,7 @@ export const layers = [
       'fill-opacity': [
         'interpolate',
         ['linear'],
-        ['feature-state', 'infectionRate'],
+        ['feature-state', 'casesPerCapita'],
         0,
         0,
         0.01,
@@ -581,6 +638,7 @@ export const layerGroups = [
       'us-county-per-capita-cases',
       'us-per-capita-hotspots',
       'us-first-case',
+      'us-county-population',
       ...getUniversalLayers(),
     ],
   },
@@ -603,6 +661,7 @@ export const layerGroups = [
       'us-county-deaths-vs-flu',
       'us-county-deaths-vs-avg',
       'us-per-capita-hotspots',
+      'us-county-population',
       ...getUniversalLayers(),
     ],
   },
