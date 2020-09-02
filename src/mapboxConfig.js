@@ -251,7 +251,7 @@ export const layers = [
         1e7,
         0.8,
         1e10,
-        1,
+        0.8,
       ],
     },
   },
