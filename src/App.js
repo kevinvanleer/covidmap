@@ -22,7 +22,7 @@ import { setCurrent } from './state/core/time.js';
 import { setShowAbout } from './state/ui/controlPanel.js';
 
 function App() {
-  const { enableLinkTracking } = useMatomo();
+  const { enableLinkTracking, trackPageView } = useMatomo();
 
   const dispatch = useDispatch();
   const aliveStatus = useSelector(
@@ -41,7 +41,12 @@ function App() {
   );
   const activeLayers = useSelector((state) => state.ui.map.activeLayers);
 
-  enableLinkTracking();
+  // Track page view
+  React.useEffect(() => {
+    enableLinkTracking();
+    trackPageView();
+  }, [enableLinkTracking, trackPageView]);
+
   const onShowAbout = useCallback(
     (show) => {
       dispatch(setShowAbout(show));
