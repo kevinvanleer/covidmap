@@ -124,6 +124,7 @@ const MapboxMap = ({
       zoom: zoom,
       minZoom: 3,
     });
+    mapboxgl.clearStorage();
     dispatch(beginLoadingMap(map));
   }, [dispatch]);
 
