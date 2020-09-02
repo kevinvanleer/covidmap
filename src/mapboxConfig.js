@@ -232,31 +232,6 @@ export const sources = [
 export const layers = [
   {
     legend: {
-      label: 'Population',
-      icon: faUsers,
-      ...legendConfig.population,
-    },
-    id: 'us-county-population',
-    type: 'fill',
-    source: 'us-counties',
-    'source-layer': 'us-counties-500k-a4l482',
-    paint: {
-      'fill-color': '#0f0',
-      'fill-opacity': [
-        'interpolate',
-        ['cubic-bezier', 0.0, 1.0, 0.17, 0.9],
-        ['feature-state', 'population'],
-        0,
-        0,
-        1e7,
-        0.8,
-        1e10,
-        0.8,
-      ],
-    },
-  },
-  {
-    legend: {
       label: 'Cases vs Avg',
       icon: faBiohazard,
       ...legendConfig.casesVsAvg,
@@ -536,6 +511,31 @@ export const layers = [
         200000,
         0.8,
         10000000,
+        0.8,
+      ],
+    },
+  },
+  {
+    legend: {
+      label: 'Population',
+      icon: faUsers,
+      ...legendConfig.population,
+    },
+    id: 'us-county-population',
+    type: 'fill',
+    source: 'us-counties',
+    'source-layer': 'us-counties-500k-a4l482',
+    paint: {
+      'fill-color': '#0f0',
+      'fill-opacity': [
+        'interpolate',
+        ['cubic-bezier', 0.0, 1.0, 0.17, 0.9],
+        ['feature-state', 'population'],
+        0,
+        0,
+        1e7,
+        0.8,
+        1e10,
         0.8,
       ],
     },
