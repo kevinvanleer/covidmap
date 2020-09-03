@@ -768,43 +768,47 @@ const getWorldCommonLayers = () =>
 export const getUniversalLayers = () =>
   layers.filter((layer) => layer.legend === undefined).map((layer) => layer.id);
 
-export const layerGroups = [
-  {
-    name: 'Per Capita',
-    layers: [
-      'us-county-per-capita-deaths',
-      'us-county-per-capita-cases',
-      'us-per-capita-hotspots',
-      'us-first-case',
-      'us-county-population',
-      ...getUsCommonLayers(),
-    ],
-  },
-  {
-    name: 'Total',
-    layers: [
-      'us-county-total-deaths',
-      'us-county-total-cases',
-      'us-hotspots',
-      'us-first-case',
-      ...getUsCommonLayers(),
-    ],
-  },
-  {
-    name: 'Misc',
-    layers: [
-      'us-county-infection-rate',
-      'us-county-cases-vs-flu',
-      'us-county-cases-vs-avg',
-      'us-county-deaths-vs-flu',
-      'us-county-deaths-vs-avg',
-      'us-per-capita-hotspots',
-      'us-county-population',
-      ...getUsCommonLayers(),
-    ],
-  },
-  {
-    name: 'World',
-    layers: ['world-deaths', 'world-cases', ...getWorldCommonLayers()],
-  },
-];
+export const layerGroups = {
+  us: [
+    {
+      name: 'Per Capita',
+      layers: [
+        'us-county-per-capita-deaths',
+        'us-county-per-capita-cases',
+        'us-per-capita-hotspots',
+        'us-first-case',
+        'us-county-population',
+        ...getUsCommonLayers(),
+      ],
+    },
+    {
+      name: 'Total',
+      layers: [
+        'us-county-total-deaths',
+        'us-county-total-cases',
+        'us-hotspots',
+        'us-first-case',
+        ...getUsCommonLayers(),
+      ],
+    },
+    {
+      name: 'Misc',
+      layers: [
+        'us-county-infection-rate',
+        'us-county-cases-vs-flu',
+        'us-county-cases-vs-avg',
+        'us-county-deaths-vs-flu',
+        'us-county-deaths-vs-avg',
+        'us-per-capita-hotspots',
+        'us-county-population',
+        ...getUsCommonLayers(),
+      ],
+    },
+  ],
+  world: [
+    {
+      name: 'Total',
+      layers: ['world-deaths', 'world-cases', ...getWorldCommonLayers()],
+    },
+  ],
+};

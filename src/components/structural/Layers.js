@@ -4,13 +4,21 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Flexbox, Spacer } from 'kvl-react-ui';
 
 import { LayerItem } from '../presentation/LayerItem.js';
-import { GroupSelect } from './GroupSelect.js';
+import { MultiSelect } from './MultiSelect.js';
 
-import { updateActiveLayers, setActiveLayers } from '../../state/ui/map.js';
+import {
+  updateActiveLayers,
+  setActiveLayers,
+  selectLayerGroup,
+  setActiveView,
+} from '../../state/ui/map.js';
 
 export const Layers = ({ layers, activeLayers, collapsed }) => {
   const dispatch = useDispatch();
   const selectedGroup = useSelector((state) => state.ui.map.selectedLayerGroup);
+  const activeView = useSelector((state) => state.ui.map.activeView);
+  const views = useSelector((state) => state.ui.map.views);
+  const groups = useSelector((state) => state.ui.map.layerGroups);
   const filteredLayers = layers.filter((layer) =>
     selectedGroup.layers.includes(layer.id)
   );
@@ -31,11 +39,33 @@ export const Layers = ({ layers, activeLayers, collapsed }) => {
     [dispatch, activeLayers, filteredLayers]
   );
 
+  const onSelectView = useCallback(
+    (view) => {
+      dispatch(setActiveView(view));
+    },
+    [dispatch]
+  );
+  const onSelectGroup = useCallback(
+    (group) => {
+      dispatch(selectLayerGroup(group));
+    },
+    [dispatch]
+  );
+
   return (
     <Flexbox flexDirection="column">
       {!collapsed ? (
         <>
-          <GroupSelect />
+          <MultiSelect
+            groups={views}
+            selectedGroup={activeView}
+            onSelect={onSelectView}
+          />
+          <MultiSelect
+            groups={groups || []}
+            selectedGroup={selectedGroup}
+            onSelect={onSelectGroup}
+          />
           <Spacer height="0.7em" />
         </>
       ) : null}

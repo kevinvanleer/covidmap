@@ -5,7 +5,7 @@ import moment from 'moment';
 import { get, findLast, findLastIndex, set, isEmpty } from 'lodash';
 import { Flexbox, Spacer, Text, SquareButton } from 'kvl-react-ui';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFlagUsa } from '@fortawesome/free-solid-svg-icons';
+import { faFlagUsa, faGlobe } from '@fortawesome/free-solid-svg-icons';
 
 import { Stats } from './Stats.js';
 import AreaChart from '../core/d3AreaChart.js';
@@ -93,9 +93,12 @@ export const Details = ({ date, entity, collapsed }) => {
   const selectedFeature = useSelector((state) => state.ui.map.selectedFeature);
   const populations = useSelector((state) => state.core.usCovidData.population);
   const totals = useSelector((state) => state.core.usCovidData.totals);
+  const activeView = useSelector((state) => state.ui.map.activeView);
   let population = usPopEst2019;
-  if (selectedGroup.name.toLowerCase() === 'world') {
+  let backIcon = faFlagUsa;
+  if (activeView.name.toLowerCase() === 'world') {
     population = popNA;
+    backIcon = faGlobe;
   } else {
     population = selectedFeature ? populations[selectedFeature] : usPopEst2019;
   }
@@ -202,7 +205,7 @@ export const Details = ({ date, entity, collapsed }) => {
                 onClick={closeStats}
                 backgroundColor="#777"
               >
-                <FontAwesomeIcon color="#eee" icon={faFlagUsa} fixedWidth />
+                <FontAwesomeIcon color="#eee" icon={backIcon} fixedWidth />
               </SquareButton>
             ) : null}
           </Flexbox>
