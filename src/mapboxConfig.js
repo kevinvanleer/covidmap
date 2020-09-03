@@ -14,6 +14,15 @@ const fluCasesPerCapita = 35.5 / 328.2;
 const fluDeathsPerCapita = 34200 / 328.2e6;
 */
 
+import { cubicBezierFindY } from './util/bezier.js';
+
+const getWorldLegendOpacity = cubicBezierFindY(
+  { x: 0, y: 0 },
+  { x: 0, y: 0.8 },
+  { x: 1.7e6, y: 0.72 },
+  { x: 1e7, y: 0.8 }
+);
+
 export const legendConfig = {
   population: {
     name: 'Population',
@@ -21,20 +30,20 @@ export const legendConfig = {
     fillColor: '#0f0',
     gradient: [
       {
-        magnitude: '1000',
-        opacity: 0.04,
+        magnitude: 1e4,
+        opacity: getWorldLegendOpacity(1e4),
       },
       {
-        magnitude: '1e4',
-        opacity: 0.08,
+        magnitude: 1e5,
+        opacity: getWorldLegendOpacity(1e5),
       },
       {
-        magnitude: '1e5',
-        opacity: 0.4,
+        magnitude: 1e6,
+        opacity: getWorldLegendOpacity(1e6),
       },
       {
-        magnitude: '1e6',
-        opacity: 0.8,
+        magnitude: 1e7,
+        opacity: 1,
       },
     ],
   },
@@ -127,20 +136,20 @@ export const legendConfig = {
     fillColor: '#f00',
     gradient: [
       {
-        magnitude: 10,
-        opacity: 0.2,
+        magnitude: 1e4,
+        opacity: getWorldLegendOpacity(1e4),
       },
       {
-        magnitude: 100,
-        opacity: 0.4,
+        magnitude: 1e5,
+        opacity: getWorldLegendOpacity(1e5),
       },
       {
-        magnitude: 1000,
-        opacity: 0.7,
+        magnitude: 1e6,
+        opacity: getWorldLegendOpacity(1e6),
       },
       {
-        magnitude: 2000,
-        opacity: 0.8,
+        magnitude: 1e7,
+        opacity: 1,
       },
     ],
   },
@@ -149,20 +158,20 @@ export const legendConfig = {
     fillColor: '#00f',
     gradient: [
       {
-        magnitude: 10,
-        opacity: 0.1,
+        magnitude: 1e4,
+        opacity: getWorldLegendOpacity(1e4),
       },
       {
-        magnitude: 100,
-        opacity: 0.2,
+        magnitude: 1e5,
+        opacity: getWorldLegendOpacity(1e5),
       },
       {
-        magnitude: 10000,
-        opacity: 0.4,
+        magnitude: 1e6,
+        opacity: getWorldLegendOpacity(1e6),
       },
       {
-        magnitude: 200000,
-        opacity: 0.8,
+        magnitude: 1e7,
+        opacity: 1,
       },
     ],
   },

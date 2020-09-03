@@ -33,3 +33,30 @@ export const cubicBezier2D = (
     y: cubicBezier([p0y, p1y, p2y, p3y])(t),
   };
 };
+
+export const cubicBezierFindY = (
+  anchorStart,
+  controlStart,
+  controlEnd,
+  anchorEnd
+) => (x) => {
+  let t = 0.5;
+  let found = false;
+
+  const bezierFunction = cubicBezier2D(
+    anchorStart,
+    controlStart,
+    controlEnd,
+    anchorEnd
+  );
+
+  while (!found) {
+    const result = bezierFunction(t);
+
+    if (Math.abs(result.x - x) < anchorEnd.x * 1e-6) {
+      return result.y;
+    } else {
+      t = result.x > x ? t * 0.5 : t * 1.5;
+    }
+  }
+};

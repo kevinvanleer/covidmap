@@ -1,9 +1,10 @@
 import {
   factorial,
   nCi,
+  bezierTerm,
   cubicBezier,
   cubicBezier2D,
-  bezierTerm,
+  cubicBezierFindY,
 } from './bezier.js';
 
 test('factorial', () => {
@@ -58,6 +59,7 @@ test('cubicBezier', () => {
   expect(cubicBezier([0, 1, 1, 1])(1)).toBe(1);
   expect(cubicBezier([0, 0.2, 0.4, 1])(0)).toBe(0);
   expect(cubicBezier([0, 0.1231, 0.7, 1])(1)).toBe(1);
+  expect(cubicBezier([0, 1, 0.9, 1])(0.5)).toBe(0.8375);
 });
 
 test('cubicBezier2D', () => {
@@ -97,4 +99,40 @@ test('cubicBezier2D', () => {
   )(0.5);
   expect(result.x).toBeCloseTo(0.425, 6);
   expect(result.y).toBeCloseTo(0.575, 6);
+
+  result = cubicBezier2D(
+    { x: 0, y: 0 },
+    { x: 0, y: 1 },
+    { x: 0.17, y: 0.9 },
+    { x: 1, y: 1 }
+  )(0.5);
+  expect(result.x).toBeCloseTo(0.18875, 6);
+  expect(result.y).toBeCloseTo(0.8375, 6);
+});
+
+test('cubicBezierFindY', () => {
+  expect(
+    cubicBezierFindY(
+      { x: 0, y: 0 },
+      { x: 0, y: 0.8 },
+      { x: 1.7e6, y: 0.72 },
+      { x: 1e7, y: 0.8 }
+    )(1e4)
+  ).toBeCloseTo(0.1, 2);
+  expect(
+    cubicBezierFindY(
+      { x: 0, y: 0 },
+      { x: 0, y: 0.8 },
+      { x: 1.7e6, y: 0.72 },
+      { x: 1e7, y: 0.8 }
+    )(1e5)
+  ).toBeCloseTo(0.27, 2);
+  expect(
+    cubicBezierFindY(
+      { x: 0, y: 0 },
+      { x: 0, y: 0.8 },
+      { x: 1.7e6, y: 0.72 },
+      { x: 1e7, y: 0.8 }
+    )(1e6)
+  ).toBeCloseTo(0.587, 2);
 });
