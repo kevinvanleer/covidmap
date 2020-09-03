@@ -11,9 +11,11 @@ const mapSlice = createSlice({
     sourcesLoadStatus: { ...loadStatusDefaults },
     layersLoadStatus: { ...loadStatusDefaults },
     map: null,
-    layerGroups: layerGroups,
+    layerGroups: layerGroups['us'],
     layers: layers,
-    selectedLayerGroup: layerGroups[0],
+    selectedLayerGroup: layerGroups['us'][0],
+    views: Object.keys(layerGroups).map((key) => ({ name: key })),
+    activeView: { name: 'us' },
     hoveredFeatures: [],
     activeLayers: layers
       .filter(
@@ -67,6 +69,13 @@ const mapSlice = createSlice({
     setActiveLayers: (state, action) => {
       state.activeLayers = action.payload;
     },
+    setActiveView: (state, action) => {
+      state.activeView = action.payload;
+      state.layerGroups = layerGroups[action.payload.name];
+      state.selectedLayerGroup = layerGroups[action.payload.name][0];
+      state.hold = false;
+      state.selectedFeature = null;
+    },
     updateActiveLayers: (state, action) => {
       const layerId = action.payload;
       const currentState = state.activeLayers.includes(layerId);
@@ -92,6 +101,7 @@ export const {
   selectLayerGroup,
   setHoveredFeatures,
   setActiveLayers,
+  setActiveView,
   updateActiveLayers,
 } = mapSlice.actions;
 export default mapSlice.reducer;

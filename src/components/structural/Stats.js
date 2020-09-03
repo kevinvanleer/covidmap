@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { get, isNumber } from 'lodash';
+import { get } from 'lodash';
 import { Text, Flexbox, Spacer, Popup } from 'kvl-react-ui';
 
 const labelFontSize = '0.6em';
@@ -35,7 +35,9 @@ const StatsItem = ({
       </Popup>
     ) : null}
     <Text fontSize="detail" bold>{`${
-      isNumber(value) ? new Intl.NumberFormat('en-US').format(value) : value
+      new Intl.NumberFormat('en-US').format(value) !== 'NaN'
+        ? new Intl.NumberFormat('en-US').format(value)
+        : value
     }`}</Text>
     <Text fontSize={labelFontSize}>{label.toUpperCase()}</Text>
   </Flexbox>
@@ -87,7 +89,7 @@ export const Stats = ({
       <Flexbox position="relative">
         <Flexbox flexDirection="column">
           <StatsItem
-            value={parseInt(get(population, 'POPESTIMATE2019', 0))}
+            value={get(population, 'POPESTIMATE2019', 0)}
             label="population"
             popupDescription="2019 population estimate provided by the United States Census Bureau"
             showPopup={showPopup.population}
@@ -95,7 +97,7 @@ export const Stats = ({
           />
           <Spacer height="0.5em" />
           <StatsItem
-            value={parseInt(ongoingCases)}
+            value={ongoingCases}
             label="ongoing cases"
             popupDescription="Cases reported within 14 days of the current date"
             showPopup={showPopup.ongoing}
@@ -106,7 +108,7 @@ export const Stats = ({
         <Spacer width="0.1em" flexGrow="1" />
         <Flexbox flexDirection="column">
           <StatsItem
-            value={parseInt(get(recentData, 'deaths', 0))}
+            value={get(recentData, 'deaths', 0)}
             label="total deaths"
             popupDescription="Total deaths as reported by The New York Times on the current date"
             showPopup={showPopup.deaths}
@@ -115,7 +117,7 @@ export const Stats = ({
           />
           <Spacer height="0.5em" />
           <StatsItem
-            value={parseInt(get(recentData, 'cases', 0))}
+            value={get(recentData, 'cases', 0)}
             label="total cases"
             popupDescription="Total cases as reported by The New York Times on the current date"
             showPopup={showPopup.cases}
@@ -136,7 +138,7 @@ export const Stats = ({
           />
           <Spacer height="0.5em" />
           <StatsItem
-            value={parseInt(newCases)}
+            value={newCases}
             label="New cases"
             popupDescription="Cases reported on the current date"
             showPopup={showPopup.newCases}

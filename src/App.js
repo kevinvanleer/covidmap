@@ -40,7 +40,9 @@ function App() {
   const casesByCounty = useSelector(
     (state) => state.core.usCovidData.casesByCounty
   );
+  const worldData = useSelector((state) => state.core.worldCovidData.byCountry);
   const activeLayers = useSelector((state) => state.ui.map.activeLayers);
+  const activeView = useSelector((state) => state.ui.map.activeView);
 
   if (process.env.NODE_ENV === 'production') {
     ReactGA.initialize('UA-55310450-2');
@@ -71,7 +73,7 @@ function App() {
     [dispatch]
   );
 
-  const detailsData = selectedFeature
+  let detailsData = selectedFeature
     ? {
         displayName: `${get(
           last(casesByCounty[selectedFeature]),
@@ -80,6 +82,14 @@ function App() {
         data: casesByCounty[selectedFeature],
       }
     : { displayName: 'United States of America', data: totals };
+  if (activeView.name.toLowerCase() === 'world') {
+    detailsData = selectedFeature
+      ? {
+          displayName: `${get(last(worldData[selectedFeature]), 'country')}`,
+          data: worldData[selectedFeature],
+        }
+      : { displayName: 'Global', data: [] };
+  }
 
   return aliveStatus.success ? (
     <>

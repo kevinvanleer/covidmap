@@ -14,6 +14,15 @@ const fluCasesPerCapita = 35.5 / 328.2;
 const fluDeathsPerCapita = 34200 / 328.2e6;
 */
 
+import { cubicBezierFindY } from './util/bezier.js';
+
+const getWorldLegendOpacity = cubicBezierFindY(
+  { x: 0, y: 0 },
+  { x: 0, y: 0.8 },
+  { x: 1.7e6, y: 0.72 },
+  { x: 1e7, y: 0.8 }
+);
+
 export const legendConfig = {
   population: {
     name: 'Population',
@@ -21,20 +30,20 @@ export const legendConfig = {
     fillColor: '#0f0',
     gradient: [
       {
-        magnitude: '1000',
-        opacity: 0.04,
+        magnitude: 1e4,
+        opacity: getWorldLegendOpacity(1e4),
       },
       {
-        magnitude: '1e4',
-        opacity: 0.08,
+        magnitude: 1e5,
+        opacity: getWorldLegendOpacity(1e5),
       },
       {
-        magnitude: '1e5',
-        opacity: 0.4,
+        magnitude: 1e6,
+        opacity: getWorldLegendOpacity(1e6),
       },
       {
-        magnitude: '1e6',
-        opacity: 0.8,
+        magnitude: 1e7,
+        opacity: 1,
       },
     ],
   },
@@ -119,6 +128,50 @@ export const legendConfig = {
       {
         magnitude: '20%',
         opacity: 0.8,
+      },
+    ],
+  },
+  worldDeaths: {
+    name: 'Deaths',
+    fillColor: '#f00',
+    gradient: [
+      {
+        magnitude: 1e4,
+        opacity: getWorldLegendOpacity(1e4),
+      },
+      {
+        magnitude: 1e5,
+        opacity: getWorldLegendOpacity(1e5),
+      },
+      {
+        magnitude: 1e6,
+        opacity: getWorldLegendOpacity(1e6),
+      },
+      {
+        magnitude: 1e7,
+        opacity: 1,
+      },
+    ],
+  },
+  worldCases: {
+    name: 'Cases',
+    fillColor: '#00f',
+    gradient: [
+      {
+        magnitude: 1e4,
+        opacity: getWorldLegendOpacity(1e4),
+      },
+      {
+        magnitude: 1e5,
+        opacity: getWorldLegendOpacity(1e5),
+      },
+      {
+        magnitude: 1e6,
+        opacity: getWorldLegendOpacity(1e6),
+      },
+      {
+        magnitude: 1e7,
+        opacity: 1,
       },
     ],
   },
@@ -214,6 +267,14 @@ export const legendConfig = {
 
 export const sources = [
   {
+    id: 'world-countries',
+    config: {
+      type: 'vector',
+      url: 'mapbox://ruokvl.d4p3jnf9',
+      promoteId: 'ISO_A2',
+    },
+  },
+  {
     id: 'us-counties',
     config: {
       type: 'vector',
@@ -229,7 +290,81 @@ export const sources = [
     },
   },
 ];
-export const layers = [
+
+const worldLayers = [
+  {
+    id: 'world-cases',
+    type: 'fill',
+    source: 'world-countries',
+    legend: {
+      label: 'Cases',
+      icon: faHeadSideCough,
+      ...legendConfig.worldCases,
+    },
+    'source-layer': 'countries-4bm4v0',
+    paint: {
+      'fill-color': '#00f',
+      'fill-opacity': [
+        'interpolate',
+        ['cubic-bezier', 0.0, 1.0, 0.17, 0.9],
+        ['feature-state', 'cases'],
+        0,
+        0,
+        1e7,
+        0.8,
+        1e10,
+        0.8,
+      ],
+    },
+  },
+  {
+    id: 'world-deaths',
+    legend: {
+      label: 'Deaths',
+      icon: faSkullCrossbones,
+      ...legendConfig.worldDeaths,
+    },
+    type: 'fill',
+    source: 'world-countries',
+    'source-layer': 'countries-4bm4v0',
+    paint: {
+      'fill-color': '#f00',
+      'fill-opacity': [
+        'interpolate',
+        ['cubic-bezier', 0.0, 1.0, 0.17, 0.9],
+        ['feature-state', 'deaths'],
+        0,
+        0,
+        1e7,
+        0.8,
+        1e10,
+        0.8,
+      ],
+    },
+  },
+  {
+    id: 'countries-base',
+    type: 'fill',
+    source: 'world-countries',
+    'source-layer': 'countries-4bm4v0',
+    paint: {
+      'fill-color': 'transparent',
+    },
+  },
+  {
+    id: 'countries-outline-base',
+    type: 'line',
+    source: 'world-countries',
+    'source-layer': 'countries-4bm4v0',
+    paint: {
+      'line-color': ['case', ['feature-state', 'hold'], '#0f0', '#e842dc'],
+      'line-width': ['interpolate', ['linear'], ['zoom'], 3, 2, 10, 4],
+      'line-opacity': ['to-number', ['feature-state', 'active']],
+    },
+  },
+];
+
+const usLayers = [
   {
     legend: {
       label: 'Cases vs Avg',
@@ -627,42 +762,62 @@ export const layers = [
   },
 ];
 
-const getUniversalLayers = () =>
+export const layers = [...usLayers, ...worldLayers];
+
+const getUsCommonLayers = () =>
+  usLayers
+    .filter((layer) => layer.legend === undefined)
+    .map((layer) => layer.id);
+
+const getWorldCommonLayers = () =>
+  worldLayers
+    .filter((layer) => layer.legend === undefined)
+    .map((layer) => layer.id);
+
+export const getUniversalLayers = () =>
   layers.filter((layer) => layer.legend === undefined).map((layer) => layer.id);
 
-export const layerGroups = [
-  {
-    name: 'Per Capita',
-    layers: [
-      'us-county-per-capita-deaths',
-      'us-county-per-capita-cases',
-      'us-per-capita-hotspots',
-      'us-first-case',
-      'us-county-population',
-      ...getUniversalLayers(),
-    ],
-  },
-  {
-    name: 'Total',
-    layers: [
-      'us-county-total-deaths',
-      'us-county-total-cases',
-      'us-hotspots',
-      'us-first-case',
-      ...getUniversalLayers(),
-    ],
-  },
-  {
-    name: 'Misc',
-    layers: [
-      'us-county-infection-rate',
-      'us-county-cases-vs-flu',
-      'us-county-cases-vs-avg',
-      'us-county-deaths-vs-flu',
-      'us-county-deaths-vs-avg',
-      'us-per-capita-hotspots',
-      'us-county-population',
-      ...getUniversalLayers(),
-    ],
-  },
-];
+export const layerGroups = {
+  us: [
+    {
+      name: 'Per Capita',
+      layers: [
+        'us-county-per-capita-deaths',
+        'us-county-per-capita-cases',
+        'us-per-capita-hotspots',
+        'us-first-case',
+        'us-county-population',
+        ...getUsCommonLayers(),
+      ],
+    },
+    {
+      name: 'Total',
+      layers: [
+        'us-county-total-deaths',
+        'us-county-total-cases',
+        'us-hotspots',
+        'us-first-case',
+        ...getUsCommonLayers(),
+      ],
+    },
+    {
+      name: 'Misc',
+      layers: [
+        'us-county-infection-rate',
+        'us-county-cases-vs-flu',
+        'us-county-cases-vs-avg',
+        'us-county-deaths-vs-flu',
+        'us-county-deaths-vs-avg',
+        'us-per-capita-hotspots',
+        'us-county-population',
+        ...getUsCommonLayers(),
+      ],
+    },
+  ],
+  world: [
+    {
+      name: 'Total',
+      layers: ['world-deaths', 'world-cases', ...getWorldCommonLayers()],
+    },
+  ],
+};

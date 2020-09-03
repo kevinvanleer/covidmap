@@ -6,6 +6,7 @@ import {
   setTotals,
   setPopulation,
 } from '../state/core/usCovidData.js';
+import { load as worldDataLoad } from '../state/core/worldCovidData.js';
 import {
   aliveCheckPending,
   aliveCheckPassed,
@@ -19,6 +20,10 @@ export const fetchUsCasesByCounty = async (startIndex, pageSize, reverse) => {
     `/api/us-cases-by-county?startIndex=${startIndex}&pageSize=${pageSize}&reverse=${reverse}`
   );
   return response.json();
+};
+
+export const fetchWorldCovidData = async () => {
+  return fetch('/api/global-covid-by-country');
 };
 
 export const fetchUsTotals = async () => {
@@ -38,6 +43,35 @@ export const fetchUsCovidBoundaries = async (resolution) => {
 
 export const fetchAliveCheck = async () => {
   return fetch(`/api/alive`);
+};
+
+const sortWorldCasesByCountry = (data) => {
+  const sorted = {};
+  data.forEach((status) => {
+    const countryId = status.Country_code;
+    if (countryId in sorted) {
+      sorted[countryId].push({
+        date: status.Date_reported,
+        cases: status.Cumulative_cases,
+        deaths: status.Cumulative_deaths,
+        newCases: status.New_cases,
+        newDeaths: status.New_deaths,
+        country: status.Country,
+      });
+    } else {
+      sorted[countryId] = [
+        {
+          date: status.Date_reported,
+          cases: status.Cumulative_cases,
+          deaths: status.Cumulative_deaths,
+          newCases: status.New_cases,
+          newDeaths: status.New_deaths,
+          country: status.Country,
+        },
+      ];
+    }
+  });
+  return sorted;
 };
 
 const sortCasesByCounty = (newCases) => async (dispatch) => {
@@ -97,6 +131,7 @@ export const initializeFeatureState = () => async (dispatch) => {
 
   const totalsPromise = fetchUsTotals();
   const populationPromise = fetchUsPopulation();
+  const worldDataPromise = fetchWorldCovidData();
 
   const boundaries = await fetchUsCovidBoundaries('20m');
   const boundaryStates = {};
@@ -136,4 +171,10 @@ export const initializeFeatureState = () => async (dispatch) => {
   } catch (e) {
     dispatch(usCasesByCountyStatus.requestFailed(e));
   }
+
+  dispatch(
+    worldDataLoad(
+      sortWorldCasesByCountry((await (await worldDataPromise).json()).data)
+    )
+  );
 };

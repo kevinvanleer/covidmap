@@ -5,7 +5,7 @@ import moment from 'moment';
 import { get, findLast, findLastIndex, set, isEmpty } from 'lodash';
 import { Flexbox, Spacer, Text, SquareButton } from 'kvl-react-ui';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFlagUsa } from '@fortawesome/free-solid-svg-icons';
+import { faFlagUsa, faGlobe } from '@fortawesome/free-solid-svg-icons';
 
 import { Stats } from './Stats.js';
 import AreaChart from '../core/d3AreaChart.js';
@@ -14,6 +14,7 @@ import BarChart from '../core/d3BarChart.js';
 import { releaseHold, setSelectedFeature } from '../../state/ui/map.js';
 
 const usPopEst2019 = { POPESTIMATE2019: 328239523 };
+const popNA = { POPESTIMATE2019: 'N/A' };
 
 const fillCasesPerDay = (endDate, count) => {
   let fillArray = [];
@@ -92,9 +93,15 @@ export const Details = ({ date, entity, collapsed }) => {
   const selectedFeature = useSelector((state) => state.ui.map.selectedFeature);
   const populations = useSelector((state) => state.core.usCovidData.population);
   const totals = useSelector((state) => state.core.usCovidData.totals);
-  const population = selectedFeature
-    ? populations[selectedFeature]
-    : usPopEst2019;
+  const activeView = useSelector((state) => state.ui.map.activeView);
+  let population = usPopEst2019;
+  let backIcon = faFlagUsa;
+  if (activeView.name.toLowerCase() === 'world') {
+    population = popNA;
+    backIcon = faGlobe;
+  } else {
+    population = selectedFeature ? populations[selectedFeature] : usPopEst2019;
+  }
   const data = entity.data;
   let recentData = null;
   let deathRate = {};
@@ -198,7 +205,7 @@ export const Details = ({ date, entity, collapsed }) => {
                 onClick={closeStats}
                 backgroundColor="#777"
               >
-                <FontAwesomeIcon color="#eee" icon={faFlagUsa} fixedWidth />
+                <FontAwesomeIcon color="#eee" icon={backIcon} fixedWidth />
               </SquareButton>
             ) : null}
           </Flexbox>
