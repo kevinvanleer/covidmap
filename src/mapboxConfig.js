@@ -281,7 +281,8 @@ export const sources = [
     },
   },
 ];
-export const layers = [
+
+const worldLayers = [
   {
     id: 'world-cases',
     type: 'fill',
@@ -332,6 +333,29 @@ export const layers = [
       ],
     },
   },
+  {
+    id: 'countries-base',
+    type: 'fill',
+    source: 'world-countries',
+    'source-layer': 'countries-4bm4v0',
+    paint: {
+      'fill-color': 'transparent',
+    },
+  },
+  {
+    id: 'countries-outline-base',
+    type: 'line',
+    source: 'world-countries',
+    'source-layer': 'countries-4bm4v0',
+    paint: {
+      'line-color': ['case', ['feature-state', 'hold'], '#0f0', '#e842dc'],
+      'line-width': ['interpolate', ['linear'], ['zoom'], 3, 2, 10, 4],
+      'line-opacity': ['to-number', ['feature-state', 'active']],
+    },
+  },
+];
+
+const usLayers = [
   {
     legend: {
       label: 'Cases vs Avg',
@@ -652,17 +676,6 @@ export const layers = [
     },
   },
   {
-    id: 'countries-outline-base',
-    type: 'line',
-    source: 'world-countries',
-    'source-layer': 'countries-4bm4v0',
-    paint: {
-      'line-color': ['case', ['feature-state', 'hold'], '#0f0', '#e842dc'],
-      'line-width': ['interpolate', ['linear'], ['zoom'], 3, 2, 10, 4],
-      'line-opacity': ['to-number', ['feature-state', 'active']],
-    },
-  },
-  {
     id: 'us-counties-outline-base',
     type: 'line',
     source: 'us-counties',
@@ -740,7 +753,19 @@ export const layers = [
   },
 ];
 
-const getUniversalLayers = () =>
+export const layers = [...usLayers, ...worldLayers];
+
+const getUsCommonLayers = () =>
+  usLayers
+    .filter((layer) => layer.legend === undefined)
+    .map((layer) => layer.id);
+
+const getWorldCommonLayers = () =>
+  worldLayers
+    .filter((layer) => layer.legend === undefined)
+    .map((layer) => layer.id);
+
+export const getUniversalLayers = () =>
   layers.filter((layer) => layer.legend === undefined).map((layer) => layer.id);
 
 export const layerGroups = [
@@ -752,7 +777,7 @@ export const layerGroups = [
       'us-per-capita-hotspots',
       'us-first-case',
       'us-county-population',
-      ...getUniversalLayers(),
+      ...getUsCommonLayers(),
     ],
   },
   {
@@ -762,7 +787,7 @@ export const layerGroups = [
       'us-county-total-cases',
       'us-hotspots',
       'us-first-case',
-      ...getUniversalLayers(),
+      ...getUsCommonLayers(),
     ],
   },
   {
@@ -775,11 +800,11 @@ export const layerGroups = [
       'us-county-deaths-vs-avg',
       'us-per-capita-hotspots',
       'us-county-population',
-      ...getUniversalLayers(),
+      ...getUsCommonLayers(),
     ],
   },
   {
     name: 'World',
-    layers: ['world-deaths', 'world-cases'],
+    layers: ['world-deaths', 'world-cases', ...getWorldCommonLayers()],
   },
 ];

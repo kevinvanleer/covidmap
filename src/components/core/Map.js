@@ -182,7 +182,6 @@ const MapboxMap = ({
         .subtract(2, 'weeks')
         .format('YYYY-MM-DD');*/
       for (const [key, value] of Object.entries(worldData)) {
-        console.debug({ key, value });
         setFeatureState(
           map,
           key,
@@ -242,13 +241,12 @@ const MapboxMap = ({
   }, [initialized, date, casesByCounty, map, population]);
 
   const selectFeature = useCallback(
-    (theMap, featureId, selected, hold = false) => {
+    (theMap, sourceConfig, featureId, selected, hold = false) => {
       if (featureId != null) {
         theMap.setFeatureState(
           {
-            source: 'us-counties',
-            sourceLayer: 'us-counties-500k-a4l482',
-            id: parseInt(featureId),
+            ...sourceConfig.source,
+            id: featureId,
           },
           { active: selected, hold }
         );
@@ -258,12 +256,12 @@ const MapboxMap = ({
   );
 
   const selectNewFeature = useCallback(
-    (theMap, featureId, hold) => {
+    (theMap, sourceConfig, featureId, hold) => {
       if (featureId !== selectedFeature) {
-        selectFeature(theMap, selectedFeature, false, hold);
+        selectFeature(theMap, sourceConfig, selectedFeature, false, hold);
       }
       if (featureId != null) {
-        selectFeature(theMap, featureId, true, hold);
+        selectFeature(theMap, sourceConfig, featureId, true, hold);
       }
       dispatch(setSelectedFeature(featureId));
     },
@@ -271,19 +269,19 @@ const MapboxMap = ({
   );
 
   const onMouseUp = useCallback(
-    (e) => {
+    (sourceConfig) => (e) => {
       if (map && initialized) {
         const theFeature = e.features.find(
-          (feature) => feature.layer.id === 'us-counties-base'
+          (feature) => feature.layer.id === sourceConfig.layer
         );
         if (theFeature.id === undefined) {
-          selectNewFeature(map, null, false);
+          selectNewFeature(map, sourceConfig, null, false);
           dispatch(setHold(false));
         } else if (selectedFeature !== theFeature.id) {
-          selectNewFeature(map, parseInt(theFeature.id), true);
+          selectNewFeature(map, sourceConfig, theFeature.id, true);
           dispatch(setHold(true));
         } else {
-          selectNewFeature(map, parseInt(theFeature.id), !hold);
+          selectNewFeature(map, sourceConfig, theFeature.id, !hold);
           dispatch(setHold(!hold));
         }
       }
@@ -292,20 +290,20 @@ const MapboxMap = ({
   );
 
   const onMouseMove = useCallback(
-    (e) => {
+    (sourceConfig) => (e) => {
       if (map && initialized && !hold) {
         let removeFeatures = hoveredFeatures.slice(0, -1);
-        removeFeatures.forEach((feature) => selectFeature(map, feature, false));
+        removeFeatures.forEach((feature) =>
+          selectFeature(map, sourceConfig, feature, false)
+        );
         let newArray = [...hoveredFeatures.slice(-1)];
         dispatch(setHoveredFeatures(newArray));
         if (e.features.length > 0) {
           const theFeature = e.features.find(
-            (feature) => feature.layer.id === 'us-counties-base'
+            (feature) => feature.layer.id === sourceConfig.layer
           );
-          dispatch(
-            setHoveredFeatures(newArray.concat([parseInt(theFeature.id)]))
-          );
-          selectNewFeature(map, parseInt(theFeature.id));
+          dispatch(setHoveredFeatures(newArray.concat([theFeature.id])));
+          selectNewFeature(map, sourceConfig, theFeature.id);
         }
       }
     },
@@ -320,26 +318,66 @@ const MapboxMap = ({
     ]
   );
 
-  const onMouseLeave = useCallback(() => {
-    if (map && initialized && !hold) {
-      selectNewFeature(map, null);
-    }
-  }, [map, initialized, hold, selectNewFeature]);
+  const onMouseLeave = useCallback(
+    (sourceConfig) => () => {
+      if (map && initialized && !hold) {
+        selectNewFeature(map, sourceConfig, null);
+      }
+    },
+    [map, initialized, hold, selectNewFeature]
+  );
+
+  const usBase = {
+    layer: 'us-counties-base',
+    source: {
+      source: 'us-counties',
+      sourceLayer: 'us-counties-500k-a4l482',
+    },
+  };
+  const onMouseUpUs = onMouseUp(usBase);
+  const onMouseMoveUs = onMouseMove(usBase);
+  const onMouseLeaveUs = onMouseLeave(usBase);
+
+  const worldBase = {
+    layer: 'countries-base',
+    source: {
+      source: 'world-countries',
+      sourceLayer: 'countries-4bm4v0',
+    },
+  };
+  const onMouseUpWorld = onMouseUp(worldBase);
+  const onMouseMoveWorld = onMouseMove(worldBase);
+  const onMouseLeaveWorld = onMouseLeave(worldBase);
 
   useEffect(() => {
     if (map && initialized) {
-      map.on('mouseup', 'us-counties-base', onMouseUp);
-      map.on('mousemove', 'us-counties-base', onMouseMove);
-      map.on('mouseleave', 'us-counties-base', onMouseLeave);
+      map.on('mouseup', usBase.layer, onMouseUpUs);
+      map.on('mousemove', usBase.layer, onMouseMoveUs);
+      map.on('mouseleave', usBase.layer, onMouseLeaveUs);
     }
     return () => {
       if (map && initialized) {
-        map.off('mouseup', 'us-counties-base', onMouseUp);
-        map.off('mousemove', 'us-counties-base', onMouseMove);
-        map.off('mouseleave', 'us-counties-base', onMouseLeave);
+        map.off('mouseup', usBase.layer, onMouseUpUs);
+        map.off('mousemove', usBase.layer, onMouseMoveUs);
+        map.off('mouseleave', usBase.layer, onMouseLeaveUs);
       }
     };
-  }, [map, initialized, onMouseUp, onMouseMove, onMouseLeave]);
+  }, [map, initialized, onMouseUpUs, onMouseMoveUs, onMouseLeaveUs]);
+
+  useEffect(() => {
+    if (map && initialized) {
+      map.on('mouseup', worldBase.layer, onMouseUpWorld);
+      map.on('mousemove', worldBase.layer, onMouseMoveWorld);
+      map.on('mouseleave', worldBase.layer, onMouseLeaveWorld);
+    }
+    return () => {
+      if (map && initialized) {
+        map.off('mouseup', worldBase.layer, onMouseUpWorld);
+        map.off('mousemove', worldBase.layer, onMouseMoveWorld);
+        map.off('mouseleave', worldBase.layer, onMouseLeaveWorld);
+      }
+    };
+  }, [map, initialized, onMouseUpWorld, onMouseMoveWorld, onMouseLeaveWorld]);
 
   return <div ref={mapContainer} {...props} />;
 };
