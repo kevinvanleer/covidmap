@@ -362,7 +362,14 @@ const MapboxMap = ({
         map.off('mouseleave', usBase.layer, onMouseLeaveUs);
       }
     };
-  }, [map, initialized, onMouseUpUs, onMouseMoveUs, onMouseLeaveUs]);
+  }, [
+    map,
+    initialized,
+    onMouseUpUs,
+    onMouseMoveUs,
+    onMouseLeaveUs,
+    usBase.layer,
+  ]);
 
   useEffect(() => {
     if (map && initialized) {
@@ -377,7 +384,14 @@ const MapboxMap = ({
         map.off('mouseleave', worldBase.layer, onMouseLeaveWorld);
       }
     };
-  }, [map, initialized, onMouseUpWorld, onMouseMoveWorld, onMouseLeaveWorld]);
+  }, [
+    map,
+    initialized,
+    onMouseUpWorld,
+    onMouseMoveWorld,
+    onMouseLeaveWorld,
+    worldBase.layer,
+  ]);
 
   return <div ref={mapContainer} {...props} />;
 };
