@@ -125,7 +125,7 @@ const MapboxMap = ({
       zoom: zoom,
       minZoom: 2,
     });
-    mapboxgl.clearStorage();
+    if (process.env.NODE_ENV !== 'production') mapboxgl.clearStorage();
     dispatch(beginLoadingMap(map));
   }, [dispatch]);
 
