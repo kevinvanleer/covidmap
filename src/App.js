@@ -82,7 +82,7 @@ function App() {
           last(casesByCounty[selectedFeature]),
           'county',
           'Unknown'
-        )}, ${(get(last(casesByCounty[selectedFeature]), 'state'), 'Unknown')}`,
+        )}, ${get(last(casesByCounty[selectedFeature]), 'state', 'Unknown')}`,
         data: casesByCounty[selectedFeature],
       }
     : { displayName: 'United States of America', data: totals };
