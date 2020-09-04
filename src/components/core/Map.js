@@ -146,8 +146,14 @@ const MapboxMap = ({
       center: [lng, lat],
       zoom: zoom,
       minZoom: 3,
+      maxPitch: 0,
+      dragRotate: false,
+      touchPitch: false,
+      pitchWithRotate: false,
     });
-    if (process.env.NODE_ENV !== 'production') mapboxgl.clearStorage();
+    map.dragRotate.disable();
+    map.touchZoomRotate.disableRotation();
+    //if (process.env.NODE_ENV !== 'production') mapboxgl.clearStorage();
     dispatch(beginLoadingMap(map));
   }, [dispatch]);
 
