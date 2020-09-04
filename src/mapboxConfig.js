@@ -133,144 +133,6 @@ const worldLegendConfig = {
   },
 };
 
-const worldLayers = [
-  {
-    id: 'world-cases-per-capita',
-    type: 'fill',
-    source: 'world-countries',
-    legend: {
-      label: 'Cases',
-      icon: faHeadSideCough,
-      ...legendConfig.worldCasesPerCapita,
-    },
-    'source-layer': 'countries-4bm4v0',
-    paint: {
-      'fill-color': '#00f',
-      'fill-opacity': [
-        'interpolate',
-        ['cubic-bezier', ...worldPerCapitaBezierControlPoints],
-        ['feature-state', 'casesPerCapita'],
-        ...worldPerCapitaAnchorPoints,
-      ],
-    },
-  },
-  {
-    id: 'world-deaths-per-capita',
-    legend: {
-      label: 'Deaths',
-      icon: faSkullCrossbones,
-      ...legendConfig.worldDeathsPerCapita,
-    },
-    type: 'fill',
-    source: 'world-countries',
-    'source-layer': 'countries-4bm4v0',
-    paint: {
-      'fill-color': '#f00',
-      'fill-opacity': [
-        'interpolate',
-        ['cubic-bezier', ...worldPerCapitaBezierControlPoints],
-        ['feature-state', 'deathsPerCapita'],
-        ...worldPerCapitaAnchorPoints,
-      ],
-    },
-  },
-  {
-    id: 'world-cases',
-    type: 'fill',
-    source: 'world-countries',
-    legend: {
-      label: 'Cases',
-      icon: faHeadSideCough,
-      ...legendConfig.worldCases,
-    },
-    'source-layer': 'countries-4bm4v0',
-    paint: {
-      'fill-color': '#00f',
-      'fill-opacity': [
-        'interpolate',
-        ['cubic-bezier', 0.0, 1.0, 0.2, 0.9],
-        ['feature-state', 'cases'],
-        0,
-        0,
-        1e7,
-        0.8,
-        1,
-        0.8,
-      ],
-    },
-  },
-  {
-    id: 'world-deaths',
-    legend: {
-      label: 'Deaths',
-      icon: faSkullCrossbones,
-      ...legendConfig.worldDeaths,
-    },
-    type: 'fill',
-    source: 'world-countries',
-    'source-layer': 'countries-4bm4v0',
-    paint: {
-      'fill-color': '#f00',
-      'fill-opacity': [
-        'interpolate',
-        ['cubic-bezier', 0.0, 1.0, 0.2, 0.9],
-        ['feature-state', 'deaths'],
-        0,
-        0,
-        1e7,
-        0.8,
-        1e10,
-        0.8,
-      ],
-    },
-  },
-  {
-    id: 'countries-base',
-    type: 'fill',
-    source: 'world-countries',
-    'source-layer': 'countries-4bm4v0',
-    paint: {
-      'fill-color': 'transparent',
-    },
-  },
-  {
-    id: 'countries-outline-base',
-    type: 'line',
-    source: 'world-countries',
-    'source-layer': 'countries-4bm4v0',
-    paint: {
-      'line-color': ['case', ['feature-state', 'hold'], '#0f0', '#e842dc'],
-      'line-width': ['interpolate', ['linear'], ['zoom'], 3, 2, 10, 4],
-      'line-opacity': ['to-number', ['feature-state', 'active']],
-    },
-  },
-  {
-    legend: {
-      label: 'Population',
-      icon: faUsers,
-      ...legendConfig.worldPopulation,
-    },
-    id: 'world-country-population',
-    type: 'fill',
-    source: 'world-countries',
-    'source-layer': 'countries-4bm4v0',
-    paint: {
-      'fill-color': '#0f0',
-      'fill-opacity': [
-        'interpolate',
-        ['cubic-bezier', 0.0, 1.0, 0.3, 0.6],
-        ['feature-state', 'population'],
-        0,
-        0,
-        1e9,
-        0.8,
-        1e14,
-        0.8,
-      ],
-    },
-  },
-];
-
 const usMiscLegendConfig = {
   covidVsFlu: {
     name: 'COVID vs Flu',
@@ -473,6 +335,148 @@ const usLegendConfig = {
     ],
   },
 };
+
+export const legendConfig = {
+  ...worldLegendConfig,
+  ...usMiscLegendConfig,
+  ...usLegendConfig,
+};
+
+export const sourceAdmin0 = {
+  source: 'admin-levels',
+  'source-layer': 'admin0',
+};
+
+const worldLayers = [
+  {
+    id: 'world-cases-per-capita',
+    type: 'fill',
+    ...sourceAdmin0,
+    legend: {
+      label: 'Cases',
+      icon: faHeadSideCough,
+      ...legendConfig.worldCasesPerCapita,
+    },
+    paint: {
+      'fill-color': '#00f',
+      'fill-opacity': [
+        'interpolate',
+        ['cubic-bezier', ...worldPerCapitaBezierControlPoints],
+        ['feature-state', 'casesPerCapita'],
+        ...worldPerCapitaAnchorPoints,
+      ],
+    },
+  },
+  {
+    id: 'world-deaths-per-capita',
+    legend: {
+      label: 'Deaths',
+      icon: faSkullCrossbones,
+      ...legendConfig.worldDeathsPerCapita,
+    },
+    type: 'fill',
+    ...sourceAdmin0,
+    paint: {
+      'fill-color': '#f00',
+      'fill-opacity': [
+        'interpolate',
+        ['cubic-bezier', ...worldPerCapitaBezierControlPoints],
+        ['feature-state', 'deathsPerCapita'],
+        ...worldPerCapitaAnchorPoints,
+      ],
+    },
+  },
+  {
+    id: 'world-cases',
+    type: 'fill',
+    ...sourceAdmin0,
+    legend: {
+      label: 'Cases',
+      icon: faHeadSideCough,
+      ...legendConfig.worldCases,
+    },
+    paint: {
+      'fill-color': '#00f',
+      'fill-opacity': [
+        'interpolate',
+        ['cubic-bezier', 0.0, 1.0, 0.2, 0.9],
+        ['feature-state', 'cases'],
+        0,
+        0,
+        1e7,
+        0.8,
+        1,
+        0.8,
+      ],
+    },
+  },
+  {
+    id: 'world-deaths',
+    legend: {
+      label: 'Deaths',
+      icon: faSkullCrossbones,
+      ...legendConfig.worldDeaths,
+    },
+    type: 'fill',
+    ...sourceAdmin0,
+    paint: {
+      'fill-color': '#f00',
+      'fill-opacity': [
+        'interpolate',
+        ['cubic-bezier', 0.0, 1.0, 0.2, 0.9],
+        ['feature-state', 'deaths'],
+        0,
+        0,
+        1e7,
+        0.8,
+        1e10,
+        0.8,
+      ],
+    },
+  },
+  {
+    id: 'countries-base',
+    type: 'fill',
+    ...sourceAdmin0,
+    paint: {
+      'fill-color': 'transparent',
+    },
+  },
+  {
+    id: 'countries-outline-base',
+    type: 'line',
+    ...sourceAdmin0,
+    paint: {
+      'line-color': ['case', ['feature-state', 'hold'], '#0f0', '#e842dc'],
+      'line-width': ['interpolate', ['linear'], ['zoom'], 3, 2, 10, 4],
+      'line-opacity': ['to-number', ['feature-state', 'active']],
+    },
+  },
+  {
+    legend: {
+      label: 'Population',
+      icon: faUsers,
+      ...legendConfig.worldPopulation,
+    },
+    id: 'world-country-population',
+    type: 'fill',
+    ...sourceAdmin0,
+    paint: {
+      'fill-color': '#0f0',
+      'fill-opacity': [
+        'interpolate',
+        ['cubic-bezier', 0.0, 1.0, 0.3, 0.6],
+        ['feature-state', 'population'],
+        0,
+        0,
+        1e9,
+        0.8,
+        1e14,
+        0.8,
+      ],
+    },
+  },
+];
 
 const usLayers = [
   {
@@ -874,10 +878,10 @@ const usLayers = [
 
 export const sources = [
   {
-    id: 'world-countries',
+    id: 'admin-levels',
     config: {
       type: 'vector',
-      url: 'mapbox://ruokvl.d4p3jnf9',
+      url: 'mapbox://ruokvl.admin-levels',
       promoteId: 'ISO_A2',
     },
   },
@@ -897,12 +901,6 @@ export const sources = [
     },
   },
 ];
-
-export const legendConfig = {
-  ...worldLegendConfig,
-  ...usMiscLegendConfig,
-  ...usLegendConfig,
-};
 
 export const layers = [...usLayers, ...worldLayers];
 

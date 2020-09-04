@@ -17,6 +17,8 @@ import {
 } from '../../state/ui/map.js';
 import { loadingStatus } from '../../state/util/loadingStatus.js';
 
+import { sourceAdmin0 } from '../../mapboxConfig.js';
+
 mapboxgl.accessToken =
   'pk.eyJ1IjoicnVva3ZsIiwiYSI6ImNrZDA3NW9oNTBhanYyeXBjOXBjazloazUifQ.qwtn31dojyeKrFMrcRAjBw';
 
@@ -132,7 +134,7 @@ const MapboxMap = ({
       style: 'mapbox://styles/mapbox/light-v10',
       center: [lng, lat],
       zoom: zoom,
-      minZoom: 2,
+      minZoom: 1.5,
     });
     if (process.env.NODE_ENV !== 'production') mapboxgl.clearStorage();
     dispatch(beginLoadingMap(map));
@@ -194,8 +196,7 @@ const MapboxMap = ({
         setFeatureState(
           map,
           key,
-          'world-countries',
-          'countries-4bm4v0',
+          ...Object.values(sourceAdmin0),
           value,
           date,
           choroplethState(
@@ -352,8 +353,8 @@ const MapboxMap = ({
   const worldBase = {
     layer: 'countries-base',
     source: {
-      source: 'world-countries',
-      sourceLayer: 'countries-4bm4v0',
+      source: sourceAdmin0.source,
+      sourceLayer: sourceAdmin0['source-layer'],
     },
   };
   const onMouseUpWorld = onMouseUp(worldBase);
