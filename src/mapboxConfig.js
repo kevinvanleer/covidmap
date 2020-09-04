@@ -16,16 +16,28 @@ const fluDeathsPerCapita = 34200 / 328.2e6;
 
 import { cubicBezierFindY } from './util/bezier.js';
 
+const worldPerCapitaBezierControlPoints = [0.0, 1.0, 0.3, 0.6];
+const worldPerCapitaAnchorPoints = [0, 0, 0.05, 0.8, 1, 0.8];
+
+const convertPoints = (anchors, controls) => {
+  return [
+    { x: anchors[0], y: anchors[1] },
+    { x: controls[0] * anchors[2], y: controls[1] * anchors[3] },
+    { x: controls[2] * anchors[2], y: controls[3] * anchors[3] },
+    { x: anchors[2], y: anchors[3] },
+  ];
+};
+
 const getWorldPerCapitaLegendOpacity = cubicBezierFindY(
-  { x: 0, y: 0 },
-  { x: 0, y: 0.8 },
-  { x: 0.17 * 0.05, y: 0.72 },
-  { x: 0.05, y: 0.8 }
+  ...convertPoints(
+    worldPerCapitaAnchorPoints,
+    worldPerCapitaBezierControlPoints
+  )
 );
 const getWorldLegendOpacity = cubicBezierFindY(
   { x: 0, y: 0 },
   { x: 0, y: 0.8 },
-  { x: 1.7e6, y: 0.72 },
+  { x: 2e6, y: 0.72 },
   { x: 1e7, y: 0.8 }
 );
 const getWorldPopLegendOpacity = cubicBezierFindY(
@@ -54,7 +66,26 @@ const worldPerCapitaGradient = [
   },
 ];
 
-export const legendConfig = {
+const worldTotalsGradient = [
+  {
+    magnitude: 1e4,
+    opacity: getWorldLegendOpacity(1e4),
+  },
+  {
+    magnitude: 1e5,
+    opacity: getWorldLegendOpacity(1e5),
+  },
+  {
+    magnitude: 1e6,
+    opacity: getWorldLegendOpacity(1e6),
+  },
+  {
+    magnitude: 1e7,
+    opacity: 0.8,
+  },
+];
+
+const worldLegendConfig = {
   worldDeathsPerCapita: {
     name: 'Deaths',
     defaultDisabled: false,
@@ -66,6 +97,16 @@ export const legendConfig = {
     defaultDisabled: false,
     fillColor: '#00f',
     gradient: worldPerCapitaGradient,
+  },
+  worldDeaths: {
+    name: 'Deaths',
+    fillColor: '#f00',
+    gradient: worldTotalsGradient,
+  },
+  worldCases: {
+    name: 'Cases',
+    fillColor: '#00f',
+    gradient: worldTotalsGradient,
   },
   worldPopulation: {
     name: 'Population',
@@ -90,29 +131,9 @@ export const legendConfig = {
       },
     ],
   },
-  population: {
-    name: 'Population',
-    defaultDisabled: true,
-    fillColor: '#0f0',
-    gradient: [
-      {
-        magnitude: 1e4,
-        opacity: getWorldLegendOpacity(1e4),
-      },
-      {
-        magnitude: 1e5,
-        opacity: getWorldLegendOpacity(1e5),
-      },
-      {
-        magnitude: 1e6,
-        opacity: getWorldLegendOpacity(1e6),
-      },
-      {
-        magnitude: 1e7,
-        opacity: 0.8,
-      },
-    ],
-  },
+};
+
+const usMiscLegendConfig = {
   covidVsFlu: {
     name: 'COVID vs Flu',
     mutex: true,
@@ -144,8 +165,8 @@ export const legendConfig = {
       },
     ],
   },
-  casesVsAvg: {
-    name: 'Cases vs Avg',
+  covidVsAvg: {
+    name: 'COVID vs Avg',
     mutex: true,
     gradient: [
       {
@@ -197,31 +218,15 @@ export const legendConfig = {
       },
     ],
   },
-  worldDeaths: {
-    name: 'Deaths',
-    fillColor: '#f00',
-    gradient: [
-      {
-        magnitude: 1e4,
-        opacity: getWorldLegendOpacity(1e4),
-      },
-      {
-        magnitude: 1e5,
-        opacity: getWorldLegendOpacity(1e5),
-      },
-      {
-        magnitude: 1e6,
-        opacity: getWorldLegendOpacity(1e6),
-      },
-      {
-        magnitude: 1e7,
-        opacity: 0.8,
-      },
-    ],
-  },
-  worldCases: {
-    name: 'Cases',
-    fillColor: '#00f',
+};
+
+const usLegendConfig = {
+  ...worldLegendConfig,
+  ...usMiscLegendConfig,
+  population: {
+    name: 'Population',
+    defaultDisabled: true,
+    fillColor: '#0f0',
     gradient: [
       {
         magnitude: 1e4,
@@ -331,6 +336,12 @@ export const legendConfig = {
   },
 };
 
+export const legendConfig = {
+  ...worldLegendConfig,
+  ...usMiscLegendConfig,
+  ...usLegendConfig,
+};
+
 export const sources = [
   {
     id: 'world-countries',
@@ -372,14 +383,9 @@ const worldLayers = [
       'fill-color': '#00f',
       'fill-opacity': [
         'interpolate',
-        ['cubic-bezier', 0.0, 1.0, 0.17, 0.9],
+        ['cubic-bezier', ...worldPerCapitaBezierControlPoints],
         ['feature-state', 'casesPerCapita'],
-        0,
-        0,
-        0.05,
-        0.8,
-        1,
-        0.8,
+        ...worldPerCapitaAnchorPoints,
       ],
     },
   },
@@ -397,14 +403,9 @@ const worldLayers = [
       'fill-color': '#f00',
       'fill-opacity': [
         'interpolate',
-        ['cubic-bezier', 0.0, 1.0, 0.17, 0.9],
+        ['cubic-bezier', ...worldPerCapitaBezierControlPoints],
         ['feature-state', 'deathsPerCapita'],
-        0,
-        0,
-        0.05,
-        0.8,
-        1,
-        0.8,
+        ...worldPerCapitaAnchorPoints,
       ],
     },
   },
@@ -422,7 +423,7 @@ const worldLayers = [
       'fill-color': '#00f',
       'fill-opacity': [
         'interpolate',
-        ['cubic-bezier', 0.0, 1.0, 0.17, 0.9],
+        ['cubic-bezier', 0.0, 1.0, 0.2, 0.9],
         ['feature-state', 'cases'],
         0,
         0,
@@ -447,7 +448,7 @@ const worldLayers = [
       'fill-color': '#f00',
       'fill-opacity': [
         'interpolate',
-        ['cubic-bezier', 0.0, 1.0, 0.17, 0.9],
+        ['cubic-bezier', 0.0, 1.0, 0.2, 0.9],
         ['feature-state', 'deaths'],
         0,
         0,
@@ -510,7 +511,7 @@ const usLayers = [
     legend: {
       label: 'Cases vs Avg',
       icon: faBiohazard,
-      ...legendConfig.casesVsAvg,
+      ...legendConfig.covidVsAvg,
     },
     id: 'us-county-cases-vs-avg',
     type: 'fill',
@@ -540,7 +541,7 @@ const usLayers = [
     legend: {
       label: 'Deaths vs Avg',
       icon: faBiohazard,
-      ...legendConfig.casesVsAvg,
+      ...legendConfig.covidVsAvg,
     },
     id: 'us-county-deaths-vs-avg',
     type: 'fill',
@@ -805,7 +806,7 @@ const usLayers = [
       'fill-color': '#0f0',
       'fill-opacity': [
         'interpolate',
-        ['cubic-bezier', 0.0, 1.0, 0.17, 0.9],
+        ['cubic-bezier', 0.0, 1.0, 0.2, 0.9],
         ['feature-state', 'population'],
         0,
         0,
