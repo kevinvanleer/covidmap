@@ -41,6 +41,8 @@ export const cubicBezierFindY = (
   anchorEnd
 ) => (x) => {
   let t = 0.5;
+  let tMax = 1;
+  let tMin = 0;
   let found = false;
 
   const bezierFunction = cubicBezier2D(
@@ -50,13 +52,23 @@ export const cubicBezierFindY = (
     anchorEnd
   );
 
+  const increment = (result) => {
+    if (x > result) {
+      tMin = t;
+      return t + (tMax - t) / 2;
+    } else {
+      tMax = t;
+      return t - (t - tMin) / 2;
+    }
+  };
+
   while (!found) {
     const result = bezierFunction(t);
 
-    if (Math.abs(result.x - x) < anchorEnd.x * 1e-6) {
+    if (Math.abs(result.x - x) < 1e-6) {
       return result.y;
     } else {
-      t = result.x > x ? t * 0.5 : t * 1.5;
+      t = increment(result.x);
     }
   }
 };
