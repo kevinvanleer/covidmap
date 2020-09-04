@@ -78,7 +78,7 @@ const mapSlice = createSlice({
         });
       } else {
         state.map.flyTo({
-          center: [-95, 40],
+          center: [-95, 39],
           zoom: 4,
         });
       }
