@@ -14,7 +14,6 @@ import BarChart from '../core/d3BarChart.js';
 import { releaseHold, setSelectedFeature } from '../../state/ui/map.js';
 
 const usPopEst2019 = { POPESTIMATE2019: 328239523 };
-const popNA = { POPESTIMATE2019: 'N/A' };
 
 const fillCasesPerDay = (endDate, count) => {
   let fillArray = [];
@@ -91,16 +90,29 @@ export const Details = ({ date, entity, collapsed }) => {
   const dispatch = useDispatch();
   const selectedGroup = useSelector((state) => state.ui.map.selectedLayerGroup);
   const selectedFeature = useSelector((state) => state.ui.map.selectedFeature);
-  const populations = useSelector((state) => state.core.usCovidData.population);
+  const usPopulations = useSelector(
+    (state) => state.core.usCovidData.population
+  );
+  const worldPopulations = useSelector(
+    (state) => state.core.worldCovidData.population
+  );
   const totals = useSelector((state) => state.core.usCovidData.totals);
   const activeView = useSelector((state) => state.ui.map.activeView);
   let population = usPopEst2019;
   let backIcon = faFlagUsa;
   if (activeView.name.toLowerCase() === 'world') {
-    population = popNA;
+    population = {
+      POPESTIMATE2019: get(
+        worldPopulations,
+        [selectedFeature, 'population'],
+        'N/A'
+      ),
+    };
     backIcon = faGlobe;
   } else {
-    population = selectedFeature ? populations[selectedFeature] : usPopEst2019;
+    population = selectedFeature
+      ? usPopulations[selectedFeature]
+      : usPopEst2019;
   }
   const data = entity.data;
   let recentData = null;

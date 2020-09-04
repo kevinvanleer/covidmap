@@ -117,7 +117,7 @@ const BarChart = ({
           .append('text')
           .attr('x', margin.left)
           .attr('y', y(average) + (y(average) < offset ? 10 : -5))
-          .text('30-DAY NATIONAL AVERAGE')
+          .text('30-DAY US AVERAGE')
           .attr('text-anchor', 'left')
           .attr('font-family', 'sans-serif')
           .attr('font-size', '8px')

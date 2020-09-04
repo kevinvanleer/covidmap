@@ -135,4 +135,12 @@ test('cubicBezierFindY', () => {
       { x: 1e7, y: 0.8 }
     )(1e6)
   ).toBeCloseTo(0.587, 2);
+  expect(
+    cubicBezierFindY(
+      { x: 0, y: 0 },
+      { x: 0, y: 0.8 },
+      { x: 1.7e11, y: 0.72 },
+      { x: 1e12, y: 0.8 }
+    )(1e6)
+  ).toBeCloseTo(0.0046, 2);
 });

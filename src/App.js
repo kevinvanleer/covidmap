@@ -85,8 +85,11 @@ function App() {
   if (activeView.name.toLowerCase() === 'world') {
     detailsData = selectedFeature
       ? {
-          displayName: `${get(last(worldData[selectedFeature]), 'country')}`,
-          data: worldData[selectedFeature],
+          displayName: `${get(
+            last(get(worldData, [selectedFeature])),
+            'country'
+          )}`,
+          data: get(worldData, [selectedFeature], []),
         }
       : { displayName: 'Global', data: [] };
   }

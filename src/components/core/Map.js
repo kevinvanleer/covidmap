@@ -90,10 +90,19 @@ const MapboxMap = ({
   const initialized = useSelector(
     (state) => state.ui.map.sourcesLoadStatus.status === loadingStatus.complete
   );
-  const population = useSelector((state) => state.core.usCovidData.population);
+  const usPopulation = useSelector(
+    (state) => state.core.usCovidData.population
+  );
+  const worldPopulation = useSelector(
+    (state) => state.core.worldCovidData.population
+  );
   const selectedGroup = useSelector((state) => state.ui.map.selectedLayerGroup);
   const hoveredFeatures = useSelector((state) => state.ui.map.hoveredFeatures);
   const worldData = useSelector((state) => state.core.worldCovidData.byCountry);
+  const activeView = useSelector((state) => state.ui.map.activeView);
+  const population =
+    activeView.name.toLowerCase() === 'world' ? worldPopulation : usPopulation;
+
   const mapContainer = useRef(null);
 
   const filteredActiveLayers = activeLayers.filter((layer) =>
@@ -189,7 +198,9 @@ const MapboxMap = ({
           'countries-4bm4v0',
           value,
           date,
-          choroplethState()
+          choroplethState(
+            parseInt(get(population, [key, 'POPESTIMATE2019'], 0))
+          )
         );
         /*setFeatureState(
           map,

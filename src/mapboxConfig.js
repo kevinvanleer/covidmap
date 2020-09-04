@@ -22,8 +22,37 @@ const getWorldLegendOpacity = cubicBezierFindY(
   { x: 1.7e6, y: 0.72 },
   { x: 1e7, y: 0.8 }
 );
+const getWorldPopLegendOpacity = cubicBezierFindY(
+  { x: 0, y: 0 },
+  { x: 0, y: 0.8 },
+  { x: 3e8, y: 0.48 },
+  { x: 1e9, y: 0.8 }
+);
 
 export const legendConfig = {
+  worldPopulation: {
+    name: 'Population',
+    defaultDisabled: true,
+    fillColor: '#0f0',
+    gradient: [
+      {
+        magnitude: 1e6,
+        opacity: getWorldPopLegendOpacity(1e6),
+      },
+      {
+        magnitude: 1e7,
+        opacity: getWorldPopLegendOpacity(1e7),
+      },
+      {
+        magnitude: 1e8,
+        opacity: getWorldPopLegendOpacity(1e8),
+      },
+      {
+        magnitude: 1e9,
+        opacity: 0.8,
+      },
+    ],
+  },
   population: {
     name: 'Population',
     defaultDisabled: true,
@@ -43,7 +72,7 @@ export const legendConfig = {
       },
       {
         magnitude: 1e7,
-        opacity: 1,
+        opacity: 0.8,
       },
     ],
   },
@@ -149,7 +178,7 @@ export const legendConfig = {
       },
       {
         magnitude: 1e7,
-        opacity: 1,
+        opacity: 0.8,
       },
     ],
   },
@@ -171,7 +200,7 @@ export const legendConfig = {
       },
       {
         magnitude: 1e7,
-        opacity: 1,
+        opacity: 0.8,
       },
     ],
   },
@@ -293,6 +322,52 @@ export const sources = [
 
 const worldLayers = [
   {
+    id: 'world-cases-per-capita',
+    type: 'fill',
+    source: 'world-countries',
+    legend: {
+      label: 'Cases',
+      icon: faHeadSideCough,
+      ...legendConfig.worldCases,
+    },
+    'source-layer': 'countries-4bm4v0',
+    paint: {
+      'fill-color': '#00f',
+      'fill-opacity': [
+        'interpolate',
+        ['cubic-bezier', 0.0, 1.0, 0.17, 0.9],
+        ['feature-state', 'casesPerCapita'],
+        0,
+        0,
+        1,
+        0.8,
+      ],
+    },
+  },
+  {
+    id: 'world-deaths-per-capita',
+    legend: {
+      label: 'Deaths',
+      icon: faSkullCrossbones,
+      ...legendConfig.worldDeaths,
+    },
+    type: 'fill',
+    source: 'world-countries',
+    'source-layer': 'countries-4bm4v0',
+    paint: {
+      'fill-color': '#f00',
+      'fill-opacity': [
+        'interpolate',
+        ['cubic-bezier', 0.0, 1.0, 0.17, 0.9],
+        ['feature-state', 'deathsPerCapita'],
+        0,
+        0,
+        1,
+        0.8,
+      ],
+    },
+  },
+  {
     id: 'world-cases',
     type: 'fill',
     source: 'world-countries',
@@ -312,7 +387,7 @@ const worldLayers = [
         0,
         1e7,
         0.8,
-        1e10,
+        1,
         0.8,
       ],
     },
@@ -360,6 +435,31 @@ const worldLayers = [
       'line-color': ['case', ['feature-state', 'hold'], '#0f0', '#e842dc'],
       'line-width': ['interpolate', ['linear'], ['zoom'], 3, 2, 10, 4],
       'line-opacity': ['to-number', ['feature-state', 'active']],
+    },
+  },
+  {
+    legend: {
+      label: 'Population',
+      icon: faUsers,
+      ...legendConfig.worldPopulation,
+    },
+    id: 'world-country-population',
+    type: 'fill',
+    source: 'world-countries',
+    'source-layer': 'countries-4bm4v0',
+    paint: {
+      'fill-color': '#0f0',
+      'fill-opacity': [
+        'interpolate',
+        ['cubic-bezier', 0.0, 1.0, 0.3, 0.6],
+        ['feature-state', 'population'],
+        0,
+        0,
+        1e9,
+        0.8,
+        1e14,
+        0.8,
+      ],
     },
   },
 ];
@@ -816,8 +916,22 @@ export const layerGroups = {
   ],
   world: [
     {
+      name: 'Per Capita',
+      layers: [
+        'world-deaths-per-capita',
+        'world-cases-per-capita',
+        'world-country-population',
+        ...getWorldCommonLayers(),
+      ],
+    },
+    {
       name: 'Total',
-      layers: ['world-deaths', 'world-cases', ...getWorldCommonLayers()],
+      layers: [
+        'world-deaths',
+        'world-cases',
+        'world-country-population',
+        ...getWorldCommonLayers(),
+      ],
     },
   ],
 };
