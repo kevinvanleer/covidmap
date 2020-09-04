@@ -16,6 +16,12 @@ const fluDeathsPerCapita = 34200 / 328.2e6;
 
 import { cubicBezierFindY } from './util/bezier.js';
 
+const getWorldPerCapitaLegendOpacity = cubicBezierFindY(
+  { x: 0, y: 0 },
+  { x: 0, y: 0.8 },
+  { x: 0.17 * 0.05, y: 0.72 },
+  { x: 0.05, y: 0.8 }
+);
 const getWorldLegendOpacity = cubicBezierFindY(
   { x: 0, y: 0 },
   { x: 0, y: 0.8 },
@@ -29,7 +35,38 @@ const getWorldPopLegendOpacity = cubicBezierFindY(
   { x: 1e9, y: 0.8 }
 );
 
+const worldPerCapitaGradient = [
+  {
+    magnitude: '.1%',
+    opacity: getWorldPerCapitaLegendOpacity(0.001),
+  },
+  {
+    magnitude: '.2%',
+    opacity: getWorldPerCapitaLegendOpacity(0.002),
+  },
+  {
+    magnitude: '1%',
+    opacity: getWorldPerCapitaLegendOpacity(0.01),
+  },
+  {
+    magnitude: '5%',
+    opacity: getWorldPerCapitaLegendOpacity(0.05),
+  },
+];
+
 export const legendConfig = {
+  worldDeathsPerCapita: {
+    name: 'Deaths',
+    defaultDisabled: false,
+    fillColor: '#f00',
+    gradient: worldPerCapitaGradient,
+  },
+  worldCasesPerCapita: {
+    name: 'Cases',
+    defaultDisabled: false,
+    fillColor: '#00f',
+    gradient: worldPerCapitaGradient,
+  },
   worldPopulation: {
     name: 'Population',
     defaultDisabled: true,
@@ -328,7 +365,7 @@ const worldLayers = [
     legend: {
       label: 'Cases',
       icon: faHeadSideCough,
-      ...legendConfig.worldCases,
+      ...legendConfig.worldCasesPerCapita,
     },
     'source-layer': 'countries-4bm4v0',
     paint: {
@@ -339,6 +376,8 @@ const worldLayers = [
         ['feature-state', 'casesPerCapita'],
         0,
         0,
+        0.05,
+        0.8,
         1,
         0.8,
       ],
@@ -349,7 +388,7 @@ const worldLayers = [
     legend: {
       label: 'Deaths',
       icon: faSkullCrossbones,
-      ...legendConfig.worldDeaths,
+      ...legendConfig.worldDeathsPerCapita,
     },
     type: 'fill',
     source: 'world-countries',
@@ -362,6 +401,8 @@ const worldLayers = [
         ['feature-state', 'deathsPerCapita'],
         0,
         0,
+        0.05,
+        0.8,
         1,
         0.8,
       ],

@@ -159,6 +159,13 @@ export const initializeFeatureState = () => async (dispatch) => {
   dispatch(setTotals(await totalsPromise));
   dispatch(setPopulation(await populationPromise));
 
+  dispatch(worldSetPopulation(await worldPopulationPromise));
+  dispatch(
+    worldDataLoad(
+      sortWorldCasesByCountry((await (await worldDataPromise).json()).data)
+    )
+  );
+
   try {
     dispatch(usCasesByCountyStatus.requestPending(0));
     while (!done) {
@@ -180,11 +187,4 @@ export const initializeFeatureState = () => async (dispatch) => {
   } catch (e) {
     dispatch(usCasesByCountyStatus.requestFailed(e));
   }
-
-  dispatch(worldSetPopulation(await worldPopulationPromise));
-  dispatch(
-    worldDataLoad(
-      sortWorldCasesByCountry((await (await worldDataPromise).json()).data)
-    )
-  );
 };

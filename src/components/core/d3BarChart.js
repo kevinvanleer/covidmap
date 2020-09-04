@@ -15,9 +15,10 @@ const BarChart = ({
   setActiveLayer,
 }) => {
   const d3svg = useRef(null);
-  const yTicks = height * (7 / 200);
 
   useEffect(() => {
+    const yTicks = height * (7 / 200);
+    const defaultMinHeight = Math.max(average * 1.5, 10);
     const margin = { top: 20, right: 0, bottom: 30, left: 30 };
     if (data && d3svg.current) {
       let svg = d3.select(d3svg.current);
@@ -34,10 +35,10 @@ const BarChart = ({
         .domain([
           0,
           isEmpty(data)
-            ? 100
+            ? defaultMinHeight
             : Math.max(
                 d3.max(data, (d) => d.value),
-                100
+                defaultMinHeight
               ),
         ])
         .nice()
@@ -133,7 +134,6 @@ const BarChart = ({
     width,
     xLabel,
     yLabel,
-    yTicks,
     average,
   ]);
 

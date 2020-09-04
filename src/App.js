@@ -43,6 +43,9 @@ function App() {
   const worldData = useSelector((state) => state.core.worldCovidData.byCountry);
   const activeLayers = useSelector((state) => state.ui.map.activeLayers);
   const activeView = useSelector((state) => state.ui.map.activeView);
+  const worldPopulations = useSelector(
+    (state) => state.core.worldCovidData.population
+  );
 
   if (process.env.NODE_ENV === 'production') {
     ReactGA.initialize('UA-55310450-2');
@@ -77,8 +80,9 @@ function App() {
     ? {
         displayName: `${get(
           last(casesByCounty[selectedFeature]),
-          'county'
-        )}, ${get(last(casesByCounty[selectedFeature]), 'state')}`,
+          'county',
+          'Unknown'
+        )}, ${(get(last(casesByCounty[selectedFeature]), 'state'), 'Unknown')}`,
         data: casesByCounty[selectedFeature],
       }
     : { displayName: 'United States of America', data: totals };
@@ -87,7 +91,8 @@ function App() {
       ? {
           displayName: `${get(
             last(get(worldData, [selectedFeature])),
-            'country'
+            'country',
+            get(worldPopulations, [selectedFeature, 'name'], 'Unknown')
           )}`,
           data: get(worldData, [selectedFeature], []),
         }
