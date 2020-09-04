@@ -117,12 +117,23 @@ const MapboxMap = ({
           map.setLayoutProperty(
             layer.id,
             'visibility',
-            filteredActiveLayers.includes(layer.id) ? 'visible' : 'none'
+            filteredActiveLayers.includes(layer.id) &&
+              worldData &&
+              casesByCounty
+              ? 'visible'
+              : 'none'
           );
         }
       });
     }
-  }, [map, initialized, layers, filteredActiveLayers]);
+  }, [
+    map,
+    initialized,
+    layers,
+    filteredActiveLayers,
+    worldData,
+    casesByCounty,
+  ]);
 
   useEffect(() => {
     const lat = 39;
@@ -183,6 +194,7 @@ const MapboxMap = ({
       layers.forEach((layer) => {
         if (map.getLayer(layer.id)) map.removeLayer(layer.id);
         map.addLayer(layer);
+        map.setLayoutProperty(layer.id, 'visibility', 'none');
       });
     }
   }, [layers, map, initialized]);

@@ -358,7 +358,12 @@ const worldLayers = [
       ...legendConfig.worldCasesPerCapita,
     },
     paint: {
-      'fill-color': '#00f',
+      'fill-color': [
+        'case',
+        ['==', ['feature-state', 'casesPerCapita'], null],
+        '#777',
+        '#00f',
+      ],
       'fill-opacity': [
         'interpolate',
         ['cubic-bezier', ...worldPerCapitaBezierControlPoints],
@@ -377,7 +382,12 @@ const worldLayers = [
     type: 'fill',
     ...sourceAdmin0,
     paint: {
-      'fill-color': '#f00',
+      'fill-color': [
+        'case',
+        ['==', ['feature-state', 'deathsPerCapita'], null],
+        '#777',
+        '#f00',
+      ],
       'fill-opacity': [
         'interpolate',
         ['cubic-bezier', ...worldPerCapitaBezierControlPoints],
@@ -396,7 +406,12 @@ const worldLayers = [
       ...legendConfig.worldCases,
     },
     paint: {
-      'fill-color': '#00f',
+      'fill-color': [
+        'case',
+        ['==', ['feature-state', 'cases'], null],
+        '#777',
+        '#00f',
+      ],
       'fill-opacity': [
         'interpolate',
         ['cubic-bezier', 0.0, 1.0, 0.2, 0.9],
@@ -420,7 +435,12 @@ const worldLayers = [
     type: 'fill',
     ...sourceAdmin0,
     paint: {
-      'fill-color': '#f00',
+      'fill-color': [
+        'case',
+        ['==', ['feature-state', 'deaths'], null],
+        '#777',
+        '#f00',
+      ],
       'fill-opacity': [
         'interpolate',
         ['cubic-bezier', 0.0, 1.0, 0.2, 0.9],
@@ -462,7 +482,12 @@ const worldLayers = [
     type: 'fill',
     ...sourceAdmin0,
     paint: {
-      'fill-color': '#0f0',
+      'fill-color': [
+        'case',
+        ['==', ['feature-state', 'population'], null],
+        '#777',
+        '#0f0',
+      ],
       'fill-opacity': [
         'interpolate',
         ['cubic-bezier', 0.0, 1.0, 0.3, 0.6],
@@ -643,7 +668,12 @@ const usLayers = [
     source: 'us-counties',
     'source-layer': 'us-counties-500k-a4l482',
     paint: {
-      'fill-color': '#f00',
+      'fill-color': [
+        'case',
+        ['==', ['feature-state', 'deathsPerCapita'], null],
+        '#777',
+        '#f00',
+      ],
       'fill-opacity': [
         'interpolate',
         ['linear'],
@@ -676,7 +706,12 @@ const usLayers = [
     source: 'us-counties',
     'source-layer': 'us-counties-500k-a4l482',
     paint: {
-      'fill-color': '#00f',
+      'fill-color': [
+        'case',
+        ['==', ['feature-state', 'casesPerCapita'], null],
+        '#777',
+        '#00f',
+      ],
       'fill-opacity': [
         'interpolate',
         ['linear'],
@@ -709,7 +744,12 @@ const usLayers = [
     source: 'us-counties',
     'source-layer': 'us-counties-500k-a4l482',
     paint: {
-      'fill-color': '#f00',
+      'fill-color': [
+        'case',
+        ['==', ['feature-state', 'deaths'], null],
+        '#777',
+        '#f00',
+      ],
       'fill-opacity': [
         'interpolate',
         ['linear'],
@@ -742,7 +782,12 @@ const usLayers = [
     source: 'us-counties',
     'source-layer': 'us-counties-500k-a4l482',
     paint: {
-      'fill-color': '#00f',
+      'fill-color': [
+        'case',
+        ['==', ['feature-state', 'cases'], null],
+        '#777',
+        '#00f',
+      ],
       'fill-opacity': [
         'interpolate',
         ['linear'],
@@ -775,7 +820,12 @@ const usLayers = [
     source: 'us-counties',
     'source-layer': 'us-counties-500k-a4l482',
     paint: {
-      'fill-color': '#0f0',
+      'fill-color': [
+        'case',
+        ['==', ['feature-state', 'population'], null],
+        '#777',
+        '#0f0',
+      ],
       'fill-opacity': [
         'interpolate',
         ['cubic-bezier', 0.0, 1.0, 0.2, 0.9],
