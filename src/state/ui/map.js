@@ -72,6 +72,7 @@ const mapSlice = createSlice({
     setActiveView: (state, action) => {
       state.activeView = action.payload;
       if (action.payload.name.toLowerCase() === 'world') {
+        state.map.setMinZoom(0);
         state.map.flyTo({
           center: [10, 25],
           zoom: 1.7,
@@ -81,6 +82,7 @@ const mapSlice = createSlice({
           center: [-95, 39],
           zoom: 4,
         });
+        state.map.setMinZoom(3);
       }
       state.layerGroups = layerGroups[action.payload.name];
       state.selectedLayerGroup = layerGroups[action.payload.name][0];

@@ -134,7 +134,7 @@ const MapboxMap = ({
       style: 'mapbox://styles/mapbox/light-v10',
       center: [lng, lat],
       zoom: zoom,
-      minZoom: 1.5,
+      minZoom: 3,
     });
     if (process.env.NODE_ENV !== 'production') mapboxgl.clearStorage();
     dispatch(beginLoadingMap(map));
