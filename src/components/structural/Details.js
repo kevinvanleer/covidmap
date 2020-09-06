@@ -14,6 +14,7 @@ import BarChart from '../core/d3BarChart.js';
 import { releaseHold, setSelectedFeature } from '../../state/ui/map.js';
 
 const usPopEst2019 = { POPESTIMATE2019: 328239523 };
+const globalPopEst2019 = 7.713e9;
 
 const fillCasesPerDay = (endDate, count) => {
   let fillArray = [];
@@ -105,7 +106,7 @@ export const Details = ({ date, entity, collapsed }) => {
       POPESTIMATE2019: get(
         worldPopulations,
         [selectedFeature, 'population'],
-        'N/A'
+        globalPopEst2019
       ),
     };
     backIcon = faGlobe;

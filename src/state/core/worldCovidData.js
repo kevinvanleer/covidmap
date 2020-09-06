@@ -5,6 +5,7 @@ const worldCovidDataSlice = createSlice({
   initialState: {
     byCountry: null,
     population: null,
+    totals: null,
   },
   reducers: {
     load: (state, action) => {
@@ -13,8 +14,11 @@ const worldCovidDataSlice = createSlice({
     setPopulation: (state, action) => {
       state.population = action.payload;
     },
+    setTotals: (state, action) => {
+      state.totals = action.payload;
+    },
   },
 });
 
-export const { load, setPopulation } = worldCovidDataSlice.actions;
+export const { load, setTotals, setPopulation } = worldCovidDataSlice.actions;
 export default worldCovidDataSlice.reducer;

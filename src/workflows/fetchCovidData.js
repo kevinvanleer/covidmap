@@ -9,6 +9,7 @@ import {
 import {
   load as worldDataLoad,
   setPopulation as worldSetPopulation,
+  setTotals as worldSetTotals,
 } from '../state/core/worldCovidData.js';
 import {
   aliveCheckPending,
@@ -23,6 +24,10 @@ export const fetchUsCasesByCounty = async (startIndex, pageSize, reverse) => {
     `/api/us-cases-by-county?startIndex=${startIndex}&pageSize=${pageSize}&reverse=${reverse}`
   );
   return response.json();
+};
+
+export const fetchGlobalCovidTotals = async () => {
+  return (await fetch('/api/global-covid-totals')).json();
 };
 
 export const fetchWorldCovidData = async () => {
@@ -141,6 +146,7 @@ export const initializeFeatureState = () => async (dispatch) => {
   const populationPromise = fetchUsPopulation();
   const worldDataPromise = fetchWorldCovidData();
   const worldPopulationPromise = fetchWorldPopulation();
+  const globalCovidTotalsPromise = fetchGlobalCovidTotals();
 
   const boundaries = await fetchUsCovidBoundaries('20m');
   const boundaryStates = {};
@@ -165,7 +171,9 @@ export const initializeFeatureState = () => async (dispatch) => {
   dispatch(setTotals(await totalsPromise));
   dispatch(setPopulation(await populationPromise));
 
+  dispatch(worldSetTotals(await globalCovidTotalsPromise));
   dispatch(worldSetPopulation(await worldPopulationPromise));
+
   try {
     dispatch(usCasesByCountyStatus.requestPending(0));
     while (!done) {

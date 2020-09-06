@@ -36,6 +36,7 @@ function App() {
   );
   const date = useSelector((state) => moment(state.core.time.current, 'x'));
   const totals = useSelector((state) => state.core.usCovidData.totals);
+  const globalTotals = useSelector((state) => state.core.worldCovidData.totals);
   const selectedFeature = useSelector((state) => state.ui.map.selectedFeature);
   const casesByCounty = useSelector(
     (state) => state.core.usCovidData.casesByCounty
@@ -96,7 +97,7 @@ function App() {
           )}`,
           data: get(worldData, [selectedFeature], []),
         }
-      : { displayName: 'Global', data: [] };
+      : { displayName: 'Global', data: globalTotals };
   }
 
   return aliveStatus.success ? (
