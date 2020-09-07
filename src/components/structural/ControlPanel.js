@@ -29,7 +29,6 @@ import {
 export const ControlPanel = ({
   layers,
   activeLayers,
-  detailsData,
   onShowAbout,
   onSetDate,
   date,
@@ -120,11 +119,7 @@ export const ControlPanel = ({
         </>
       ) : null}
       {!detailsHidden ? (
-        <Details
-          date={moment(date)}
-          entity={detailsData}
-          collapsed={collapsed}
-        />
+        <Details date={moment(date)} collapsed={collapsed} />
       ) : null}
       <DateSelector
         date={date}
@@ -146,7 +141,6 @@ export const ControlPanel = ({
 ControlPanel.propTypes = {
   layers: PropTypes.array,
   activeLayers: PropTypes.array,
-  detailsData: PropTypes.object,
   onShowAbout: PropTypes.func,
   onSetDate: PropTypes.func,
   date: PropTypes.object,

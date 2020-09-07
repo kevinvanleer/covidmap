@@ -10,7 +10,10 @@ const actionSanitizer = (action) =>
   action.type === 'usCovidData/appendBadRecords' ||
   action.type === 'usCovidData/addBoundaries' ||
   action.type === 'usCovidData/setTotals' ||
-  action.type === 'usCovidData/setPopulation'
+  action.type === 'usCovidData/setPopulation' ||
+  action.type === 'worldCovidData/load' ||
+  action.type === 'worldCovidData/setTotals' ||
+  action.type === 'worldCovidData/setPopulation'
     ? {
         ...action,
         payload: {
@@ -30,18 +33,41 @@ const stateSanitizer = (state) => {
     uiState = { ...state.ui, map: mapState };
   }
 
-  let coreState = state.core;
+  let coreState = { ...state.core };
+  if (state.core.worldCovidData) {
+    const worldCovidState = {
+      ...state.core.worldCovidData,
+      byCountry: {
+        keys: Object.keys(get(state, 'core.worldCovidData.byCountry')),
+      },
+      population: {
+        keys: Object.keys(get(state, 'core.worldCovidData.population')),
+      },
+      totals: { length: get(state, 'core.worldCovidData.totals.length') },
+    };
+    coreState.worldCovidData = {
+      ...worldCovidState,
+    };
+  }
   if (state.core.usCovidData) {
     const usCovidState = {
       ...state.core.usCovidData,
       casesByCounty: {
         keys: Object.keys(get(state, 'core.usCovidData.casesByCounty')),
       },
+      byState: {
+        keys: Object.keys(get(state, 'core.usCovidData.byState')),
+      },
+      stateAndCounty: {
+        keys: Object.keys(get(state, 'core.usCovidData.stateAndCounty')),
+      },
       badRecords: { length: get(state, 'core.usCovidData.badRecords.length') },
       totals: { length: get(state, 'core.usCovidData.totals.length') },
-      population: { length: get(state, 'core.usCovidData.population.length') },
+      population: {
+        keys: Object.keys(get(state, 'core.usCovidData.population')),
+      },
     };
-    coreState = { ...state.core, usCovidData: usCovidState };
+    coreState.usCovidData = { ...usCovidState };
   }
   return {
     ...state,

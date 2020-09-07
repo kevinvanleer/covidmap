@@ -1,8 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { get, findLast, findLastIndex, set, isEmpty } from 'lodash';
+import { get, findLast, findLastIndex, set, last } from 'lodash';
 import { Flexbox, Spacer, Text, SquareButton } from 'kvl-react-ui';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFlagUsa, faGlobe } from '@fortawesome/free-solid-svg-icons';
@@ -87,8 +87,11 @@ const getNationalPerCapitaAverage = (date, totals, population) => {
   return NaN;
 };
 
-export const Details = ({ date, entity, collapsed }) => {
+export const Details = ({ date, collapsed }) => {
   const dispatch = useDispatch();
+  const globalTotals = useSelector((state) => state.core.worldCovidData.totals);
+  const usData = useSelector((state) => state.core.usCovidData.stateAndCounty);
+  const worldData = useSelector((state) => state.core.worldCovidData.byCountry);
   const selectedGroup = useSelector((state) => state.ui.map.selectedLayerGroup);
   const selectedFeature = useSelector((state) => state.ui.map.selectedFeature);
   const usPopulations = useSelector(
@@ -101,6 +104,7 @@ export const Details = ({ date, entity, collapsed }) => {
   const activeView = useSelector((state) => state.ui.map.activeView);
   let population = usPopEst2019;
   let backIcon = faFlagUsa;
+
   if (activeView.name.toLowerCase() === 'world') {
     population = {
       POPESTIMATE2019: get(
@@ -115,31 +119,81 @@ export const Details = ({ date, entity, collapsed }) => {
       ? usPopulations[selectedFeature]
       : usPopEst2019;
   }
-  const data = entity.data;
-  let recentData = null;
-  let deathRate = {};
-  let newCases = 0;
-  let ongoingCases = 0;
-  let casesPerDay = [];
-  let xLabel = moment(date).subtract(14, 'days').format('MMM');
 
-  if (!isEmpty(data)) {
-    const recentDataIndex = findLastIndex(
-      data,
-      (status) => status.date <= date.format('YYYY-MM-DD')
-    );
-    recentData = get(data, [recentDataIndex], { deaths: 0, cases: 0 });
-    const yesterday = findLast(
-      data,
-      (status) =>
-        status.date <= moment(date).subtract(1, 'days').format('YYYY-MM-DD')
-    );
-    const twoWeekLagIndex = findLastIndex(
-      data,
-      (status) =>
-        status.date <= moment(date).subtract(2, 'weeks').format('YYYY-MM-DD')
-    );
-    const twoWeekLagData = data[twoWeekLagIndex];
+  let entity = useMemo(() => {
+    let entity = selectedFeature
+      ? {
+          displayName:
+            selectedFeature < 1000
+              ? get(last(usData[selectedFeature]), 'state', 'Unknown')
+              : `${get(
+                  last(usData[selectedFeature]),
+                  'county',
+                  'Unknown'
+                )}, ${get(last(usData[selectedFeature]), 'state', 'Unknown')}`,
+          data: usData[selectedFeature],
+        }
+      : { displayName: 'United States of America', data: totals };
+    if (activeView.name.toLowerCase() === 'world') {
+      entity = selectedFeature
+        ? {
+            displayName: `${get(
+              last(get(worldData, [selectedFeature])),
+              'country',
+              get(worldPopulations, [selectedFeature, 'name'], 'Unknown')
+            )}`,
+            data: get(worldData, [selectedFeature], []),
+          }
+        : { displayName: 'Global', data: globalTotals };
+    }
+    return entity;
+  }, [
+    selectedFeature,
+    usData,
+    worldData,
+    activeView,
+    globalTotals,
+    totals,
+    worldPopulations,
+  ]);
+  let xLabel = useMemo(() => moment(date).subtract(14, 'days').format('MMM'), [
+    date,
+  ]);
+
+  let deathRate = {
+    current: 0,
+    twoWeek: 0,
+    fourWeek: 0,
+    eightWeek: 0,
+  };
+
+  const data = entity.data;
+  const recentDataIndex = useMemo(
+    () =>
+      findLastIndex(data, (status) => status.date <= date.format('YYYY-MM-DD')),
+    [data, date]
+  );
+  const recentData = get(data, [recentDataIndex], { deaths: 0, cases: 0 });
+  const yesterday = useMemo(
+    () =>
+      findLast(
+        data,
+        (status) =>
+          status.date <= moment(date).subtract(1, 'days').format('YYYY-MM-DD')
+      ),
+    [data, date]
+  );
+  const twoWeekLagIndex = useMemo(
+    () =>
+      findLastIndex(
+        data,
+        (status) =>
+          status.date <= moment(date).subtract(2, 'weeks').format('YYYY-MM-DD')
+      ),
+    [data, date]
+  );
+  const twoWeekLagData = data[twoWeekLagIndex];
+  /*
     const fourWeekLagData = findLast(
       data,
       (status) =>
@@ -149,13 +203,13 @@ export const Details = ({ date, entity, collapsed }) => {
       data,
       (status) =>
         status.date <= moment(date).subtract(8, 'weeks').format('YYYY-MM-DD')
-    );
-    set(deathRate, 'current', recentData.deaths / recentData.cases);
-    set(
-      deathRate,
-      'twoWeek',
-      recentData.deaths / get(twoWeekLagData, 'cases') || 0
-    );
+    );*/
+  set(deathRate, 'current', recentData.deaths / recentData.cases);
+  set(
+    deathRate,
+    'twoWeek',
+    recentData.deaths / get(twoWeekLagData, 'cases') || 0
+  ); /*
     set(
       deathRate,
       'fourWeek',
@@ -165,32 +219,23 @@ export const Details = ({ date, entity, collapsed }) => {
       deathRate,
       'eightWeek',
       recentData.deaths / get(eightWeekLagData, 'cases') || 0
-    );
-    newCases = get(recentData, 'cases', 0) - get(yesterday, 'cases', 0);
-    ongoingCases =
-      get(recentData, 'cases', 0) - get(twoWeekLagData, 'cases', 0);
+    );*/
+  const newCases = get(recentData, 'cases', 0) - get(yesterday, 'cases', 0);
+  const ongoingCases =
+    get(recentData, 'cases', 0) - get(twoWeekLagData, 'cases', 0);
 
-    casesPerDay = getCasesPerDay(
-      data,
-      twoWeekLagIndex,
-      recentDataIndex,
-      population,
-      date,
-      15
-    );
-  } else {
-    recentData = {
-      date: '2020-01-01',
-      cases: 0,
-      deaths: 0,
-    };
-    deathRate = {
-      current: 0,
-      twoWeek: 0,
-      fourWeek: 0,
-      eightWeek: 0,
-    };
-  }
+  const casesPerDay = useMemo(
+    () =>
+      getCasesPerDay(
+        data,
+        twoWeekLagIndex,
+        recentDataIndex,
+        population,
+        date,
+        15
+      ),
+    [data, twoWeekLagIndex, recentDataIndex, population, date]
+  );
 
   const closeStats = useCallback(() => {
     dispatch(releaseHold());
@@ -249,7 +294,7 @@ export const Details = ({ date, entity, collapsed }) => {
         />
       ) : (
         <AreaChart
-          data={data}
+          data={entity.data}
           currentDate={date}
           height={collapsed ? 100 : undefined}
           width={325}
@@ -263,6 +308,5 @@ export const Details = ({ date, entity, collapsed }) => {
 
 Details.propTypes = {
   date: PropTypes.object,
-  entity: PropTypes.object,
   collapsed: PropTypes.bool,
 };

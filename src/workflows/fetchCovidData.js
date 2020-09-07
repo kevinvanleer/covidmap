@@ -5,6 +5,7 @@ import {
   appendBadRecords,
   setTotals,
   setPopulation,
+  setByState,
 } from '../state/core/usCovidData.js';
 import {
   load as worldDataLoad,
@@ -28,6 +29,10 @@ export const fetchUsCasesByCounty = async (startIndex, pageSize, reverse) => {
 
 export const fetchGlobalCovidTotals = async () => {
   return (await fetch('/api/global-covid-totals')).json();
+};
+
+export const fetchUsCovidByState = async () => {
+  return (await fetch('/api/us-covid-by-state')).json();
 };
 
 export const fetchWorldCovidData = async () => {
@@ -147,6 +152,7 @@ export const initializeFeatureState = () => async (dispatch) => {
   const worldDataPromise = fetchWorldCovidData();
   const worldPopulationPromise = fetchWorldPopulation();
   const globalCovidTotalsPromise = fetchGlobalCovidTotals();
+  const byStatePromise = fetchUsCovidByState();
 
   const boundaries = await fetchUsCovidBoundaries('20m');
   const boundaryStates = {};
@@ -167,6 +173,8 @@ export const initializeFeatureState = () => async (dispatch) => {
       sortWorldCasesByCountry((await (await worldDataPromise).json()).data)
     )
   );
+
+  dispatch(setByState(await byStatePromise));
 
   dispatch(setTotals(await totalsPromise));
   dispatch(setPopulation(await populationPromise));

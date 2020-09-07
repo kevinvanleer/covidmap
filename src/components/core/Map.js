@@ -17,7 +17,12 @@ import {
 } from '../../state/ui/map.js';
 import { loadingStatus } from '../../state/util/loadingStatus.js';
 
-import { sourceAdmin0 } from '../../mapboxConfig.js';
+import {
+  sourceAdmin0,
+  sourceUsCounties,
+  sourceUsStates,
+  mouseLayers,
+} from '../../mapboxConfig.js';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoicnVva3ZsIiwiYSI6ImNrZDA3NW9oNTBhanYyeXBjOXBjazloazUifQ.qwtn31dojyeKrFMrcRAjBw';
@@ -77,14 +82,7 @@ const setFeatureState = (
   );
 };
 
-const MapboxMap = ({
-  sources,
-  activeLayers,
-  layers,
-  date,
-  casesByCounty,
-  ...props
-}) => {
+const MapboxMap = ({ sources, activeLayers, layers, date, ...props }) => {
   const dispatch = useDispatch();
   const hold = useSelector((state) => state.ui.map.hold);
   const selectedFeature = useSelector((state) => state.ui.map.selectedFeature);
@@ -100,6 +98,7 @@ const MapboxMap = ({
   );
   const selectedGroup = useSelector((state) => state.ui.map.selectedLayerGroup);
   const hoveredFeatures = useSelector((state) => state.ui.map.hoveredFeatures);
+  const usData = useSelector((state) => state.core.usCovidData.stateAndCounty);
   const worldData = useSelector((state) => state.core.worldCovidData.byCountry);
   const activeView = useSelector((state) => state.ui.map.activeView);
   const population =
@@ -117,29 +116,21 @@ const MapboxMap = ({
           map.setLayoutProperty(
             layer.id,
             'visibility',
-            filteredActiveLayers.includes(layer.id) &&
-              worldData &&
-              casesByCounty
+            filteredActiveLayers.includes(layer.id) && worldData && usData
               ? 'visible'
               : 'none'
           );
         }
       });
     }
-  }, [
-    map,
-    initialized,
-    layers,
-    filteredActiveLayers,
-    worldData,
-    casesByCounty,
-  ]);
+  }, [map, initialized, layers, filteredActiveLayers, worldData, usData]);
 
   useEffect(() => {
     const lat = 39;
     const lng = -95;
     const zoom = 3;
     dispatch(beginMapInitialization());
+    //mapboxgl.clearStorage();
     const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v10',
@@ -153,7 +144,6 @@ const MapboxMap = ({
     });
     map.dragRotate.disable();
     map.touchZoomRotate.disableRotation();
-    //if (process.env.NODE_ENV !== 'production') mapboxgl.clearStorage();
     dispatch(beginLoadingMap(map));
   }, [dispatch]);
 
@@ -238,37 +228,49 @@ const MapboxMap = ({
   }, [initialized, date, worldData, map, population]);
 
   useEffect(() => {
-    if (initialized && casesByCounty) {
+    if (initialized && usData) {
       const twoWeeksAgo = moment(date)
         .subtract(2, 'weeks')
         .format('YYYY-MM-DD');
-      for (const [key, value] of Object.entries(casesByCounty)) {
-        setFeatureState(
-          map,
-          parseInt(key),
-          'us-counties',
-          'us-counties-500k-a4l482',
-          value,
-          date,
-          choroplethState(
-            parseInt(get(population, [key, 'POPESTIMATE2019'], 0))
-          )
-        );
-        setFeatureState(
-          map,
-          parseInt(key),
-          'us-county-centroids',
-          undefined,
-          value,
-          date,
-          centroidState(
-            twoWeeksAgo,
-            parseInt(get(population, [key, 'POPESTIMATE2019'], 0))
-          )
-        );
+      for (const [key, value] of Object.entries(usData)) {
+        if (key.length <= 2) {
+          setFeatureState(
+            map,
+            key,
+            ...Object.values(sourceUsStates),
+            value,
+            date,
+            choroplethState(
+              parseInt(get(population, [key, 'POPESTIMATE2019'], 0))
+            )
+          );
+        } else {
+          setFeatureState(
+            map,
+            key,
+            ...Object.values(sourceUsCounties),
+            value,
+            date,
+            choroplethState(
+              parseInt(get(population, [key, 'POPESTIMATE2019'], 0))
+            )
+          );
+          setFeatureState(
+            map,
+            key,
+            'us-county-centroids',
+            undefined,
+            value,
+            date,
+            centroidState(
+              twoWeeksAgo,
+              parseInt(get(population, [key, 'POPESTIMATE2019'], 0))
+            )
+          );
+        }
       }
     }
-  }, [initialized, date, casesByCounty, map, population]);
+  }, [initialized, date, usData, map, population]);
 
   const selectFeature = useCallback(
     (theMap, sourceConfig, featureId, selected, hold = false) => {
@@ -357,71 +359,41 @@ const MapboxMap = ({
     [map, initialized, hold, selectNewFeature]
   );
 
-  const usBase = {
-    layer: 'us-counties-base',
-    source: {
-      source: 'us-counties',
-      sourceLayer: 'us-counties-500k-a4l482',
-    },
-  };
-  const onMouseUpUs = onMouseUp(usBase);
-  const onMouseMoveUs = onMouseMove(usBase);
-  const onMouseLeaveUs = onMouseLeave(usBase);
-
-  const worldBase = {
-    layer: 'countries-base',
-    source: {
-      source: sourceAdmin0.source,
-      sourceLayer: sourceAdmin0['source-layer'],
-    },
-  };
-  const onMouseUpWorld = onMouseUp(worldBase);
-  const onMouseMoveWorld = onMouseMove(worldBase);
-  const onMouseLeaveWorld = onMouseLeave(worldBase);
-
   useEffect(() => {
-    if (map && initialized) {
-      map.on('mouseup', usBase.layer, onMouseUpUs);
-      map.on('mousemove', usBase.layer, onMouseMoveUs);
-      map.on('mouseleave', usBase.layer, onMouseLeaveUs);
-    }
-    return () => {
+    const handlers = [];
+    mouseLayers.forEach((base) => {
       if (map && initialized) {
-        map.off('mouseup', usBase.layer, onMouseUpUs);
-        map.off('mousemove', usBase.layer, onMouseMoveUs);
-        map.off('mouseleave', usBase.layer, onMouseLeaveUs);
-      }
-    };
-  }, [
-    map,
-    initialized,
-    onMouseUpUs,
-    onMouseMoveUs,
-    onMouseLeaveUs,
-    usBase.layer,
-  ]);
+        let handler = {
+          event: 'mouseup',
+          layer: base.layer,
+          handler: onMouseUp(base),
+        };
+        map.on(handler.event, handler.layer, handler.handler);
+        handlers.push({ ...handler });
 
-  useEffect(() => {
-    if (map && initialized) {
-      map.on('mouseup', worldBase.layer, onMouseUpWorld);
-      map.on('mousemove', worldBase.layer, onMouseMoveWorld);
-      map.on('mouseleave', worldBase.layer, onMouseLeaveWorld);
-    }
-    return () => {
-      if (map && initialized) {
-        map.off('mouseup', worldBase.layer, onMouseUpWorld);
-        map.off('mousemove', worldBase.layer, onMouseMoveWorld);
-        map.off('mouseleave', worldBase.layer, onMouseLeaveWorld);
+        handler = {
+          event: 'mousemove',
+          layer: base.layer,
+          handler: onMouseMove(base),
+        };
+        map.on(handler.event, handler.layer, handler.handler);
+        handlers.push({ ...handler });
+
+        handler = {
+          event: 'mouseleave',
+          layer: base.layer,
+          handler: onMouseLeave(base),
+        };
+        map.on(handler.event, handler.layer, handler.handler);
+        handlers.push({ ...handler });
       }
+    });
+    return () => {
+      handlers.forEach((handler) => {
+        map.off(handler.event, handler.layer, handler.handler);
+      });
     };
-  }, [
-    map,
-    initialized,
-    onMouseUpWorld,
-    onMouseMoveWorld,
-    onMouseLeaveWorld,
-    worldBase.layer,
-  ]);
+  }, [map, initialized, onMouseMove, onMouseUp, onMouseLeave]);
 
   return <div ref={mapContainer} {...props} />;
 };
@@ -431,7 +403,6 @@ MapboxMap.propTypes = {
   sources: PropTypes.array,
   layers: PropTypes.array,
   date: PropTypes.string,
-  casesByCounty: PropTypes.object,
 };
 
 export default MapboxMap;

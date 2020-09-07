@@ -1,5 +1,6 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { get, inRange } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 import { Flexbox, Spacer } from 'kvl-react-ui';
 
@@ -19,8 +20,22 @@ export const Layers = ({ layers, activeLayers, collapsed }) => {
   const activeView = useSelector((state) => state.ui.map.activeView);
   const views = useSelector((state) => state.ui.map.views);
   const groups = useSelector((state) => state.ui.map.layerGroups);
-  const filteredLayers = layers.filter((layer) =>
-    selectedGroup.layers.includes(layer.id)
+  const map = useSelector((state) => state.ui.map.map);
+  const zoomLevel = map ? map.getZoom() : 0;
+  const filteredLayers = useMemo(
+    () =>
+      layers.filter(
+        (layer) =>
+          selectedGroup.layers.includes(layer.id) &&
+          inRange(
+            zoomLevel,
+            ...get(layer, 'legend.zoomLevels', [
+              Number.NEGATIVE_INFINITY,
+              Number.POSITIVE_INFINITY,
+            ])
+          )
+      ),
+    [layers, zoomLevel, selectedGroup.layers]
   );
 
   const onUpdateActiveLayers = useCallback(

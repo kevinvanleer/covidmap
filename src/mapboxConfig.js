@@ -16,6 +16,15 @@ const fluDeathsPerCapita = 34200 / 328.2e6;
 
 import { cubicBezierFindY } from './util/bezier.js';
 
+const casesColor = '#00f';
+const deathsColor = '#f00';
+const populationColor = '#0f0';
+const invalidColor = '#777';
+
+const cubicBezierDefaultControlPoints = [0.0, 1.0, 0.2, 0.9];
+
+const usStateTotalAnchorPoints = [0, 0, 1e6, 0.8, 1e7, 0.8];
+
 const worldPerCapitaBezierControlPoints = [0.0, 1.0, 0.3, 0.6];
 const worldPerCapitaAnchorPoints = [0, 0, 0.05, 0.8, 1, 0.8];
 
@@ -34,6 +43,9 @@ const getWorldPerCapitaLegendOpacity = cubicBezierFindY(
     worldPerCapitaBezierControlPoints
   )
 );
+const getUsStateTotalLegendOpacity = cubicBezierFindY(
+  ...convertPoints(usStateTotalAnchorPoints, cubicBezierDefaultControlPoints)
+);
 const getWorldLegendOpacity = cubicBezierFindY(
   { x: 0, y: 0 },
   { x: 0, y: 0.8 },
@@ -46,6 +58,25 @@ const getWorldPopLegendOpacity = cubicBezierFindY(
   { x: 3e8, y: 0.48 },
   { x: 1e9, y: 0.8 }
 );
+
+const usStateTotalGradient = [
+  {
+    magnitude: 1e3,
+    opacity: getUsStateTotalLegendOpacity(1e3),
+  },
+  {
+    magnitude: 1e4,
+    opacity: getUsStateTotalLegendOpacity(1e4),
+  },
+  {
+    magnitude: 1e5,
+    opacity: getUsStateTotalLegendOpacity(1e5),
+  },
+  {
+    magnitude: 1e6,
+    opacity: 0.8,
+  },
+];
 
 const worldPerCapitaGradient = [
   {
@@ -85,57 +116,27 @@ const worldTotalsGradient = [
   },
 ];
 
-const worldLegendConfig = {
-  worldDeathsPerCapita: {
-    name: 'Deaths',
-    defaultDisabled: false,
-    fillColor: '#f00',
-    gradient: worldPerCapitaGradient,
+const worldPopulationGradient = [
+  {
+    magnitude: 1e6,
+    opacity: getWorldPopLegendOpacity(1e6),
   },
-  worldCasesPerCapita: {
-    name: 'Cases',
-    defaultDisabled: false,
-    fillColor: '#00f',
-    gradient: worldPerCapitaGradient,
+  {
+    magnitude: 1e7,
+    opacity: getWorldPopLegendOpacity(1e7),
   },
-  worldDeaths: {
-    name: 'Deaths',
-    fillColor: '#f00',
-    gradient: worldTotalsGradient,
+  {
+    magnitude: 1e8,
+    opacity: getWorldPopLegendOpacity(1e8),
   },
-  worldCases: {
-    name: 'Cases',
-    fillColor: '#00f',
-    gradient: worldTotalsGradient,
+  {
+    magnitude: 1e9,
+    opacity: 0.8,
   },
-  worldPopulation: {
-    name: 'Population',
-    defaultDisabled: true,
-    fillColor: '#0f0',
-    gradient: [
-      {
-        magnitude: 1e6,
-        opacity: getWorldPopLegendOpacity(1e6),
-      },
-      {
-        magnitude: 1e7,
-        opacity: getWorldPopLegendOpacity(1e7),
-      },
-      {
-        magnitude: 1e8,
-        opacity: getWorldPopLegendOpacity(1e8),
-      },
-      {
-        magnitude: 1e9,
-        opacity: 0.8,
-      },
-    ],
-  },
-};
+];
 
 const usMiscLegendConfig = {
   covidVsFlu: {
-    name: 'COVID vs Flu',
     mutex: true,
     gradient: [
       {
@@ -166,7 +167,6 @@ const usMiscLegendConfig = {
     ],
   },
   covidVsAvg: {
-    name: 'COVID vs Avg',
     mutex: true,
     gradient: [
       {
@@ -197,7 +197,6 @@ const usMiscLegendConfig = {
     ],
   },
   infectionRate: {
-    name: 'Infection Rate',
     fillColor: '#ff9a00',
     gradient: [
       {
@@ -221,12 +220,10 @@ const usMiscLegendConfig = {
 };
 
 const usLegendConfig = {
-  ...worldLegendConfig,
   ...usMiscLegendConfig,
   population: {
-    name: 'Population',
     defaultDisabled: true,
-    fillColor: '#0f0',
+    fillColor: populationColor,
     gradient: [
       {
         magnitude: 1e4,
@@ -246,9 +243,38 @@ const usLegendConfig = {
       },
     ],
   },
+  statePopulation: {
+    defaultDisabled: true,
+    fillColor: populationColor,
+    gradient: [
+      {
+        magnitude: 1e4,
+        opacity: getWorldLegendOpacity(1e4),
+      },
+      {
+        magnitude: 1e5,
+        opacity: getWorldLegendOpacity(1e5),
+      },
+      {
+        magnitude: 1e6,
+        opacity: getWorldLegendOpacity(1e6),
+      },
+      {
+        magnitude: 5e8,
+        opacity: 0.8,
+      },
+    ],
+  },
+  usStateTotalCases: {
+    fillColor: casesColor,
+    gradient: usStateTotalGradient,
+  },
+  usStateTotalDeaths: {
+    fillColor: deathsColor,
+    gradient: usStateTotalGradient,
+  },
   deaths: {
-    name: 'Deaths',
-    fillColor: '#f00',
+    fillColor: deathsColor,
     gradient: [
       {
         magnitude: 10,
@@ -269,8 +295,7 @@ const usLegendConfig = {
     ],
   },
   cases: {
-    name: 'Cases',
-    fillColor: '#00f',
+    fillColor: casesColor,
     gradient: [
       {
         magnitude: 10,
@@ -291,8 +316,7 @@ const usLegendConfig = {
     ],
   },
   deathsPerCapita: {
-    name: 'Deaths',
-    fillColor: '#f00',
+    fillColor: deathsColor,
     gradient: [
       {
         magnitude: '.01%',
@@ -313,8 +337,7 @@ const usLegendConfig = {
     ],
   },
   casesPerCapita: {
-    name: 'Cases',
-    fillColor: '#00f',
+    fillColor: casesColor,
     gradient: [
       {
         magnitude: '.1%',
@@ -336,8 +359,7 @@ const usLegendConfig = {
   },
 };
 
-export const legendConfig = {
-  ...worldLegendConfig,
+const legendConfig = {
   ...usMiscLegendConfig,
   ...usLegendConfig,
 };
@@ -345,6 +367,53 @@ export const legendConfig = {
 export const sourceAdmin0 = {
   source: 'admin-levels',
   'source-layer': 'admin0',
+};
+
+export const sourceUsStates = {
+  source: 'us-admin-levels',
+  'source-layer': 'admin1',
+};
+
+export const sourceUsCounties = {
+  source: 'us-admin-levels',
+  'source-layer': 'admin2',
+};
+
+export const mouseLayers = [];
+
+const generateBaseLayers = (source, prefix) => {
+  mouseLayers.push({
+    source: {
+      source: source.source,
+      sourceLayer: source['source-layer'],
+    },
+    layer: `${prefix}-base`,
+  });
+  return [
+    {
+      id: `${prefix}-base`,
+      type: 'fill',
+      ...source,
+      paint: {
+        'fill-color': 'transparent',
+      },
+    },
+    {
+      id: `${prefix}-outline-base`,
+      type: 'line',
+      ...source,
+      paint: {
+        'line-color': [
+          'case',
+          ['feature-state', 'hold'],
+          populationColor,
+          '#e842dc',
+        ],
+        'line-width': ['interpolate', ['linear'], ['zoom'], 3, 2, 10, 4],
+        'line-opacity': ['to-number', ['feature-state', 'active']],
+      },
+    },
+  ];
 };
 
 const worldLayers = [
@@ -355,14 +424,15 @@ const worldLayers = [
     legend: {
       label: 'Cases',
       icon: faHeadSideCough,
-      ...legendConfig.worldCasesPerCapita,
+      fillColor: casesColor,
+      gradient: worldPerCapitaGradient,
     },
     paint: {
       'fill-color': [
         'case',
         ['==', ['feature-state', 'casesPerCapita'], null],
-        '#777',
-        '#00f',
+        invalidColor,
+        casesColor,
       ],
       'fill-opacity': [
         'interpolate',
@@ -377,7 +447,8 @@ const worldLayers = [
     legend: {
       label: 'Deaths',
       icon: faSkullCrossbones,
-      ...legendConfig.worldDeathsPerCapita,
+      fillColor: deathsColor,
+      gradient: worldPerCapitaGradient,
     },
     type: 'fill',
     ...sourceAdmin0,
@@ -385,8 +456,8 @@ const worldLayers = [
       'fill-color': [
         'case',
         ['==', ['feature-state', 'deathsPerCapita'], null],
-        '#777',
-        '#f00',
+        invalidColor,
+        deathsColor,
       ],
       'fill-opacity': [
         'interpolate',
@@ -403,14 +474,15 @@ const worldLayers = [
     legend: {
       label: 'Cases',
       icon: faHeadSideCough,
-      ...legendConfig.worldCases,
+      fillColor: casesColor,
+      gradient: worldTotalsGradient,
     },
     paint: {
       'fill-color': [
         'case',
         ['==', ['feature-state', 'cases'], null],
-        '#777',
-        '#00f',
+        invalidColor,
+        casesColor,
       ],
       'fill-opacity': [
         'interpolate',
@@ -430,7 +502,8 @@ const worldLayers = [
     legend: {
       label: 'Deaths',
       icon: faSkullCrossbones,
-      ...legendConfig.worldDeaths,
+      fillColor: deathsColor,
+      gradient: worldTotalsGradient,
     },
     type: 'fill',
     ...sourceAdmin0,
@@ -438,8 +511,8 @@ const worldLayers = [
       'fill-color': [
         'case',
         ['==', ['feature-state', 'deaths'], null],
-        '#777',
-        '#f00',
+        invalidColor,
+        deathsColor,
       ],
       'fill-opacity': [
         'interpolate',
@@ -454,29 +527,14 @@ const worldLayers = [
       ],
     },
   },
-  {
-    id: 'countries-base',
-    type: 'fill',
-    ...sourceAdmin0,
-    paint: {
-      'fill-color': 'transparent',
-    },
-  },
-  {
-    id: 'countries-outline-base',
-    type: 'line',
-    ...sourceAdmin0,
-    paint: {
-      'line-color': ['case', ['feature-state', 'hold'], '#0f0', '#e842dc'],
-      'line-width': ['interpolate', ['linear'], ['zoom'], 3, 2, 10, 4],
-      'line-opacity': ['to-number', ['feature-state', 'active']],
-    },
-  },
+  ...generateBaseLayers(sourceAdmin0, 'countries'),
   {
     legend: {
       label: 'Population',
       icon: faUsers,
-      ...legendConfig.worldPopulation,
+      defaultDisabled: true,
+      fillColor: populationColor,
+      gradient: worldPopulationGradient,
     },
     id: 'world-country-population',
     type: 'fill',
@@ -485,8 +543,8 @@ const worldLayers = [
       'fill-color': [
         'case',
         ['==', ['feature-state', 'population'], null],
-        '#777',
-        '#0f0',
+        invalidColor,
+        populationColor,
       ],
       'fill-opacity': [
         'interpolate',
@@ -503,17 +561,17 @@ const worldLayers = [
   },
 ];
 
-const usLayers = [
+const usLayersState = [
   {
     legend: {
       label: 'Cases vs Avg',
       icon: faBiohazard,
       ...legendConfig.covidVsAvg,
+      zoomLevels: [Number.NEGATIVE_INFINITY, 4],
     },
-    id: 'us-county-cases-vs-avg',
+    id: 'us-state-cases-vs-avg',
     type: 'fill',
-    source: 'us-counties',
-    'source-layer': 'us-counties-500k-a4l482',
+    ...sourceUsStates,
     paint: {
       'fill-color': [
         'interpolate',
@@ -539,11 +597,11 @@ const usLayers = [
       label: 'Deaths vs Avg',
       icon: faBiohazard,
       ...legendConfig.covidVsAvg,
+      zoomLevels: [Number.NEGATIVE_INFINITY, 4],
     },
-    id: 'us-county-deaths-vs-avg',
+    id: 'us-state-deaths-vs-avg',
     type: 'fill',
-    source: 'us-counties',
-    'source-layer': 'us-counties-500k-a4l482',
+    ...sourceUsStates,
     paint: {
       'fill-color': [
         'interpolate',
@@ -569,11 +627,11 @@ const usLayers = [
       label: 'Deaths vs Flu',
       icon: faBiohazard,
       ...legendConfig.covidVsFlu,
+      zoomLevels: [Number.NEGATIVE_INFINITY, 4],
     },
-    id: 'us-county-deaths-vs-flu',
+    id: 'us-state-deaths-vs-flu',
     type: 'fill',
-    source: 'us-counties',
-    'source-layer': 'us-counties-500k-a4l482',
+    ...sourceUsStates,
     paint: {
       'fill-color': [
         'interpolate',
@@ -599,11 +657,11 @@ const usLayers = [
       label: 'Cases vs Flu',
       icon: faBiohazard,
       ...legendConfig.covidVsFlu,
+      zoomLevels: [Number.NEGATIVE_INFINITY, 4],
     },
-    id: 'us-county-cases-vs-flu',
+    id: 'us-state-cases-vs-flu',
     type: 'fill',
-    source: 'us-counties',
-    'source-layer': 'us-counties-500k-a4l482',
+    ...sourceUsStates,
     paint: {
       'fill-color': [
         'interpolate',
@@ -629,11 +687,11 @@ const usLayers = [
       label: 'Infection rate',
       icon: faBiohazard,
       ...legendConfig.infectionRate,
+      zoomLevels: [Number.NEGATIVE_INFINITY, 4],
     },
-    id: 'us-county-infection-rate',
+    id: 'us-state-infection-rate',
     type: 'fill',
-    source: 'us-counties',
-    'source-layer': 'us-counties-500k-a4l482',
+    ...sourceUsStates,
     paint: {
       'fill-color': legendConfig.infectionRate.fillColor,
       'fill-opacity': [
@@ -662,17 +720,17 @@ const usLayers = [
       label: 'Deaths',
       icon: faSkullCrossbones,
       ...legendConfig.deathsPerCapita,
+      zoomLevels: [Number.NEGATIVE_INFINITY, 4],
     },
-    id: 'us-county-per-capita-deaths',
+    id: 'us-state-per-capita-deaths',
     type: 'fill',
-    source: 'us-counties',
-    'source-layer': 'us-counties-500k-a4l482',
+    ...sourceUsStates,
     paint: {
       'fill-color': [
         'case',
         ['==', ['feature-state', 'deathsPerCapita'], null],
-        '#777',
-        '#f00',
+        invalidColor,
+        deathsColor,
       ],
       'fill-opacity': [
         'interpolate',
@@ -700,17 +758,395 @@ const usLayers = [
       label: 'Cases',
       icon: faHeadSideCough,
       ...legendConfig.casesPerCapita,
+      zoomLevels: [Number.NEGATIVE_INFINITY, 4],
     },
-    id: 'us-county-per-capita-cases',
+    id: 'us-state-per-capita-cases',
     type: 'fill',
-    source: 'us-counties',
-    'source-layer': 'us-counties-500k-a4l482',
+    ...sourceUsStates,
     paint: {
       'fill-color': [
         'case',
         ['==', ['feature-state', 'casesPerCapita'], null],
-        '#777',
-        '#00f',
+        invalidColor,
+        casesColor,
+      ],
+      'fill-opacity': [
+        'interpolate',
+        ['linear'],
+        ['feature-state', 'casesPerCapita'],
+        0,
+        0,
+        0.001,
+        0.1,
+        0.002,
+        0.2,
+        0.01,
+        0.5,
+        0.03,
+        0.7,
+        0.05,
+        0.8,
+        1,
+        0.8,
+      ],
+    },
+  },
+  {
+    legend: {
+      label: 'Deaths',
+      icon: faSkullCrossbones,
+      ...legendConfig.usStateTotalDeaths,
+      zoomLevels: [Number.NEGATIVE_INFINITY, 4],
+    },
+    id: 'us-state-total-deaths',
+    type: 'fill',
+    ...sourceUsStates,
+    paint: {
+      'fill-color': [
+        'case',
+        ['==', ['feature-state', 'deaths'], null],
+        invalidColor,
+        deathsColor,
+      ],
+      'fill-opacity': [
+        'interpolate',
+        ['cubic-bezier', ...cubicBezierDefaultControlPoints],
+        ['feature-state', 'deaths'],
+        ...usStateTotalAnchorPoints,
+      ],
+    },
+  },
+  {
+    legend: {
+      label: 'Cases',
+      icon: faHeadSideCough,
+      ...legendConfig.usStateTotalCases,
+      zoomLevels: [Number.NEGATIVE_INFINITY, 4],
+    },
+    id: 'us-state-total-cases',
+    type: 'fill',
+    ...sourceUsStates,
+    paint: {
+      'fill-color': [
+        'case',
+        ['==', ['feature-state', 'cases'], null],
+        invalidColor,
+        casesColor,
+      ],
+      'fill-opacity': [
+        'interpolate',
+        ['cubic-bezier', ...cubicBezierDefaultControlPoints],
+        ['feature-state', 'cases'],
+        ...usStateTotalAnchorPoints,
+      ],
+    },
+  },
+  {
+    legend: {
+      label: 'Population',
+      icon: faUsers,
+      ...legendConfig.statePopulation,
+      defaultDisabled: true,
+      zoomLevels: [Number.NEGATIVE_INFINITY, 4],
+    },
+    id: 'us-state-population',
+    type: 'fill',
+    ...sourceUsStates,
+    paint: {
+      'fill-color': [
+        'case',
+        ['==', ['feature-state', 'population'], null],
+        invalidColor,
+        populationColor,
+      ],
+      'fill-opacity': [
+        'interpolate',
+        ['cubic-bezier', 0.0, 1.0, 0.2, 0.9],
+        ['feature-state', 'population'],
+        0,
+        0,
+        5e8,
+        0.8,
+        1e10,
+        0.8,
+      ],
+    },
+  },
+  ...generateBaseLayers(sourceUsStates, 'us-states'),
+  /*{
+    legend: {
+      label: 'Hotspots',
+      icon: faViruses,
+    },
+    id: 'us-hotspots',
+    type: 'symbol',
+    source: 'us-state-centroids',
+    layout: {
+      'icon-image': 'corona-red',
+      'icon-size': ['interpolate', ['linear'], ['zoom'], 3, 0.1, 20, 1],
+      'icon-ignore-placement': true,
+    },
+    paint: {
+      'icon-opacity': ['to-number', ['feature-state', 'hotspot']],
+      'icon-color': 'red',
+    },
+  },
+  {
+    legend: {
+      label: 'Hotspots',
+      icon: faViruses,
+    },
+    id: 'us-per-capita-hotspots',
+    type: 'symbol',
+    source: 'us-state-centroids',
+    layout: {
+      'icon-image': 'corona-red',
+      'icon-size': ['interpolate', ['linear'], ['zoom'], 3, 0.1, 20, 1],
+      'icon-ignore-placement': true,
+    },
+    paint: {
+      'icon-opacity': ['to-number', ['feature-state', 'perCapitaHotspot']],
+      'icon-color': 'red',
+    },
+  },
+  {
+    legend: {
+      label: 'Onset',
+      icon: faVirus,
+    },
+    id: 'us-first-case',
+    type: 'symbol',
+    source: 'us-state-centroids',
+    layout: {
+      'icon-image': 'corona-green',
+      'icon-size': ['interpolate', ['linear'], ['zoom'], 3, 0.2, 20, 1],
+      'icon-ignore-placement': true,
+    },
+    paint: {
+      'icon-opacity': ['to-number', ['feature-state', 'firstCase']],
+      'icon-color': 'red',
+    },
+  },
+  {
+    id: 'us-state-names',
+    type: 'symbol',
+    source: 'us-state-centroids',
+    minzoom: 7,
+    layout: { 'text-field': ['get', 'NAME'], 'text-ignore-placement': true },
+    paint: {
+      'text-halo-color': '#fff',
+      'text-halo-width': 1,
+    },
+  },*/
+];
+const usLayersCounty = [
+  {
+    legend: {
+      label: 'Cases vs Avg',
+      icon: faBiohazard,
+      ...legendConfig.covidVsAvg,
+      zoomLevels: [4, Number.POSITIVE_INFINITY],
+    },
+    id: 'us-county-cases-vs-avg',
+    type: 'fill',
+    ...sourceUsCounties,
+    paint: {
+      'fill-color': [
+        'interpolate',
+        ['linear'],
+        ['feature-state', 'casesPerCapita'],
+        0,
+        ['rgba', 58, 235, 255, 0.8],
+        0.0018,
+        ['rgba', 58, 235, 255, 0.8],
+        0.01799,
+        ['rgba', 58, 235, 255, 0],
+        0.018,
+        ['rgba', 255, 212, 0, 0],
+        0.18,
+        ['rgba', 255, 212, 0, 0.8],
+        1,
+        ['rgba', 255, 212, 0, 0.8],
+      ],
+    },
+  },
+  {
+    legend: {
+      label: 'Deaths vs Avg',
+      icon: faBiohazard,
+      ...legendConfig.covidVsAvg,
+      zoomLevels: [4, Number.POSITIVE_INFINITY],
+    },
+    id: 'us-county-deaths-vs-avg',
+    type: 'fill',
+    ...sourceUsCounties,
+    paint: {
+      'fill-color': [
+        'interpolate',
+        ['linear'],
+        ['feature-state', 'deathsPerCapita'],
+        0,
+        ['rgba', 58, 235, 255, 0.8],
+        5.6e-5,
+        ['rgba', 58, 235, 255, 0.8],
+        5.599e-4,
+        ['rgba', 58, 235, 255, 0],
+        5.6e-4,
+        ['rgba', 255, 212, 0, 0],
+        5.6e-3,
+        ['rgba', 255, 212, 0, 0.8],
+        1,
+        ['rgba', 255, 212, 0, 0.8],
+      ],
+    },
+  },
+  {
+    legend: {
+      label: 'Deaths vs Flu',
+      icon: faBiohazard,
+      ...legendConfig.covidVsFlu,
+      zoomLevels: [4, Number.POSITIVE_INFINITY],
+    },
+    id: 'us-county-deaths-vs-flu',
+    type: 'fill',
+    ...sourceUsCounties,
+    paint: {
+      'fill-color': [
+        'interpolate',
+        ['linear'],
+        ['feature-state', 'deathsPerCapita'],
+        0,
+        ['rgba', 58, 235, 255, 0.8],
+        1e-5,
+        ['rgba', 58, 235, 255, 0.8],
+        9e-5,
+        ['rgba', 58, 235, 255, 0],
+        1e-4,
+        ['rgba', 255, 212, 0, 0],
+        1e-3,
+        ['rgba', 255, 212, 0, 0.8],
+        1,
+        ['rgba', 255, 212, 0, 0.8],
+      ],
+    },
+  },
+  {
+    legend: {
+      label: 'Cases vs Flu',
+      icon: faBiohazard,
+      ...legendConfig.covidVsFlu,
+      zoomLevels: [4, Number.POSITIVE_INFINITY],
+    },
+    id: 'us-county-cases-vs-flu',
+    type: 'fill',
+    ...sourceUsCounties,
+    paint: {
+      'fill-color': [
+        'interpolate',
+        ['linear'],
+        ['feature-state', 'casesPerCapita'],
+        0,
+        ['rgba', 58, 235, 255, 0.8],
+        0.01,
+        ['rgba', 58, 235, 255, 0.8],
+        0.09,
+        ['rgba', 58, 235, 255, 0],
+        0.1,
+        ['rgba', 255, 212, 0, 0],
+        0.2,
+        ['rgba', 255, 212, 0, 0.8],
+        1,
+        ['rgba', 255, 212, 0, 0.8],
+      ],
+    },
+  },
+  {
+    legend: {
+      label: 'Infection rate',
+      icon: faBiohazard,
+      ...legendConfig.infectionRate,
+      zoomLevels: [4, Number.POSITIVE_INFINITY],
+    },
+    id: 'us-county-infection-rate',
+    type: 'fill',
+    ...sourceUsCounties,
+    paint: {
+      'fill-color': legendConfig.infectionRate.fillColor,
+      'fill-opacity': [
+        'interpolate',
+        ['linear'],
+        ['feature-state', 'casesPerCapita'],
+        0,
+        0,
+        0.01,
+        0.1,
+        0.02,
+        0.2,
+        0.05,
+        0.5,
+        0.1,
+        0.7,
+        0.2,
+        0.8,
+        1,
+        0.8,
+      ],
+    },
+  },
+  {
+    legend: {
+      label: 'Deaths',
+      icon: faSkullCrossbones,
+      ...legendConfig.deathsPerCapita,
+      zoomLevels: [4, Number.POSITIVE_INFINITY],
+    },
+    id: 'us-county-per-capita-deaths',
+    type: 'fill',
+    ...sourceUsCounties,
+    paint: {
+      'fill-color': [
+        'case',
+        ['==', ['feature-state', 'deathsPerCapita'], null],
+        invalidColor,
+        deathsColor,
+      ],
+      'fill-opacity': [
+        'interpolate',
+        ['linear'],
+        ['feature-state', 'deathsPerCapita'],
+        0,
+        0,
+        0.0001,
+        0.1,
+        0.0002,
+        0.2,
+        0.001,
+        0.5,
+        0.003,
+        0.7,
+        0.005,
+        0.8,
+        1,
+        0.8,
+      ],
+    },
+  },
+  {
+    legend: {
+      label: 'Cases',
+      icon: faHeadSideCough,
+      ...legendConfig.casesPerCapita,
+      zoomLevels: [4, Number.POSITIVE_INFINITY],
+    },
+    id: 'us-county-per-capita-cases',
+    type: 'fill',
+    ...sourceUsCounties,
+    paint: {
+      'fill-color': [
+        'case',
+        ['==', ['feature-state', 'casesPerCapita'], null],
+        invalidColor,
+        casesColor,
       ],
       'fill-opacity': [
         'interpolate',
@@ -738,17 +1174,17 @@ const usLayers = [
       label: 'Deaths',
       icon: faSkullCrossbones,
       ...legendConfig.deaths,
+      zoomLevels: [4, Number.POSITIVE_INFINITY],
     },
     id: 'us-county-total-deaths',
     type: 'fill',
-    source: 'us-counties',
-    'source-layer': 'us-counties-500k-a4l482',
+    ...sourceUsCounties,
     paint: {
       'fill-color': [
         'case',
         ['==', ['feature-state', 'deaths'], null],
-        '#777',
-        '#f00',
+        invalidColor,
+        deathsColor,
       ],
       'fill-opacity': [
         'interpolate',
@@ -776,17 +1212,17 @@ const usLayers = [
       label: 'Cases',
       icon: faHeadSideCough,
       ...legendConfig.cases,
+      zoomLevels: [4, Number.POSITIVE_INFINITY],
     },
     id: 'us-county-total-cases',
     type: 'fill',
-    source: 'us-counties',
-    'source-layer': 'us-counties-500k-a4l482',
+    ...sourceUsCounties,
     paint: {
       'fill-color': [
         'case',
         ['==', ['feature-state', 'cases'], null],
-        '#777',
-        '#00f',
+        invalidColor,
+        casesColor,
       ],
       'fill-opacity': [
         'interpolate',
@@ -814,17 +1250,17 @@ const usLayers = [
       label: 'Population',
       icon: faUsers,
       ...legendConfig.population,
+      zoomLevels: [4, Number.POSITIVE_INFINITY],
     },
     id: 'us-county-population',
     type: 'fill',
-    source: 'us-counties',
-    'source-layer': 'us-counties-500k-a4l482',
+    ...sourceUsCounties,
     paint: {
       'fill-color': [
         'case',
         ['==', ['feature-state', 'population'], null],
-        '#777',
-        '#0f0',
+        invalidColor,
+        populationColor,
       ],
       'fill-opacity': [
         'interpolate',
@@ -839,26 +1275,7 @@ const usLayers = [
       ],
     },
   },
-  {
-    id: 'us-counties-base',
-    type: 'fill',
-    source: 'us-counties',
-    'source-layer': 'us-counties-500k-a4l482',
-    paint: {
-      'fill-color': 'transparent',
-    },
-  },
-  {
-    id: 'us-counties-outline-base',
-    type: 'line',
-    source: 'us-counties',
-    'source-layer': 'us-counties-500k-a4l482',
-    paint: {
-      'line-color': ['case', ['feature-state', 'hold'], '#0f0', '#e842dc'],
-      'line-width': ['interpolate', ['linear'], ['zoom'], 3, 2, 10, 4],
-      'line-opacity': ['to-number', ['feature-state', 'active']],
-    },
-  },
+  ...generateBaseLayers(sourceUsCounties, 'us-counties'),
   {
     legend: {
       label: 'Hotspots',
@@ -936,11 +1353,10 @@ export const sources = [
     },
   },
   {
-    id: 'us-counties',
+    id: 'us-admin-levels',
     config: {
       type: 'vector',
-      url: 'mapbox://ruokvl.0761cl0n',
-      promoteId: 'FEATURE_ID',
+      url: 'mapbox://ruokvl.us-admin-levels',
     },
   },
   {
@@ -952,7 +1368,8 @@ export const sources = [
   },
 ];
 
-export const layers = [...usLayers, ...worldLayers];
+const usLayers = [...usLayersState, ...usLayersCounty];
+export const layers = [...worldLayers, ...usLayers];
 
 const getUsCommonLayers = () =>
   usLayers
@@ -974,9 +1391,12 @@ export const layerGroups = {
       layers: [
         'us-county-per-capita-deaths',
         'us-county-per-capita-cases',
+        'us-state-per-capita-deaths',
+        'us-state-per-capita-cases',
         'us-per-capita-hotspots',
         'us-first-case',
         'us-county-population',
+        'us-state-population',
         ...getUsCommonLayers(),
       ],
     },
@@ -985,6 +1405,8 @@ export const layerGroups = {
       layers: [
         'us-county-total-deaths',
         'us-county-total-cases',
+        'us-state-total-deaths',
+        'us-state-total-cases',
         'us-hotspots',
         'us-first-case',
         ...getUsCommonLayers(),
@@ -1000,6 +1422,13 @@ export const layerGroups = {
         'us-county-deaths-vs-avg',
         'us-per-capita-hotspots',
         'us-county-population',
+        'us-state-infection-rate',
+        'us-state-cases-vs-flu',
+        'us-state-cases-vs-avg',
+        'us-state-deaths-vs-flu',
+        'us-state-deaths-vs-avg',
+        'us-per-capita-hotspots',
+        'us-state-population',
         ...getUsCommonLayers(),
       ],
     },

@@ -3,8 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const worldCovidDataSlice = createSlice({
   name: 'worldCovidData',
   initialState: {
-    byCountry: null,
-    population: null,
+    byCountry: {},
+    population: {},
     totals: null,
   },
   reducers: {
