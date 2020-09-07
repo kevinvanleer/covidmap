@@ -54,18 +54,30 @@ export const About = ({ onHide }) => (
       <Spacer height="1em" />
       <Text fontSize="label">Data sources</Text>
       <Spacer height="0.5em" />
-      <Text>US 2010 census county boundaries</Text>
+      <Text>US 2010 census boundaries</Text>
       <Link href="https://eric.clst.org/tech/usgeojson/">
         <Text fontSize="detail">https://eric.clst.org/tech/usgeojson/</Text>
       </Link>
       <Spacer height="0.5em" />
-      <Text>2019 Population Estimates: US Census Bureau</Text>
+      <Text>Global country boundaries: Data Packaged Core Datasets</Text>
+      <Link href="https://github.com/datasets/geo-countries">
+        <Text fontSize="detail">Find it on GitHub</Text>
+      </Link>
+      <Spacer height="0.5em" />
+      <Text>2019 US Population Estimates: US Census Bureau</Text>
       <Link href="https://www2.census.gov/programs-surveys/popest/datasets/2010-2019/counties/totals/co-est2019-alldata.csv">
-        <Text fontSize="detail">Download raw CSV</Text>
+        <Text fontSize="detail">Download raw CSV file</Text>
+      </Link>
+      <Spacer height="0.5em" />
+      <Text>Global Population Estimates: World Bank</Text>
+      <Link href="https://data.worldbank.org/indicator/SP.POP.TOTL">
+        <Text fontSize="detail">
+          https://data.worldbank.org/indicator/SP.POP.TOTL
+        </Text>
       </Link>
       <Spacer height="0.5em" />
       <Text>
-        Cases and deaths, The New York Times, based on reports from state and
+        US Cases and deaths, The New York Times, based on reports from state and
         local health agencies:
       </Text>
       <Link href="https://github.com/nytimes/covid-19-data">
@@ -73,6 +85,11 @@ export const About = ({ onHide }) => (
       </Link>
       <Link href="https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html">
         <Text fontSize="detail">New York Times interactive tracking page</Text>
+      </Link>
+      <Spacer height="0.5em" />
+      <Text>Global COVID-19 cases and deaths: World Health Organization</Text>
+      <Link href="https://covid19.who.int/WHO-COVID-19-global-data.csv">
+        <Text fontSize="detail">Download raw CSV file</Text>
       </Link>
       <Spacer height="0.5em" />
       <Text>Source code</Text>
