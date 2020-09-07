@@ -14,8 +14,8 @@ export const About = ({ onHide }) => (
     margin="1em"
   >
     <Text fontSize="heading">About this visualization</Text>
-    <Spacer height="0.5em" />
-    <Flexbox flexDirection="column" overflow="auto">
+    <Spacer height="1.5em" />
+    <div style={{ overflow: 'auto' }}>
       <Text>
         COVID-19 cases and deaths are displayed as blue and red choropleths as
         reported by the New York Times. Onset, the date of the first case in
@@ -88,7 +88,8 @@ export const About = ({ onHide }) => (
       </Text>
       <Link href="mailto:kevin.vanleer@gmail.com">kevin.vanleer@gmail.com</Link>
       <Spacer height="1em" />
-    </Flexbox>
+    </div>
+    <Spacer height="1em" />
     <Button id="covidmap-about-hide-self" onClick={onHide}>
       <Text color="#eee">Dismiss</Text>
     </Button>
