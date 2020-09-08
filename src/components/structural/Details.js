@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { get, findLast, findLastIndex, set, last } from 'lodash';
+import { get, findLast, findLastIndex, last } from 'lodash';
 import { Flexbox, Spacer, Text, SquareButton } from 'kvl-react-ui';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFlagUsa, faGlobe } from '@fortawesome/free-solid-svg-icons';
@@ -160,13 +160,6 @@ export const Details = ({ date, collapsed }) => {
     date,
   ]);
 
-  let deathRate = {
-    current: 0,
-    twoWeek: 0,
-    fourWeek: 0,
-    eightWeek: 0,
-  };
-
   const data = entity.data;
   const recentDataIndex = useMemo(
     () =>
@@ -193,34 +186,9 @@ export const Details = ({ date, collapsed }) => {
     [data, date]
   );
   const twoWeekLagData = data[twoWeekLagIndex];
-  /*
-    const fourWeekLagData = findLast(
-      data,
-      (status) =>
-        status.date <= moment(date).subtract(4, 'weeks').format('YYYY-MM-DD')
-    );
-    const eightWeekLagData = findLast(
-      data,
-      (status) =>
-        status.date <= moment(date).subtract(8, 'weeks').format('YYYY-MM-DD')
-    );*/
-  set(deathRate, 'current', recentData.deaths / recentData.cases);
-  set(
-    deathRate,
-    'twoWeek',
-    recentData.deaths / get(twoWeekLagData, 'cases') || 0
-  ); /*
-    set(
-      deathRate,
-      'fourWeek',
-      recentData.deaths / get(fourWeekLagData, 'cases') || 0
-    );
-    set(
-      deathRate,
-      'eightWeek',
-      recentData.deaths / get(eightWeekLagData, 'cases') || 0
-    );*/
+
   const newCases = get(recentData, 'cases', 0) - get(yesterday, 'cases', 0);
+
   const ongoingCases =
     get(recentData, 'cases', 0) - get(twoWeekLagData, 'cases', 0);
 
@@ -270,7 +238,6 @@ export const Details = ({ date, collapsed }) => {
           <Spacer height="0.5em" />
           <Stats
             population={population}
-            deathRate={deathRate}
             collapsed={collapsed}
             entity={entity}
             recentData={recentData}
