@@ -36,10 +36,11 @@ function App() {
   const date = useSelector((state) => moment(state.core.time.current, 'x'));
   const activeLayers = useSelector((state) => state.ui.map.activeLayers);
 
-  if (process.env.NODE_ENV === 'production') {
-    ReactGA.initialize('UA-55310450-2');
-    ReactGA.pageview(window.location.pathname + window.location.search);
-  }
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      ReactGA.pageview(window.location.pathname + window.location.search);
+    }
+  }, []);
 
   // Track page view
   enableLinkTracking();

@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import ReactGA from 'react-ga';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
@@ -13,6 +14,10 @@ import configureAppStore from './state/configureAppStore.js';
 const store = configureAppStore();
 
 store.dispatch(startTimeService());
+
+if (process.env.NODE_ENV === 'production') {
+  ReactGA.initialize('UA-55310450-2');
+}
 
 ReactDOM.render(
   <React.StrictMode>
