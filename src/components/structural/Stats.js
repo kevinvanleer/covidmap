@@ -56,7 +56,6 @@ StatsItem.propTypes = {
 
 export const Stats = ({
   collapsed,
-  deathRate,
   recentData,
   newCases,
   ongoingCases,
@@ -129,9 +128,13 @@ export const Stats = ({
         <Spacer width="0.1em" flexGrow="1" />
         <Flexbox flexDirection="column">
           <StatsItem
-            value={`${(deathRate.twoWeek * 100).toFixed()}%`}
-            label="Death rate"
-            popupDescription="Total deaths as of the current date compared to total cases 14 days ago"
+            value={Math.round(
+              (get(recentData, 'deaths', 0) /
+                get(population, 'POPESTIMATE2019', 0)) *
+                1e5
+            )}
+            label="Deaths per 100k"
+            popupDescription="Number of deaths that have occurred, normalized to a population of 100,000 individuals"
             showPopup={showPopup.deathRate}
             onShowPopup={() => onShowPopup('deathRate', !showPopup.deathRate)}
             right
@@ -155,7 +158,6 @@ export const Stats = ({
 Stats.propTypes = {
   collapsed: PropTypes.bool,
   population: PropTypes.object,
-  deathRate: PropTypes.object,
   recentData: PropTypes.object,
   newCases: PropTypes.number,
   ongoingCases: PropTypes.number,

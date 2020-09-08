@@ -62,13 +62,15 @@ export const cubicBezierFindY = (
     }
   };
 
+  let iterator = 0;
   while (!found) {
     const result = bezierFunction(t);
 
-    if (Math.abs(result.x - x) < 1e-6) {
+    if (Math.abs(result.x - x) < 1e-6 || iterator > 1e5) {
       return result.y;
     } else {
       t = increment(result.x);
     }
+    iterator++;
   }
 };
