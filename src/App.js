@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMatomo } from '@datapunt/matomo-tracker-react';
 import moment from 'moment';
@@ -18,7 +18,6 @@ import FullscreenMap from './components/presentation/FullscreenMap.js';
 
 import { layers, sources } from './mapboxConfig.js';
 
-import { setCurrent } from './state/core/time.js';
 import { setShowAbout } from './state/ui/controlPanel.js';
 
 function App() {
@@ -33,7 +32,8 @@ function App() {
   const layersHidden = useSelector(
     (state) => state.ui.controlPanel.layersHidden
   );
-  const date = useSelector((state) => moment(state.core.time.current, 'x'));
+  const date = useSelector((state) => state.core.time.current);
+  const duration = useSelector((state) => state.core.time.duration);
   const activeLayers = useSelector((state) => state.ui.map.activeLayers);
 
   useEffect(() => {
@@ -41,6 +41,17 @@ function App() {
       ReactGA.pageview(window.location.pathname + window.location.search);
     }
   }, []);
+
+  const theMoment = useMemo(() => moment(date, 'x'), [date]);
+  const dateRange = useMemo(
+    () => ({
+      start: duration
+        ? moment(theMoment).subtract(duration).format('YYYY-MM-DD')
+        : null,
+      end: theMoment.format('YYYY-MM-DD'),
+    }),
+    [theMoment, duration]
+  );
 
   // Track page view
   enableLinkTracking();
@@ -59,24 +70,16 @@ function App() {
     dispatch(initializeFeatureState());
   }, [dispatch]);
 
-  const onSetDate = useCallback(
-    (newDate) => {
-      dispatch(setCurrent(newDate));
-    },
-    [dispatch]
-  );
-
   return aliveStatus.success ? (
     <>
       <ControlPanel
         layers={layers}
         activeLayers={activeLayers}
-        date={moment(date)}
-        onSetDate={onSetDate}
+        date={theMoment}
         onShowAbout={() => onShowAbout(true)}
       />
       <FullscreenMap
-        date={date.format('YYYY-MM-DD')}
+        date={dateRange}
         sources={sources}
         layers={layers}
         activeLayers={activeLayers}

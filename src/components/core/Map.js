@@ -28,13 +28,13 @@ mapboxgl.accessToken =
   'pk.eyJ1IjoicnVva3ZsIiwiYSI6ImNrZDA3NW9oNTBhanYyeXBjOXBjazloazUifQ.qwtn31dojyeKrFMrcRAjBw';
 
 const centroidState = (twoWeeksBefore, population) => (state, date) => {
-  const recentData = findLast(state, (status) => status.date <= date);
+  const recentData = findLast(state, (status) => status.date <= date.end);
   const twoWeeksPrior = findLast(
     state,
     (status) => status.date <= twoWeeksBefore
   );
   return {
-    firstCase: get(state, [1, 'date']) === date,
+    firstCase: get(state, [1, 'date']) === date.end,
     hotspot:
       parseInt(get(recentData, 'cases', 0)) /
         parseInt(get(twoWeeksPrior, 'cases', 0)) >
@@ -48,17 +48,23 @@ const centroidState = (twoWeeksBefore, population) => (state, date) => {
 };
 
 const choroplethState = (population) => (state, date) => {
-  const recentData = findLast(state, (status) => status.date <= date);
+  const recentData = findLast(state, (status) => status.date <= date.end);
+  const beginRangeData = date.start
+    ? findLast(state, (status) => status.date <= date.start)
+    : null;
+  const beginCases = date.start ? parseInt(get(beginRangeData, 'cases', 0)) : 0;
+  const beginDeaths = date.start
+    ? parseInt(get(beginRangeData, 'deaths', 0))
+    : 0;
+  const cases = parseInt(get(recentData, 'cases', 0)) - beginCases;
+  const deaths = parseInt(get(recentData, 'deaths', 0)) - beginDeaths;
+
   return {
-    casesPerCapita:
-      population > 0 ? parseInt(get(recentData, 'cases', 0)) / population : 0,
-    deathsPerCapita:
-      population > 0 ? parseInt(get(recentData, 'deaths', 0)) / population : 0,
-    cases: parseInt(get(recentData, 'cases', 0)),
-    deaths: parseInt(get(recentData, 'deaths', 0)),
-    deathRate:
-      parseInt(get(recentData, 'deaths', 0)) /
-      parseInt(get(recentData, 'cases', 0)),
+    casesPerCapita: population > 0 ? cases / population : 0,
+    deathsPerCapita: population > 0 ? deaths / population : 0,
+    cases: cases,
+    deaths: deaths,
+    deathRate: deaths / cases,
     population: population,
   };
 };
@@ -229,7 +235,7 @@ const MapboxMap = ({ sources, activeLayers, layers, date, ...props }) => {
 
   useEffect(() => {
     if (initialized && usData) {
-      const twoWeeksAgo = moment(date)
+      const twoWeeksAgo = moment(date.end)
         .subtract(2, 'weeks')
         .format('YYYY-MM-DD');
       for (const [key, value] of Object.entries(usData)) {
@@ -402,7 +408,7 @@ MapboxMap.propTypes = {
   activeLayers: PropTypes.array,
   sources: PropTypes.array,
   layers: PropTypes.array,
-  date: PropTypes.string,
+  date: PropTypes.object,
 };
 
 export default MapboxMap;

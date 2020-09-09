@@ -26,13 +26,7 @@ import {
   collapse,
 } from '../../state/ui/controlPanel.js';
 
-export const ControlPanel = ({
-  layers,
-  activeLayers,
-  onShowAbout,
-  onSetDate,
-  date,
-}) => {
+export const ControlPanel = ({ layers, activeLayers, onShowAbout, date }) => {
   const dispatch = useDispatch();
   const collapsed = useSelector((state) => state.ui.controlPanel.collapsed);
   const layersHidden = useSelector(
@@ -136,11 +130,7 @@ export const ControlPanel = ({
       {!detailsHidden ? (
         <Details date={moment(date)} collapsed={collapsed} />
       ) : null}
-      <DateSelector
-        date={date}
-        setDate={onSetDate}
-        withChart={!detailsHidden}
-      />
+      <DateSelector withChart={!detailsHidden} />
       {loadingMessage ? (
         <Flexbox flexDirection="column">
           <Spacer height="1em" />
@@ -157,6 +147,5 @@ ControlPanel.propTypes = {
   layers: PropTypes.array,
   activeLayers: PropTypes.array,
   onShowAbout: PropTypes.func,
-  onSetDate: PropTypes.func,
   date: PropTypes.object,
 };

@@ -33,6 +33,7 @@ const timeSlice = createSlice({
     min: parseInt(moment('2020-01-01').format('x')),
     max: parseInt(moment().subtract(1, 'days').format('x')),
     current: parseInt(moment().subtract(1, 'days').format('x')),
+    duration: null,
     pause: true,
     rate: 0,
   },
@@ -48,7 +49,6 @@ const timeSlice = createSlice({
         newTime = state.current + action.payload * state.rate;
         if (newTime > state.max) {
           newTime = state.max;
-          //delay = 1000;
         }
       }
       state.current = newTime;
@@ -69,6 +69,9 @@ const timeSlice = createSlice({
     setPause: (state, action) => {
       state.pause = action.pause;
     },
+    setDuration: (state, action) => {
+      state.duration = action.payload;
+    },
   },
 });
 
@@ -79,6 +82,7 @@ export const {
   setMin,
   setRate,
   setPause,
+  setDuration,
   togglePlayPause,
 } = timeSlice.actions;
 export default timeSlice.reducer;
