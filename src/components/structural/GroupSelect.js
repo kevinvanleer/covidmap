@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Flexbox, Text, Divider } from 'kvl-react-ui';
 
@@ -8,6 +8,12 @@ export const GroupSelect = () => {
   const groups = useSelector((state) => state.ui.map.layerGroups);
   const selectedGroup = useSelector((state) => state.ui.map.selectedLayerGroup);
   const dispatch = useDispatch();
+
+  const onSelectLayerGroup = useCallback(
+    (group) => dispatch(selectLayerGroup(group)),
+    [dispatch]
+  );
+
   let maxLength = 0;
 
   groups.forEach(
@@ -30,7 +36,7 @@ export const GroupSelect = () => {
               padding="0.2em"
               key={group.name}
               fontSize="detail"
-              onClick={() => dispatch(selectLayerGroup(group))}
+              onClick={() => onSelectLayerGroup(group)}
             >
               {group.name.toUpperCase()}
             </Text>

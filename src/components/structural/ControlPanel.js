@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -51,6 +51,21 @@ export const ControlPanel = ({
     (state) => state.request.usCasesByCounty.progress
   );
 
+  const onToggleHideLayers = useCallback(
+    () => dispatch(hideLayers(!layersHidden)),
+    [layersHidden, dispatch]
+  );
+
+  const onToggleHideDetails = useCallback(
+    () => dispatch(hideDetails(!detailsHidden)),
+    [detailsHidden, dispatch]
+  );
+
+  const onToggleCollapse = useCallback(() => dispatch(collapse(!collapsed)), [
+    collapsed,
+    dispatch,
+  ]);
+
   let loadingMessage = null;
   let progress = sourcesLoading || mapLoading ? 0 : dataProgress;
   if (dataProgress < 1) loadingMessage = 'Downloading pandemic statistics...';
@@ -83,7 +98,7 @@ export const ControlPanel = ({
           <ToggleButton
             id="button-covidmap-control-panel-hide-layers"
             flexGrow={0}
-            onClick={() => dispatch(hideLayers(!layersHidden))}
+            onClick={onToggleHideLayers}
             icon={faLayerGroup}
             active={!layersHidden}
             backgroundColor="#777"
@@ -91,7 +106,7 @@ export const ControlPanel = ({
           <ToggleButton
             id="button-covidmap-control-panel-hide-details"
             flexGrow={0}
-            onClick={() => dispatch(hideDetails(!detailsHidden))}
+            onClick={onToggleHideDetails}
             icon={faChartBar}
             active={!detailsHidden}
             backgroundColor="#777"
@@ -101,7 +116,7 @@ export const ControlPanel = ({
             id="button-covidmap-control-panel-collapse"
             flexGrow={0}
             color="white"
-            onClick={() => dispatch(collapse(!collapsed))}
+            onClick={onToggleCollapse}
             collapsed={collapsed}
             backgroundColor="#777"
           />
