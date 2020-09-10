@@ -87,7 +87,6 @@ const mapSlice = createSlice({
       state.layerGroups = layerGroups[action.payload.name];
       state.selectedLayerGroup = layerGroups[action.payload.name][0];
       state.hold = false;
-      state.selectedFeature = null;
     },
     updateActiveLayers: (state, action) => {
       const layerId = action.payload;

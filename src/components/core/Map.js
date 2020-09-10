@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -88,6 +88,24 @@ const setFeatureState = (
   );
 };
 
+const selectFeature = (
+  theMap,
+  sourceConfig,
+  featureId,
+  selected,
+  hold = false
+) => {
+  if (featureId != null) {
+    theMap.setFeatureState(
+      {
+        ...sourceConfig.source,
+        id: featureId,
+      },
+      { active: selected, hold }
+    );
+  }
+};
+
 const MapboxMap = ({ sources, activeLayers, layers, date, ...props }) => {
   const dispatch = useDispatch();
   const hold = useSelector((state) => state.ui.map.hold);
@@ -136,7 +154,6 @@ const MapboxMap = ({ sources, activeLayers, layers, date, ...props }) => {
     const lng = -95;
     const zoom = 3;
     dispatch(beginMapInitialization());
-    //mapboxgl.clearStorage();
     const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v10',
@@ -278,23 +295,8 @@ const MapboxMap = ({ sources, activeLayers, layers, date, ...props }) => {
     }
   }, [initialized, date, usData, map, population]);
 
-  const selectFeature = useCallback(
-    (theMap, sourceConfig, featureId, selected, hold = false) => {
-      if (featureId != null) {
-        theMap.setFeatureState(
-          {
-            ...sourceConfig.source,
-            id: featureId,
-          },
-          { active: selected, hold }
-        );
-      }
-    },
-    []
-  );
-
-  const selectNewFeature = useCallback(
-    (theMap, sourceConfig, featureId, hold) => {
+  useEffect(() => {
+    const selectNewFeature = (theMap, sourceConfig, featureId, hold) => {
       if (featureId !== selectedFeature) {
         selectFeature(theMap, sourceConfig, selectedFeature, false, hold);
       }
@@ -302,12 +304,9 @@ const MapboxMap = ({ sources, activeLayers, layers, date, ...props }) => {
         selectFeature(theMap, sourceConfig, featureId, true, hold);
       }
       dispatch(setSelectedFeature(featureId));
-    },
-    [dispatch, selectFeature, selectedFeature]
-  );
+    };
 
-  const onMouseUp = useCallback(
-    (sourceConfig) => (e) => {
+    const onMouseUp = (sourceConfig) => (e) => {
       if (map && initialized) {
         const theFeature = e.features.find(
           (feature) => feature.layer.id === sourceConfig.layer
@@ -323,13 +322,10 @@ const MapboxMap = ({ sources, activeLayers, layers, date, ...props }) => {
           dispatch(setHold(!hold));
         }
       }
-    },
-    [map, initialized, hold, selectNewFeature, dispatch, selectedFeature]
-  );
+    };
 
-  const onMouseMove = useCallback(
-    (sourceConfig) => (e) => {
-      if (map && initialized && !hold) {
+    const onMouseMove = (sourceConfig) => (e) => {
+      if (map && initialized) {
         let removeFeatures = hoveredFeatures.slice(0, -1);
         removeFeatures.forEach((feature) =>
           selectFeature(map, sourceConfig, feature, false)
@@ -344,28 +340,14 @@ const MapboxMap = ({ sources, activeLayers, layers, date, ...props }) => {
           selectNewFeature(map, sourceConfig, theFeature.id);
         }
       }
-    },
-    [
-      map,
-      initialized,
-      hold,
-      hoveredFeatures,
-      dispatch,
-      selectNewFeature,
-      selectFeature,
-    ]
-  );
+    };
 
-  const onMouseLeave = useCallback(
-    (sourceConfig) => () => {
+    const onMouseLeave = (sourceConfig) => () => {
       if (map && initialized && !hold) {
         selectNewFeature(map, sourceConfig, null);
       }
-    },
-    [map, initialized, hold, selectNewFeature]
-  );
+    };
 
-  useEffect(() => {
     const handlers = [];
     mouseLayers.forEach((base) => {
       if (map && initialized) {
@@ -377,21 +359,23 @@ const MapboxMap = ({ sources, activeLayers, layers, date, ...props }) => {
         map.on(handler.event, handler.layer, handler.handler);
         handlers.push({ ...handler });
 
-        handler = {
-          event: 'mousemove',
-          layer: base.layer,
-          handler: onMouseMove(base),
-        };
-        map.on(handler.event, handler.layer, handler.handler);
-        handlers.push({ ...handler });
+        if (!hold) {
+          handler = {
+            event: 'mousemove',
+            layer: base.layer,
+            handler: onMouseMove(base),
+          };
+          map.on(handler.event, handler.layer, handler.handler);
+          handlers.push({ ...handler });
 
-        handler = {
-          event: 'mouseleave',
-          layer: base.layer,
-          handler: onMouseLeave(base),
-        };
-        map.on(handler.event, handler.layer, handler.handler);
-        handlers.push({ ...handler });
+          handler = {
+            event: 'mouseleave',
+            layer: base.layer,
+            handler: onMouseLeave(base),
+          };
+          map.on(handler.event, handler.layer, handler.handler);
+          handlers.push({ ...handler });
+        }
       }
     });
     return () => {
@@ -399,7 +383,7 @@ const MapboxMap = ({ sources, activeLayers, layers, date, ...props }) => {
         map.off(handler.event, handler.layer, handler.handler);
       });
     };
-  }, [map, initialized, onMouseMove, onMouseUp, onMouseLeave]);
+  }, [map, initialized, selectedFeature, hold]);
 
   return <div ref={mapContainer} {...props} />;
 };
