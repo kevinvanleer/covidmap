@@ -4,7 +4,6 @@
   "private": true,
   "proxy": "http://localhost:3003",
   "dependencies": {
-    "@datapunt/matomo-tracker-react": "^0.2.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.30",
     "@fortawesome/free-regular-svg-icons": "^5.14.0",
     "@fortawesome/free-solid-svg-icons": "^5.14.0",

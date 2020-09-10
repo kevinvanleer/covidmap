@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useMatomo } from '@datapunt/matomo-tracker-react';
 import moment from 'moment';
 import ReactGA from 'react-ga';
 
@@ -21,8 +20,6 @@ import { layers, sources } from './mapboxConfig.js';
 import { setShowAbout } from './state/ui/controlPanel.js';
 
 function App() {
-  const { enableLinkTracking, trackPageView } = useMatomo();
-
   const dispatch = useDispatch();
   const aliveStatus = useSelector(
     (state) => state.core.apiServerStatus.aliveCheck
@@ -52,12 +49,6 @@ function App() {
     }),
     [theMoment, duration]
   );
-
-  // Track page view
-  enableLinkTracking();
-  React.useEffect(() => {
-    trackPageView();
-  }, [trackPageView]);
 
   const onShowAbout = useCallback(
     (show) => {
