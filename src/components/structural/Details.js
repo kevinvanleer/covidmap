@@ -185,7 +185,7 @@ export const Details = ({ date, collapsed }) => {
       ),
     [data, date]
   );
-  const twoWeekLagData = data[twoWeekLagIndex];
+  const twoWeekLagData = get(data, [twoWeekLagIndex], null);
 
   const newCases = get(recentData, 'cases', 0) - get(yesterday, 'cases', 0);
 
@@ -211,7 +211,7 @@ export const Details = ({ date, collapsed }) => {
   }, [dispatch]);
 
   return recentData ? (
-    <Flexbox flexDirection="column">
+    <Flexbox flexDirection="column" style={{ flexShrink: 0 }}>
       <Flexbox>
         <Flexbox flexDirection="column" flexGrow={1}>
           <Flexbox>
