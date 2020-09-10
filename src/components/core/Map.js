@@ -13,7 +13,6 @@ import {
   mapFinishedLoading,
   beginLoadingSources,
   sourcesFinishedLoading,
-  setHoveredFeatures,
 } from '../../state/ui/map.js';
 import { loadingStatus } from '../../state/util/loadingStatus.js';
 
@@ -108,8 +107,6 @@ const selectFeature = (
 
 const MapboxMap = ({ sources, activeLayers, layers, date, ...props }) => {
   const dispatch = useDispatch();
-  const hold = useSelector((state) => state.ui.map.hold);
-  const selectedFeature = useSelector((state) => state.ui.map.selectedFeature);
   const map = useSelector((state) => state.ui.map.map);
   const initialized = useSelector(
     (state) => state.ui.map.sourcesLoadStatus.status === loadingStatus.complete
@@ -121,7 +118,6 @@ const MapboxMap = ({ sources, activeLayers, layers, date, ...props }) => {
     (state) => state.core.worldCovidData.population
   );
   const selectedGroup = useSelector((state) => state.ui.map.selectedLayerGroup);
-  const hoveredFeatures = useSelector((state) => state.ui.map.hoveredFeatures);
   const usData = useSelector((state) => state.core.usCovidData.stateAndCounty);
   const worldData = useSelector((state) => state.core.worldCovidData.byCountry);
   const activeView = useSelector((state) => state.ui.map.activeView);
@@ -296,14 +292,17 @@ const MapboxMap = ({ sources, activeLayers, layers, date, ...props }) => {
   }, [initialized, date, usData, map, population]);
 
   useEffect(() => {
-    const selectNewFeature = (theMap, sourceConfig, featureId, hold) => {
+    let selectedFeature = null;
+    let hold = null;
+    const selectNewFeature = (theMap, sourceConfig, featureId, newHold) => {
       if (featureId !== selectedFeature) {
-        selectFeature(theMap, sourceConfig, selectedFeature, false, hold);
+        selectFeature(theMap, sourceConfig, selectedFeature, false, newHold);
+        selectedFeature = featureId;
+        dispatch(setSelectedFeature(featureId));
       }
       if (featureId != null) {
-        selectFeature(theMap, sourceConfig, featureId, true, hold);
+        selectFeature(theMap, sourceConfig, featureId, true, newHold);
       }
-      dispatch(setSelectedFeature(featureId));
     };
 
     const onMouseUp = (sourceConfig) => (e) => {
@@ -314,29 +313,25 @@ const MapboxMap = ({ sources, activeLayers, layers, date, ...props }) => {
         if (theFeature.id === undefined) {
           selectNewFeature(map, sourceConfig, null, false);
           dispatch(setHold(false));
+          hold = false;
         } else if (selectedFeature !== theFeature.id) {
           selectNewFeature(map, sourceConfig, theFeature.id, true);
           dispatch(setHold(true));
+          hold = true;
         } else {
           selectNewFeature(map, sourceConfig, theFeature.id, !hold);
           dispatch(setHold(!hold));
+          hold = !hold;
         }
       }
     };
 
     const onMouseMove = (sourceConfig) => (e) => {
-      if (map && initialized) {
-        let removeFeatures = hoveredFeatures.slice(0, -1);
-        removeFeatures.forEach((feature) =>
-          selectFeature(map, sourceConfig, feature, false)
-        );
-        let newArray = [...hoveredFeatures.slice(-1)];
-        dispatch(setHoveredFeatures(newArray));
+      if (map && initialized && !hold) {
         if (e.features.length > 0) {
           const theFeature = e.features.find(
             (feature) => feature.layer.id === sourceConfig.layer
           );
-          dispatch(setHoveredFeatures(newArray.concat([theFeature.id])));
           selectNewFeature(map, sourceConfig, theFeature.id);
         }
       }
@@ -359,23 +354,21 @@ const MapboxMap = ({ sources, activeLayers, layers, date, ...props }) => {
         map.on(handler.event, handler.layer, handler.handler);
         handlers.push({ ...handler });
 
-        if (!hold) {
-          handler = {
-            event: 'mousemove',
-            layer: base.layer,
-            handler: onMouseMove(base),
-          };
-          map.on(handler.event, handler.layer, handler.handler);
-          handlers.push({ ...handler });
+        handler = {
+          event: 'mousemove',
+          layer: base.layer,
+          handler: onMouseMove(base),
+        };
+        map.on(handler.event, handler.layer, handler.handler);
+        handlers.push({ ...handler });
 
-          handler = {
-            event: 'mouseleave',
-            layer: base.layer,
-            handler: onMouseLeave(base),
-          };
-          map.on(handler.event, handler.layer, handler.handler);
-          handlers.push({ ...handler });
-        }
+        handler = {
+          event: 'mouseleave',
+          layer: base.layer,
+          handler: onMouseLeave(base),
+        };
+        map.on(handler.event, handler.layer, handler.handler);
+        handlers.push({ ...handler });
       }
     });
     return () => {
@@ -383,7 +376,7 @@ const MapboxMap = ({ sources, activeLayers, layers, date, ...props }) => {
         map.off(handler.event, handler.layer, handler.handler);
       });
     };
-  }, [map, initialized, selectedFeature, hold, dispatch]);
+  }, [map, initialized, dispatch]);
 
   return <div ref={mapContainer} {...props} />;
 };

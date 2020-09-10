@@ -16,7 +16,6 @@ const mapSlice = createSlice({
     selectedLayerGroup: layerGroups['us'][0],
     views: Object.keys(layerGroups).map((key) => ({ name: key })),
     activeView: { name: 'us' },
-    hoveredFeatures: [],
     activeLayers: layers
       .filter(
         (layer) => !layer?.legend?.mutex && !layer?.legend?.defaultDisabled
@@ -63,9 +62,6 @@ const mapSlice = createSlice({
     selectLayerGroup: (state, action) => {
       state.selectedLayerGroup = action.payload;
     },
-    setHoveredFeatures: (state, action) => {
-      state.hoveredFeatures = action.payload;
-    },
     setActiveLayers: (state, action) => {
       state.activeLayers = action.payload;
     },
@@ -111,7 +107,6 @@ export const {
   beingLoadingLayers,
   layersFinishedLoading,
   selectLayerGroup,
-  setHoveredFeatures,
   setActiveLayers,
   setActiveView,
   updateActiveLayers,
