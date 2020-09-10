@@ -211,7 +211,7 @@ export const Details = ({ date, collapsed }) => {
   }, [dispatch]);
 
   return recentData ? (
-    <Flexbox flexDirection="column" style={{ flexShrink: 0 }}>
+    <Flexbox flexDirection="column">
       <Flexbox>
         <Flexbox flexDirection="column" flexGrow={1}>
           <Flexbox>

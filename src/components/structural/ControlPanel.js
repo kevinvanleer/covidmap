@@ -72,6 +72,8 @@ export const ControlPanel = ({ layers, activeLayers, onShowAbout, date }) => {
       width="min-content"
       right="1em"
       top="1em"
+      maxHeight="calc(100% - 4em)"
+      maxWidth="calc(100% - 4em)"
       backgroundColor="rgba(68,68,68,0.85)"
       zIndex={100}
     >
@@ -117,19 +119,29 @@ export const ControlPanel = ({ layers, activeLayers, onShowAbout, date }) => {
         </Flexbox>
       </Flexbox>
       <Divider horizontal margin="0.5em 0" />
-      {!layersHidden ? (
-        <>
-          <Layers
-            layers={layers}
-            activeLayers={activeLayers}
-            collapsed={collapsed}
-          />
-          <Divider horizontal margin="0.5em 0" />
-        </>
-      ) : null}
-      {!detailsHidden ? (
-        <Details date={moment(date)} collapsed={collapsed} />
-      ) : null}
+      <Flexbox
+        flexDirection="column"
+        style={{ flexShrink: 1 }}
+        overflow="hidden auto"
+      >
+        {!layersHidden ? (
+          <div>
+            <Layers
+              layers={layers}
+              activeLayers={activeLayers}
+              collapsed={collapsed}
+            />
+            <Divider horizontal margin="0.5em 0" />
+          </div>
+        ) : null}
+        {!detailsHidden ? (
+          <div>
+            <Details date={moment(date)} collapsed={collapsed} />
+          </div>
+        ) : (
+          <Spacer width="325px" />
+        )}
+      </Flexbox>
       <DateSelector withChart={!detailsHidden} />
       {loadingMessage ? (
         <Flexbox flexDirection="column">

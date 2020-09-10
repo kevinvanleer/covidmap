@@ -3,6 +3,9 @@ import { Flexbox } from 'kvl-react-ui';
 
 export const FloatingPanel = styled(Flexbox)`
   position: absolute;
+  & > * {
+    flex-shrink: 0;
+  }
 `;
 
 FloatingPanel.defaultProps = {
