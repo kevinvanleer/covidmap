@@ -383,7 +383,7 @@ const MapboxMap = ({ sources, activeLayers, layers, date, ...props }) => {
         map.off(handler.event, handler.layer, handler.handler);
       });
     };
-  }, [map, initialized, selectedFeature, hold]);
+  }, [map, initialized, selectedFeature, hold, dispatch]);
 
   return <div ref={mapContainer} {...props} />;
 };
