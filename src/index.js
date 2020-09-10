@@ -7,7 +7,6 @@ import * as serviceWorker from './serviceWorker';
 import { start as startTimeService } from './services/time.js';
 
 import { Provider } from 'react-redux';
-import { AnalyticsProvider } from './AnalyticsProvider.js';
 
 import configureAppStore from './state/configureAppStore.js';
 
@@ -21,11 +20,9 @@ if (process.env.NODE_ENV === 'production') {
 
 ReactDOM.render(
   <React.StrictMode>
-    <AnalyticsProvider>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </AnalyticsProvider>
+    <Provider store={store}>
+      <App />
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );
