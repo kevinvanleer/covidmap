@@ -31,7 +31,8 @@ const usCountyTotalDeathsAnchorPoints = [0, 0, 10000, 0.8];
 const usCountyTotalCasesAnchorPoints = [0, 0, 100000, 0.8];
 
 const worldPerCapitaBezierControlPoints = [0.0, 0.5, 0.3, 0.6];
-const worldPerCapitaAnchorPoints = [0, 0, 0.1, 0.8, 1, 0.8];
+const worldPerCapitaAnchorPoints = [0, 0, 0.05, 0.8, 1, 0.8];
+const perCapitaDeathsAnchorPoints = [0, 0, 0.005, 0.8, 1, 0.8];
 
 const convertPoints = (anchors, controls) => {
   return [
@@ -45,6 +46,13 @@ const convertPoints = (anchors, controls) => {
 const getWorldPerCapitaLegendOpacity = cubicBezierFindY(
   ...convertPoints(
     worldPerCapitaAnchorPoints,
+    worldPerCapitaBezierControlPoints
+  )
+);
+
+const getPerCapitaDeathsLegendOpacity = cubicBezierFindY(
+  ...convertPoints(
+    perCapitaDeathsAnchorPoints,
     worldPerCapitaBezierControlPoints
   )
 );
@@ -114,6 +122,25 @@ const worldPerCapitaGradient = [
   {
     magnitude: '5%',
     opacity: getWorldPerCapitaLegendOpacity(0.05),
+  },
+];
+
+const perCapitaDeathsGradient = [
+  {
+    magnitude: '.01%',
+    opacity: getPerCapitaDeathsLegendOpacity(0.0001),
+  },
+  {
+    magnitude: '.05%',
+    opacity: getPerCapitaDeathsLegendOpacity(0.0005),
+  },
+  {
+    magnitude: '.1%',
+    opacity: getPerCapitaDeathsLegendOpacity(0.001),
+  },
+  {
+    magnitude: '.5%',
+    opacity: getPerCapitaDeathsLegendOpacity(0.005),
   },
 ];
 
@@ -426,7 +453,7 @@ const worldLayers = [
       label: 'Deaths',
       icon: faSkullCrossbones,
       fillColor: deathsColor,
-      gradient: worldPerCapitaGradient,
+      gradient: perCapitaDeathsGradient,
     },
     type: 'fill',
     ...sourceAdmin0,
@@ -441,7 +468,7 @@ const worldLayers = [
         'interpolate',
         ['cubic-bezier', ...worldPerCapitaBezierControlPoints],
         ['feature-state', 'deathsPerCapita'],
-        ...worldPerCapitaAnchorPoints,
+        ...perCapitaDeathsAnchorPoints,
       ],
     },
   },
@@ -688,7 +715,7 @@ const usLayersState = [
       label: 'Deaths',
       icon: faSkullCrossbones,
       fillColor: deathsColor,
-      gradient: worldPerCapitaGradient,
+      gradient: perCapitaDeathsGradient,
       zoomLevels: [Number.NEGATIVE_INFINITY, 4],
     },
     id: 'us-state-per-capita-deaths',
@@ -705,7 +732,7 @@ const usLayersState = [
         'interpolate',
         ['cubic-bezier', ...worldPerCapitaBezierControlPoints],
         ['feature-state', 'deathsPerCapita'],
-        ...worldPerCapitaAnchorPoints,
+        ...perCapitaDeathsAnchorPoints,
       ],
     },
   },
@@ -1042,7 +1069,7 @@ const usLayersCounty = [
       label: 'Deaths',
       icon: faSkullCrossbones,
       fillColor: deathsColor,
-      gradient: worldPerCapitaGradient,
+      gradient: perCapitaDeathsGradient,
       zoomLevels: [4, Number.POSITIVE_INFINITY],
     },
     id: 'us-county-per-capita-deaths',
@@ -1059,7 +1086,7 @@ const usLayersCounty = [
         'interpolate',
         ['cubic-bezier', ...worldPerCapitaBezierControlPoints],
         ['feature-state', 'deathsPerCapita'],
-        ...worldPerCapitaAnchorPoints,
+        ...perCapitaDeathsAnchorPoints,
       ],
     },
   },
