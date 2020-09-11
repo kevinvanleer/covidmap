@@ -5,6 +5,7 @@ import { isEmpty } from 'lodash';
 
 const BarChart = ({
   data,
+  dataDimensions,
   average,
   xLabel,
   yLabel,
@@ -18,7 +19,7 @@ const BarChart = ({
 
   useEffect(() => {
     const yTicks = height * (7 / 200);
-    const defaultMinHeight = Math.max(average * 1.5, 10);
+    const defaultMinHeight = average ? Math.max(average * 1.5, 10) : 10;
     const margin = { top: 20, right: 0, bottom: 30, left: 30 };
     if (data && d3svg.current) {
       let svg = d3.select(d3svg.current);
@@ -37,7 +38,7 @@ const BarChart = ({
           isEmpty(data)
             ? defaultMinHeight
             : Math.max(
-                d3.max(data, (d) => d.value),
+                d3.max(data, (d) => d[dataDimensions.y]),
                 defaultMinHeight
               ),
         ])
@@ -50,7 +51,7 @@ const BarChart = ({
           .call(
             d3
               .axisBottom(x)
-              .tickFormat((i) => data[i].date)
+              .tickFormat((i) => data[i][dataDimensions.x])
               .tickSizeOuter(0)
           )
           .call((g) =>
@@ -85,8 +86,8 @@ const BarChart = ({
         .join('rect')
         .attr('fill', color)
         .attr('x', (d, i) => x(i))
-        .attr('y', (d) => y(d.value))
-        .attr('height', (d) => y(0) - y(d.value))
+        .attr('y', (d) => y(d[dataDimensions.y]))
+        .attr('height', (d) => y(0) - y(d[dataDimensions.y]))
         .attr('width', x.bandwidth());
       svg.append('g').call(xAxis);
       svg.append('g').call(yAxis);
@@ -150,6 +151,7 @@ const BarChart = ({
 
 BarChart.propTypes = {
   data: PropTypes.array,
+  dataDimensions: PropTypes.object,
   color: PropTypes.string,
   height: PropTypes.number,
   width: PropTypes.number,
@@ -166,6 +168,7 @@ BarChart.defaultProps = {
   color: 'steelblue',
   height: 200,
   width: 300,
+  dataDimensions: { x: 'date', y: 'value' },
 };
 
 export default BarChart;
