@@ -25,6 +25,9 @@ const cubicBezierDefaultControlPoints = [0.0, 1.0, 0.2, 0.9];
 
 const usStateTotalAnchorPoints = [0, 0, 1e6, 0.8, 1e7, 0.8];
 
+const usCountyTotalDeathsAnchorPoints = [0, 0, 10000, 0.8];
+const usCountyTotalCasesAnchorPoints = [0, 0, 100000, 0.8];
+
 const worldPerCapitaBezierControlPoints = [0.0, 0.5, 0.3, 0.6];
 const worldPerCapitaAnchorPoints = [0, 0, 0.01, 0.8, 1, 0.8];
 
@@ -44,8 +47,18 @@ const getWorldPerCapitaLegendOpacity = cubicBezierFindY(
   )
 );
 
+const getUsCountyTotalCasesLegendOpacity = cubicBezierFindY(
+  ...convertPoints(
+    usCountyTotalCasesAnchorPoints,
+    worldPerCapitaBezierControlPoints
+  )
+);
+
 const getUsCountyTotalDeathsLegendOpacity = cubicBezierFindY(
-  ...convertPoints([0, 0, 10000, 0.8], worldPerCapitaBezierControlPoints)
+  ...convertPoints(
+    usCountyTotalDeathsAnchorPoints,
+    worldPerCapitaBezierControlPoints
+  )
 );
 
 const getUsStateTotalLegendOpacity = cubicBezierFindY(
@@ -303,20 +316,20 @@ const usLegendConfig = {
     fillColor: casesColor,
     gradient: [
       {
-        magnitude: 10,
-        opacity: 0.1,
+        magnitude: 100,
+        opacity: getUsCountyTotalCasesLegendOpacity(100),
       },
       {
-        magnitude: 100,
-        opacity: 0.2,
+        magnitude: 1000,
+        opacity: getUsCountyTotalCasesLegendOpacity(1000),
       },
       {
         magnitude: 10000,
-        opacity: 0.4,
+        opacity: getUsCountyTotalCasesLegendOpacity(10000),
       },
       {
-        magnitude: 200000,
-        opacity: 0.8,
+        magnitude: 100000,
+        opacity: getUsCountyTotalCasesLegendOpacity(100000),
       },
     ],
   },
@@ -1131,10 +1144,7 @@ const usLayersCounty = [
         'interpolate',
         ['cubic-bezier', ...worldPerCapitaBezierControlPoints],
         ['feature-state', 'deaths'],
-        0,
-        0,
-        10000,
-        0.8,
+        ...usCountyTotalDeathsAnchorPoints,
       ],
     },
   },
@@ -1157,22 +1167,9 @@ const usLayersCounty = [
       ],
       'fill-opacity': [
         'interpolate',
-        ['linear'],
+        ['cubic-bezier', ...worldPerCapitaBezierControlPoints],
         ['feature-state', 'cases'],
-        0,
-        0,
-        10,
-        0.1,
-        100,
-        0.2,
-        10000,
-        0.4,
-        100000,
-        0.7,
-        200000,
-        0.8,
-        10000000,
-        0.8,
+        ...usCountyTotalCasesAnchorPoints,
       ],
     },
   },
