@@ -22,6 +22,8 @@ const populationColor = '#0f0';
 const invalidColor = '#777';
 
 const cubicBezierDefaultControlPoints = [0.0, 1.0, 0.2, 0.9];
+const worldTotalControlPoints = cubicBezierDefaultControlPoints;
+const worldTotalAnchorPoints = [0, 0, 1e7, 0.8, 1e10, 0.8];
 
 const usStateTotalAnchorPoints = [0, 0, 1e6, 0.8, 1e7, 0.8];
 
@@ -29,7 +31,7 @@ const usCountyTotalDeathsAnchorPoints = [0, 0, 10000, 0.8];
 const usCountyTotalCasesAnchorPoints = [0, 0, 100000, 0.8];
 
 const worldPerCapitaBezierControlPoints = [0.0, 0.5, 0.3, 0.6];
-const worldPerCapitaAnchorPoints = [0, 0, 0.01, 0.8, 1, 0.8];
+const worldPerCapitaAnchorPoints = [0, 0, 0.1, 0.8, 1, 0.8];
 
 const convertPoints = (anchors, controls) => {
   return [
@@ -102,16 +104,16 @@ const worldPerCapitaGradient = [
     opacity: getWorldPerCapitaLegendOpacity(0.001),
   },
   {
-    magnitude: '.2%',
-    opacity: getWorldPerCapitaLegendOpacity(0.002),
-  },
-  {
     magnitude: '.5%',
     opacity: getWorldPerCapitaLegendOpacity(0.005),
   },
   {
     magnitude: '1%',
     opacity: getWorldPerCapitaLegendOpacity(0.01),
+  },
+  {
+    magnitude: '5%',
+    opacity: getWorldPerCapitaLegendOpacity(0.05),
   },
 ];
 
@@ -462,14 +464,9 @@ const worldLayers = [
       ],
       'fill-opacity': [
         'interpolate',
-        ['cubic-bezier', 0.0, 1.0, 0.2, 0.9],
+        ['cubic-bezier', ...worldTotalControlPoints],
         ['feature-state', 'cases'],
-        0,
-        0,
-        1e7,
-        0.8,
-        1e10,
-        0.8,
+        ...worldTotalAnchorPoints,
       ],
     },
   },
@@ -492,14 +489,9 @@ const worldLayers = [
       ],
       'fill-opacity': [
         'interpolate',
-        ['cubic-bezier', 0.0, 1.0, 0.2, 0.9],
+        ['cubic-bezier', ...worldTotalControlPoints],
         ['feature-state', 'deaths'],
-        0,
-        0,
-        1e7,
-        0.8,
-        1e10,
-        0.8,
+        ...worldTotalAnchorPoints,
       ],
     },
   },
@@ -737,22 +729,9 @@ const usLayersState = [
       ],
       'fill-opacity': [
         'interpolate',
-        ['linear'],
+        ['cubic-bezier', ...worldPerCapitaBezierControlPoints],
         ['feature-state', 'casesPerCapita'],
-        0,
-        0,
-        0.001,
-        0.1,
-        0.002,
-        0.2,
-        0.01,
-        0.5,
-        0.03,
-        0.7,
-        0.05,
-        0.8,
-        1,
-        0.8,
+        ...worldPerCapitaAnchorPoints,
       ],
     },
   },
@@ -1104,22 +1083,9 @@ const usLayersCounty = [
       ],
       'fill-opacity': [
         'interpolate',
-        ['linear'],
+        ['cubic-bezier', ...worldPerCapitaBezierControlPoints],
         ['feature-state', 'casesPerCapita'],
-        0,
-        0,
-        0.001,
-        0.1,
-        0.002,
-        0.2,
-        0.01,
-        0.5,
-        0.03,
-        0.7,
-        0.05,
-        0.8,
-        1,
-        0.8,
+        ...worldPerCapitaAnchorPoints,
       ],
     },
   },
