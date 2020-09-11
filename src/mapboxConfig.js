@@ -43,6 +43,11 @@ const getWorldPerCapitaLegendOpacity = cubicBezierFindY(
     worldPerCapitaBezierControlPoints
   )
 );
+
+const getUsCountyTotalDeathsLegendOpacity = cubicBezierFindY(
+  ...convertPoints([0, 0, 10000, 0.8], worldPerCapitaBezierControlPoints)
+);
+
 const getUsStateTotalLegendOpacity = cubicBezierFindY(
   ...convertPoints(usStateTotalAnchorPoints, cubicBezierDefaultControlPoints)
 );
@@ -278,19 +283,19 @@ const usLegendConfig = {
     gradient: [
       {
         magnitude: 10,
-        opacity: 0.2,
+        opacity: getUsCountyTotalDeathsLegendOpacity(10),
       },
       {
         magnitude: 100,
-        opacity: 0.4,
+        opacity: getUsCountyTotalDeathsLegendOpacity(100),
       },
       {
         magnitude: 1000,
-        opacity: 0.7,
+        opacity: getUsCountyTotalDeathsLegendOpacity(1000),
       },
       {
-        magnitude: 2000,
-        opacity: 0.8,
+        magnitude: 10000,
+        opacity: getUsCountyTotalDeathsLegendOpacity(10000),
       },
     ],
   },
@@ -1124,21 +1129,11 @@ const usLayersCounty = [
       ],
       'fill-opacity': [
         'interpolate',
-        ['linear'],
+        ['cubic-bezier', ...worldPerCapitaBezierControlPoints],
         ['feature-state', 'deaths'],
         0,
         0,
-        1,
-        0.1,
-        10,
-        0.2,
-        100,
-        0.4,
-        1000,
-        0.7,
-        2000,
-        0.8,
-        10000000,
+        10000,
         0.8,
       ],
     },
