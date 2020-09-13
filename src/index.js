@@ -17,9 +17,8 @@ store.dispatch(startTimeService());
 
 if (process.env.NODE_ENV === 'production') {
   ReactGA.initialize('UA-55310450-2');
+  TagManager.initialize({ gtmId: 'GTM-W923ZS3' });
 }
-ReactGA.initialize('UA-55310450-2');
-TagManager.initialize({ gtmId: 'GTM-W923ZS3' });
 
 ReactDOM.render(
   <React.StrictMode>
