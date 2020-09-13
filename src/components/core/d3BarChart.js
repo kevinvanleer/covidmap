@@ -136,6 +136,7 @@ const BarChart = ({
     xLabel,
     yLabel,
     average,
+    dataDimensions,
   ]);
 
   return (
