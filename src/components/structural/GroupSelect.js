@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Flexbox, Text, Divider } from 'kvl-react-ui';
+import { Flexbox, Text, Divider, Button } from 'kvl-react-ui';
 
 import { selectLayerGroup } from '../../state/ui/map';
 
@@ -30,16 +30,20 @@ export const GroupSelect = () => {
             alignItems="center"
             backgroundColor={selectedGroup.name === group.name && '#777'}
           >
-            <Text
-              centerAlign
-              flexGrow={1}
-              padding="0.2em"
-              key={group.name}
-              fontSize="detail"
+            <Button
+              id={`covidmap-groupselect-${group.name.toLowerCase()}`}
               onClick={() => onSelectLayerGroup(group)}
             >
-              {group.name.toUpperCase()}
-            </Text>
+              <Text
+                centerAlign
+                flexGrow={1}
+                padding="0.2em"
+                key={group.name}
+                fontSize="detail"
+              >
+                {group.name.toUpperCase()}
+              </Text>
+            </Button>
           </Flexbox>
           {idx !== groups.length - 1 && <Divider vertical />}
         </React.Fragment>
