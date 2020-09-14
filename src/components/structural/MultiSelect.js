@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Flexbox, Text, Divider } from 'kvl-react-ui';
+import { Clickable } from '../presentation/Clickable';
 
 export const MultiSelect = ({ groups, selectedGroup, onSelect }) => {
   let maxLength = 0;
@@ -19,16 +20,15 @@ export const MultiSelect = ({ groups, selectedGroup, onSelect }) => {
             alignItems="center"
             backgroundColor={selectedGroup.name === group.name && '#777'}
           >
-            <Text
-              centerAlign
-              flexGrow={1}
-              padding="0.2em"
-              key={group.name}
-              fontSize="detail"
+            <Clickable
+              id={`covidmap-multiselect-item-${group.name.toLowerCase()}`}
               onClick={() => onSelect(group)}
+              flexGrow={1}
             >
-              {group.name.toUpperCase()}
-            </Text>
+              <Text centerAlign padding="0.2em" fontSize="detail">
+                {group.name.toUpperCase()}
+              </Text>
+            </Clickable>
           </Flexbox>
           {idx !== groups.length - 1 && <Divider vertical />}
         </React.Fragment>
