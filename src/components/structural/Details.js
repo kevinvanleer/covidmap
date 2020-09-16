@@ -403,7 +403,7 @@ export const Details = ({ date, collapsed }) => {
                 horizontal
                 labelBars
                 data={perCapitaComps
-                  .slice(0, 30)
+                  .slice(0, 51)
                   .filter((entity) => entity.deaths >= 1)}
                 dataDimensions={{ category: 'name', magnitude: 'deaths' }}
                 height={Math.min(window.innerHeight - 150, 1080)}
