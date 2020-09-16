@@ -29,7 +29,7 @@ const BarChart = ({
     const dimensionValues = horizontal
       ? { category: height, magnitude: width }
       : { category: width, magnitude: height };
-    const magnitudeTicks = (horizontal ? width : height) * (7 / 200);
+    const magnitudeTicks = horizontal ? (width * 7) / 300 : (height * 7) / 200;
     const defaultMaxMagnitude = average ? Math.max(average * 1.5, 10) : 10;
     const margin = labelBars
       ? { top: 5, right: 0, bottom: 30, left: 10 }
