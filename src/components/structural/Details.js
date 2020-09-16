@@ -372,7 +372,7 @@ export const Details = ({ date, collapsed }) => {
               <Flexbox>
                 <Flexbox flexDirection="column" flexGrow={1}>
                   <Text bold fontSize="label">
-                    {entity.displayName}
+                    {entity.displayName}: Deaths per capita
                   </Text>
                   <Text fontSize="detail">
                     {recentData.date
