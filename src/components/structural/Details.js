@@ -1,11 +1,17 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import ReactDOM from 'react-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { get, findLast, findLastIndex, last } from 'lodash';
 import { Flexbox, Spacer, Text, SquareButton } from 'kvl-react-ui';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFlagUsa, faGlobe } from '@fortawesome/free-solid-svg-icons';
+import {
+  faFlagUsa,
+  faGlobe,
+  faExpand,
+  faCompress,
+} from '@fortawesome/free-solid-svg-icons';
 
 import { Stats } from './Stats.js';
 import AreaChart from '../core/d3AreaChart.js';
@@ -31,6 +37,9 @@ const fillCasesPerDay = (endDate, count) => {
   }
   return fillArray.reverse();
 };
+
+const Portal = ({ children, container }) =>
+  ReactDOM.createPortal(children, container);
 
 const getCasesPerDay = (
   data,
@@ -88,6 +97,7 @@ const getNationalPerCapitaAverage = (date, totals, population) => {
 };
 
 export const Details = ({ date, collapsed }) => {
+  const [displayExpandedStats, setDisplayExpandedStats] = useState(false);
   const dispatch = useDispatch();
   const globalTotals = useSelector((state) => state.core.worldCovidData.totals);
   const usData = useSelector((state) => state.core.usCovidData.stateAndCounty);
@@ -285,7 +295,15 @@ export const Details = ({ date, collapsed }) => {
               >
                 <FontAwesomeIcon color="#eee" icon={backIcon} fixedWidth />
               </SquareButton>
-            ) : null}
+            ) : (
+              <SquareButton
+                id="covid19-button-expand-stats"
+                onClick={() => setDisplayExpandedStats(true)}
+                backgroundColor="#777"
+              >
+                <FontAwesomeIcon color="#eee" icon={faExpand} fixedWidth />
+              </SquareButton>
+            )}
           </Flexbox>
           <Spacer height="0.5em" />
           <Stats
@@ -309,7 +327,7 @@ export const Details = ({ date, collapsed }) => {
           height={collapsed ? 100 : undefined}
           color="#ce2029"
           width={325}
-          yLabel="deaths in 1M"
+          yLabel="deaths in 100k"
         />
       ) : null}
       {selectedFeature && selectedGroup.name.toLowerCase() === 'per capita' ? (
@@ -335,6 +353,70 @@ export const Details = ({ date, collapsed }) => {
           currentValue={parseInt(get(recentData, 'cases', 0))}
           showIntercept={true}
         />
+      ) : null}
+      {displayExpandedStats ? (
+        <Portal container={document.getElementById('root')}>
+          <Flexbox
+            position="absolute"
+            backgroundColor="rgba(0,0,0,0.8)"
+            top="0"
+            bottom="0"
+            left="0"
+            right="0"
+            zIndex="1000"
+            alignItems="center"
+            justifyContent="center"
+            color="#eee"
+          >
+            <Flexbox flexDirection="column">
+              <Flexbox>
+                <Flexbox flexDirection="column" flexGrow={1}>
+                  <Text bold fontSize="label">
+                    {entity.displayName}
+                  </Text>
+                  <Text fontSize="detail">
+                    {recentData.date
+                      ? `reporting on ${recentData.date}`
+                      : 'no reported cases'}
+                  </Text>
+                </Flexbox>
+                <Spacer flexGrow={1} />
+                <SquareButton
+                  id="covid19-button-collapse-stats"
+                  onClick={() => setDisplayExpandedStats(false)}
+                  backgroundColor="#777"
+                >
+                  <FontAwesomeIcon color="#eee" icon={faCompress} fixedWidth />
+                </SquareButton>
+              </Flexbox>
+              <Spacer height="0.5em" />
+              <Stats
+                population={population}
+                collapsed={collapsed}
+                entity={entity}
+                recentData={recentData}
+                newCases={newCases}
+                ongoingCases={ongoingCases}
+              />
+              <Spacer height="0.5em" />
+              <BarChart
+                horizontal
+                labelBars
+                data={perCapitaComps
+                  .slice(0, 30)
+                  .filter((entity) => entity.deaths >= 1)}
+                dataDimensions={{ category: 'name', magnitude: 'deaths' }}
+                height={Math.min(window.innerHeight - 150, 1080)}
+                color="#ce2029"
+                width={Math.min(
+                  window.innerWidth - window.innerWidth * 0.05,
+                  1920
+                )}
+                yLabel="deaths in 1M"
+              />
+            </Flexbox>
+          </Flexbox>
+        </Portal>
       ) : null}
     </Flexbox>
   ) : null;
