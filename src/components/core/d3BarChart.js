@@ -167,7 +167,7 @@ const BarChart = ({
         )
         .attr(dimensions.category, categoryScale.bandwidth());
       if (labelBars) {
-        const fontSize = categoryScale.bandwidth() * 0.5;
+        const fontSize = categoryScale.bandwidth() * 0.7;
         const fontOffset = (categoryScale.bandwidth() + fontSize) / 2 - 2;
         svg
           .append('g')
@@ -176,7 +176,7 @@ const BarChart = ({
           .join('text')
           .attr(axes.category, (d, i) => categoryScale(i) + fontOffset)
           .attr(axes.magnitude, margin.left + 5)
-          .text((d) => d[dataDimensions.category])
+          .text((d) => d[dataDimensions.category].toUpperCase())
           .attr('text-anchor', 'left')
           .attr('font-family', 'sans-serif')
           .attr('font-size', fontSize)
