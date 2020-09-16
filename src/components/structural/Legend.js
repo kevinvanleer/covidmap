@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import { Flexbox, Text } from 'kvl-react-ui';
 
 const prettyPrint = (number) => {
+  if (number >= 1e9) {
+    return `${number / 1e9}B`;
+  }
   if (number >= 1e6) {
     return `${number / 1e6}M`;
   }
