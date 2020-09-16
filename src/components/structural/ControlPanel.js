@@ -142,7 +142,7 @@ export const ControlPanel = ({ layers, activeLayers, onShowAbout, date }) => {
           <Spacer width="325px" />
         )}
       </Flexbox>
-      <DateSelector withChart={!detailsHidden} />
+      <DateSelector />
       {loadingMessage ? (
         <Flexbox flexDirection="column">
           <Spacer height="1em" />
