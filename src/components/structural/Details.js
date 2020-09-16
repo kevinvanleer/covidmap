@@ -91,6 +91,7 @@ export const Details = ({ date, collapsed }) => {
   const dispatch = useDispatch();
   const globalTotals = useSelector((state) => state.core.worldCovidData.totals);
   const usData = useSelector((state) => state.core.usCovidData.stateAndCounty);
+  const usStatesData = useSelector((state) => state.core.usCovidData.byState);
   const worldData = useSelector((state) => state.core.worldCovidData.byCountry);
   const selectedGroup = useSelector((state) => state.ui.map.selectedLayerGroup);
   const selectedFeature = useSelector((state) => state.ui.map.selectedFeature);
@@ -157,6 +158,57 @@ export const Details = ({ date, collapsed }) => {
     worldPopulations,
   ]);
   let xLabel = useMemo(() => moment(date).subtract(14, 'days').format('MMM'), [
+    date,
+  ]);
+
+  const perCapitaComps = useMemo(() => {
+    const allPerCapita = [];
+    Object.entries(usStatesData).forEach(([id, timeSeries]) => {
+      const stateData = findLast(
+        timeSeries,
+        (status) => status.date <= date.format('YYYY-MM-DD')
+      );
+      if (stateData) {
+        const statePop = get(usPopulations, [id, 'POPESTIMATE2019']);
+        if (statePop) {
+          allPerCapita.push({
+            id,
+            name:
+              activeView.name.toLowerCase() === 'world'
+                ? `${stateData.state}, US`
+                : stateData.state,
+            deaths: (stateData.deaths / statePop) * 1e6,
+            cases: (stateData.cases / statePop) * 1e6,
+          });
+        }
+      }
+    });
+    if (activeView.name.toLowerCase() === 'world') {
+      Object.entries(worldData).forEach(([id, timeSeries]) => {
+        const countryData = findLast(
+          timeSeries,
+          (status) => status.date <= date.format('YYYY-MM-DD')
+        );
+        if (countryData) {
+          const countryPop = get(worldPopulations, [id, 'population']);
+          if (countryPop) {
+            allPerCapita.push({
+              id,
+              name: countryData.country,
+              deaths: (countryData.deaths / countryPop) * 1e6,
+              cases: (countryData.cases / countryPop) * 1e6,
+            });
+          }
+        }
+      });
+    }
+    return allPerCapita.sort((a, b) => b.deaths - a.deaths);
+  }, [
+    activeView,
+    usStatesData,
+    usPopulations,
+    worldData,
+    worldPopulations,
     date,
   ]);
 
@@ -246,7 +298,21 @@ export const Details = ({ date, collapsed }) => {
           />
         </Flexbox>
       </Flexbox>
-      {selectedGroup.name.toLowerCase() === 'per capita' ? (
+      {!selectedFeature && selectedGroup.name.toLowerCase() === 'per capita' ? (
+        <BarChart
+          horizontal
+          labelBars
+          data={perCapitaComps
+            .slice(0, 10)
+            .filter((entity) => entity.deaths >= 1)}
+          dataDimensions={{ category: 'name', magnitude: 'deaths' }}
+          height={collapsed ? 100 : undefined}
+          color="#ce2029"
+          width={325}
+          yLabel="deaths in 1M"
+        />
+      ) : null}
+      {selectedFeature && selectedGroup.name.toLowerCase() === 'per capita' ? (
         <BarChart
           data={casesPerDay}
           average={getNationalPerCapitaAverage(
@@ -259,7 +325,8 @@ export const Details = ({ date, collapsed }) => {
           yLabel="cases in 100k"
           xLabel={xLabel}
         />
-      ) : (
+      ) : null}
+      {selectedGroup.name.toLowerCase() === 'total' ? (
         <AreaChart
           data={entity.data}
           currentDate={date}
@@ -268,7 +335,7 @@ export const Details = ({ date, collapsed }) => {
           currentValue={parseInt(get(recentData, 'cases', 0))}
           showIntercept={true}
         />
-      )}
+      ) : null}
     </Flexbox>
   ) : null;
 };

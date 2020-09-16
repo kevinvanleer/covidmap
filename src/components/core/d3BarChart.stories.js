@@ -29,3 +29,12 @@ export const BigData = () => (
 export const HorizonalLine = () => (
   <BarChart data={genData(30)} average={40} color="#2e86c1" yLabel="Y Label" />
 );
+export const HorizonalLineFlipLabel = () => (
+  <BarChart data={genData(30)} average={4} color="#2e86c1" yLabel="Y Label" />
+);
+export const Horizontal = () => (
+  <BarChart horizontal data={data} color="#2e86c1" yLabel="Y Label" />
+);
+export const HorizontalLabelBars = () => (
+  <BarChart horizontal labelBars data={data} color="#2e86c1" yLabel="Y Label" />
+);
