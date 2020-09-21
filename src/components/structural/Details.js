@@ -344,7 +344,7 @@ export const Details = ({ date, collapsed }) => {
           xLabel={xLabel}
         />
       ) : null}
-      {selectedGroup.name.toLowerCase() === 'total' ? (
+      {selectedGroup.name.toLowerCase() !== 'per capita' ? (
         <AreaChart
           data={entity.data}
           currentDate={date}
