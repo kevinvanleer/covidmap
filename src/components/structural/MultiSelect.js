@@ -13,23 +13,23 @@ export const MultiSelect = ({ groups, selectedGroup, onSelect }) => {
     <Flexbox style={{ border: '1px solid #777' }} flexGrow={1}>
       {groups.map((group, idx) => (
         <React.Fragment key={`${group.name}-${idx}`}>
-          <Flexbox
+          <Clickable
+            id={`covidmap-multiselect-item-${group.name.toLowerCase()}`}
+            onClick={() => onSelect(group)}
             flexGrow={1}
-            minWidth={`${maxLength}ch`}
-            justifyContent="center"
-            alignItems="center"
-            backgroundColor={selectedGroup.name === group.name && '#777'}
           >
-            <Clickable
-              id={`covidmap-multiselect-item-${group.name.toLowerCase()}`}
-              onClick={() => onSelect(group)}
+            <Flexbox
               flexGrow={1}
+              minWidth={`${maxLength}ch`}
+              justifyContent="center"
+              alignItems="center"
+              backgroundColor={selectedGroup.name === group.name && '#777'}
             >
               <Text centerAlign padding="0.2em" fontSize="detail">
                 {group.name.toUpperCase()}
               </Text>
-            </Clickable>
-          </Flexbox>
+            </Flexbox>
+          </Clickable>
           {idx !== groups.length - 1 && <Divider vertical />}
         </React.Fragment>
       ))}
