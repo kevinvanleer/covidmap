@@ -24,7 +24,11 @@ export const fetchUsCasesByCounty = async (startIndex, pageSize, reverse) => {
   const response = await fetch(
     `/api/us-cases-by-county?startIndex=${startIndex}&pageSize=${pageSize}&reverse=${reverse}`
   );
-  return response.json();
+
+  //HACK: csvtojson adds comma to last json array element, remove it
+  let text = await response.text();
+  if (text[text.length - 4] === ',') text = text.slice(0, -4) + text.slice(-3);
+  return JSON.parse(text);
 };
 
 export const fetchGlobalCovidTotals = async () => {
@@ -133,7 +137,8 @@ const sortCasesByCounty = (newCases) => async (dispatch) => {
 export const initializeFeatureState = () => async (dispatch) => {
   let done = false;
   let startIndex = 0;
-  let pageSize = 1000;
+  //HACK: We're getting the results from a stream now
+  let pageSize = 1e12;
 
   dispatch(aliveCheckPending());
   try {
