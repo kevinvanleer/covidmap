@@ -31,7 +31,7 @@ const usCountyTotalDeathsAnchorPoints = [0, 0, 10000, 0.8];
 const usCountyTotalCasesAnchorPoints = [0, 0, 100000, 0.8];
 
 const worldPerCapitaBezierControlPoints = [0.0, 0.5, 0.3, 0.6];
-const worldPerCapitaAnchorPoints = [0, 0, 0.05, 0.8, 1, 0.8];
+const worldPerCapitaAnchorPoints = [0, 0, 0.1, 0.8, 1, 0.8];
 const perCapitaDeathsAnchorPoints = [0, 0, 0.005, 0.8, 1, 0.8];
 
 const convertPoints = (anchors, controls) => {
@@ -108,10 +108,6 @@ const usStateTotalGradient = [
 
 const worldPerCapitaGradient = [
   {
-    magnitude: '.1%',
-    opacity: getWorldPerCapitaLegendOpacity(0.001),
-  },
-  {
     magnitude: '.5%',
     opacity: getWorldPerCapitaLegendOpacity(0.005),
   },
@@ -122,6 +118,10 @@ const worldPerCapitaGradient = [
   {
     magnitude: '5%',
     opacity: getWorldPerCapitaLegendOpacity(0.05),
+  },
+  {
+    magnitude: '10%',
+    opacity: getWorldPerCapitaLegendOpacity(0.1),
   },
 ];
 
