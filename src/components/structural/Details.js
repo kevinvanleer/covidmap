@@ -90,8 +90,8 @@ const getNationalPerCapitaAverage = (date, totals, population) => {
       (status) =>
         status.date <= moment(date).subtract(30, 'days').format('YYYY-MM-DD')
     );
-    const casesPerDay = get(last, 'cases', 0) - get(thirty, 'cases', 0) / 30;
-    return (casesPerDay / population) * 1e3;
+    const casesPerDay = (get(last, 'cases', 0) - get(thirty, 'cases', 0)) / 30;
+    return (casesPerDay / population) * 1e5;
   }
   return NaN;
 };
