@@ -21,18 +21,55 @@ const deathsColor = '#f00';
 const populationColor = '#0f0';
 const invalidColor = '#777';
 
+const usCountyTotalDeathsUpperBound = 1e4;
+const usCountyTotalCasesUpperBound = 5e5;
+const usStateTotalUpperBound = 5e6;
+const worldPerCapitaCasesUpperBound = 0.2;
+const worldPerCapitaDeathsUpperBound = 0.005;
+
 const cubicBezierDefaultControlPoints = [0.0, 1.0, 0.2, 0.9];
 const worldTotalControlPoints = cubicBezierDefaultControlPoints;
 const worldTotalAnchorPoints = [0, 0, 1e7, 0.8, 1e10, 0.8];
 
-const usStateTotalAnchorPoints = [0, 0, 1e6, 0.8, 1e7, 0.8];
+const usStateTotalAnchorPoints = [
+  0,
+  0,
+  usStateTotalUpperBound,
+  0.8,
+  usStateTotalUpperBound * 10,
+  0.8,
+];
 
-const usCountyTotalDeathsAnchorPoints = [0, 0, 10000, 0.8];
-const usCountyTotalCasesAnchorPoints = [0, 0, 100000, 0.8];
+const usCountyTotalDeathsAnchorPoints = [
+  0,
+  0,
+  usCountyTotalDeathsUpperBound,
+  0.8,
+];
+const usCountyTotalCasesAnchorPoints = [
+  0,
+  0,
+  usCountyTotalCasesUpperBound,
+  0.8,
+];
 
 const worldPerCapitaBezierControlPoints = [0.0, 0.5, 0.3, 0.6];
-const worldPerCapitaAnchorPoints = [0, 0, 0.1, 0.8, 1, 0.8];
-const perCapitaDeathsAnchorPoints = [0, 0, 0.005, 0.8, 1, 0.8];
+const worldPerCapitaAnchorPoints = [
+  0,
+  0,
+  worldPerCapitaCasesUpperBound,
+  0.8,
+  1,
+  0.8,
+];
+const perCapitaDeathsAnchorPoints = [
+  0,
+  0,
+  worldPerCapitaDeathsUpperBound,
+  0.8,
+  1,
+  0.8,
+];
 
 const convertPoints = (anchors, controls) => {
   return [
@@ -89,31 +126,27 @@ const getWorldPopLegendOpacity = cubicBezierFindY(
 
 const usStateTotalGradient = [
   {
-    magnitude: 1e3,
-    opacity: getUsStateTotalLegendOpacity(1e3),
+    magnitude: 5e3,
+    opacity: getUsStateTotalLegendOpacity(5e3),
   },
   {
-    magnitude: 1e4,
-    opacity: getUsStateTotalLegendOpacity(1e4),
+    magnitude: 5e4,
+    opacity: getUsStateTotalLegendOpacity(5e4),
   },
   {
-    magnitude: 1e5,
-    opacity: getUsStateTotalLegendOpacity(1e5),
+    magnitude: 5e5,
+    opacity: getUsStateTotalLegendOpacity(5e5),
   },
   {
-    magnitude: 1e6,
+    magnitude: 5e6,
     opacity: 0.8,
   },
 ];
 
 const worldPerCapitaGradient = [
   {
-    magnitude: '.5%',
-    opacity: getWorldPerCapitaLegendOpacity(0.005),
-  },
-  {
-    magnitude: '1%',
-    opacity: getWorldPerCapitaLegendOpacity(0.01),
+    magnitude: '2%',
+    opacity: getWorldPerCapitaLegendOpacity(0.02),
   },
   {
     magnitude: '5%',
@@ -122,6 +155,10 @@ const worldPerCapitaGradient = [
   {
     magnitude: '10%',
     opacity: getWorldPerCapitaLegendOpacity(0.1),
+  },
+  {
+    magnitude: '20%',
+    opacity: getWorldPerCapitaLegendOpacity(0.2),
   },
 ];
 
