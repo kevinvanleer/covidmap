@@ -3,19 +3,6 @@ import PropTypes from 'prop-types';
 
 import { Flexbox, Text } from 'kvl-react-ui';
 
-const prettyPrint = (number) => {
-  if (number >= 1e9) {
-    return `${number / 1e9}B`;
-  }
-  if (number >= 1e6) {
-    return `${number / 1e6}M`;
-  }
-  if (number >= 1e3) {
-    return `${number / 1e3}k`;
-  }
-  return number;
-};
-
 const boxDimension = '1.5rem';
 
 export const Legend = ({ fillColor, gradient }) => (
@@ -40,7 +27,7 @@ export const Legend = ({ fillColor, gradient }) => (
           centerAlign
           width={boxDimension}
         >
-          {prettyPrint(step.magnitude)}
+          {step.magnitude}
         </Text>
       ))}
     </Flexbox>

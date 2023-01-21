@@ -21,53 +21,27 @@ const deathsColor = '#f00';
 const populationColor = '#0f0';
 const invalidColor = '#777';
 
-const usCountyTotalDeathsUpperBound = 1e4;
-const usCountyTotalCasesUpperBound = 5e5;
-const usStateTotalUpperBound = 5e6;
-const worldPerCapitaCasesUpperBound = 0.2;
-const worldPerCapitaDeathsUpperBound = 0.005;
+const usCountyTotalDeathsUpperBound = 1e5;
+const usCountyTotalCasesUpperBound = 5e6;
+const usCountyPopulationUpperBound = 1e7;
+const usStateTotalUpperBound = 1e8;
+const usStatePopulationUpperBound = 5e8;
+const usStateInfectionRateUpperBound = 1;
+const worldPerCapitaCasesUpperBound = 0.5;
+const worldPerCapitaDeathsUpperBound = 0.02;
+const worldPopulationUpperBound = 1e9;
+const worldTotalUpperBound = 1e8;
 
 const cubicBezierDefaultControlPoints = [0.0, 1.0, 0.2, 0.9];
-const worldTotalControlPoints = cubicBezierDefaultControlPoints;
-const worldTotalAnchorPoints = [0, 0, 1e7, 0.8, 1e10, 0.8];
-
-const usStateTotalAnchorPoints = [
-  0,
-  0,
-  usStateTotalUpperBound,
-  0.8,
-  usStateTotalUpperBound * 10,
-  0.8,
-];
-
-const usCountyTotalDeathsAnchorPoints = [
-  0,
-  0,
-  usCountyTotalDeathsUpperBound,
-  0.8,
-];
-const usCountyTotalCasesAnchorPoints = [
-  0,
-  0,
-  usCountyTotalCasesUpperBound,
-  0.8,
-];
-
 const worldPerCapitaBezierControlPoints = [0.0, 0.5, 0.3, 0.6];
-const worldPerCapitaAnchorPoints = [
+const worldTotalControlPoints = cubicBezierDefaultControlPoints;
+
+const generateAnchorPoints = (upperLimit) => [
   0,
   0,
-  worldPerCapitaCasesUpperBound,
+  upperLimit,
   0.8,
-  1,
-  0.8,
-];
-const perCapitaDeathsAnchorPoints = [
-  0,
-  0,
-  worldPerCapitaDeathsUpperBound,
-  0.8,
-  1,
+  upperLimit * 1000,
   0.8,
 ];
 
@@ -79,6 +53,64 @@ const convertPoints = (anchors, controls) => {
     { x: anchors[2], y: anchors[3] },
   ];
 };
+
+const legendLabelPercent = (magnitude) => `${magnitude * 100}%`;
+
+const legendLabelMagnitude = (number) => {
+  if (number >= 1e9) {
+    return `${number / 1e9}B`;
+  }
+  if (number >= 1e6) {
+    return `${number / 1e6}M`;
+  }
+  if (number >= 1e3) {
+    return `${number / 1e3}k`;
+  }
+  return number;
+};
+
+const getLinearOpacity = (upperLimit) => (magnitude) => magnitude / upperLimit;
+
+const generateLegendGradient = (
+  upperLimit,
+  legendLabelFunc,
+  steps,
+  opacityFunc
+) =>
+  steps.map((step) => ({
+    magnitude: legendLabelFunc(upperLimit * step),
+    opacity: opacityFunc(upperLimit * step),
+  }));
+
+const worldTotalAnchorPoints = generateAnchorPoints(worldTotalUpperBound);
+
+const usStateTotalAnchorPoints = generateAnchorPoints(usStateTotalUpperBound);
+
+const usCountyPopulationAnchorPoints = generateAnchorPoints(
+  usCountyPopulationUpperBound
+);
+
+const usCountyTotalDeathsAnchorPoints = generateAnchorPoints(
+  usCountyTotalDeathsUpperBound
+);
+const usCountyTotalCasesAnchorPoints = generateAnchorPoints(
+  usCountyTotalCasesUpperBound
+);
+
+const worldPerCapitaAnchorPoints = generateAnchorPoints(
+  worldPerCapitaCasesUpperBound
+);
+const perCapitaDeathsAnchorPoints = generateAnchorPoints(
+  worldPerCapitaDeathsUpperBound
+);
+
+const infectionRateAnchorPoints = generateAnchorPoints(
+  usStateInfectionRateUpperBound
+);
+
+const usStatePopulationAnchorPoints = generateAnchorPoints(
+  usStatePopulationUpperBound
+);
 
 const getWorldPerCapitaLegendOpacity = cubicBezierFindY(
   ...convertPoints(
@@ -111,113 +143,67 @@ const getUsCountyTotalDeathsLegendOpacity = cubicBezierFindY(
 const getUsStateTotalLegendOpacity = cubicBezierFindY(
   ...convertPoints(usStateTotalAnchorPoints, cubicBezierDefaultControlPoints)
 );
-const getWorldLegendOpacity = cubicBezierFindY(
-  { x: 0, y: 0 },
-  { x: 0, y: 0.8 },
-  { x: 2e6, y: 0.72 },
-  { x: 1e7, y: 0.8 }
+
+const getUsStatePopulationLegendOpacity = cubicBezierFindY(
+  ...convertPoints(
+    usStatePopulationAnchorPoints,
+    cubicBezierDefaultControlPoints
+  )
 );
+
+const getWorldTotalLegendOpacity = cubicBezierFindY(
+  ...convertPoints(worldTotalAnchorPoints, cubicBezierDefaultControlPoints)
+);
+
+const getUsCountyPopulationLegendOpacity = cubicBezierFindY(
+  ...convertPoints(
+    usCountyPopulationAnchorPoints,
+    cubicBezierDefaultControlPoints
+  )
+);
+
+const worldPopulationAnchorPoints = generateAnchorPoints(
+  worldPopulationUpperBound
+);
+
 const getWorldPopLegendOpacity = cubicBezierFindY(
-  { x: 0, y: 0 },
-  { x: 0, y: 0.8 },
-  { x: 3e8, y: 0.48 },
-  { x: 1e9, y: 0.8 }
+  ...convertPoints(worldPopulationAnchorPoints, cubicBezierDefaultControlPoints)
 );
 
-const usStateTotalGradient = [
-  {
-    magnitude: 5e3,
-    opacity: getUsStateTotalLegendOpacity(5e3),
-  },
-  {
-    magnitude: 5e4,
-    opacity: getUsStateTotalLegendOpacity(5e4),
-  },
-  {
-    magnitude: 5e5,
-    opacity: getUsStateTotalLegendOpacity(5e5),
-  },
-  {
-    magnitude: 5e6,
-    opacity: 0.8,
-  },
-];
+const usStateTotalGradient = generateLegendGradient(
+  usStateTotalUpperBound,
+  legendLabelMagnitude,
+  [1e-3, 1e-2, 1e-1, 1],
+  getUsStateTotalLegendOpacity
+);
 
-const worldPerCapitaGradient = [
-  {
-    magnitude: '2%',
-    opacity: getWorldPerCapitaLegendOpacity(0.02),
-  },
-  {
-    magnitude: '5%',
-    opacity: getWorldPerCapitaLegendOpacity(0.05),
-  },
-  {
-    magnitude: '10%',
-    opacity: getWorldPerCapitaLegendOpacity(0.1),
-  },
-  {
-    magnitude: '20%',
-    opacity: getWorldPerCapitaLegendOpacity(0.2),
-  },
-];
+const worldPerCapitaGradient = generateLegendGradient(
+  worldPerCapitaCasesUpperBound,
+  legendLabelPercent,
+  [0.1, 0.25, 0.5, 1],
+  getWorldPerCapitaLegendOpacity
+);
 
-const perCapitaDeathsGradient = [
-  {
-    magnitude: '.01%',
-    opacity: getPerCapitaDeathsLegendOpacity(0.0001),
-  },
-  {
-    magnitude: '.05%',
-    opacity: getPerCapitaDeathsLegendOpacity(0.0005),
-  },
-  {
-    magnitude: '.1%',
-    opacity: getPerCapitaDeathsLegendOpacity(0.001),
-  },
-  {
-    magnitude: '.5%',
-    opacity: getPerCapitaDeathsLegendOpacity(0.005),
-  },
-];
+const perCapitaDeathsGradient = generateLegendGradient(
+  worldPerCapitaDeathsUpperBound,
+  legendLabelPercent,
+  [0.1, 0.25, 0.5, 1],
+  getPerCapitaDeathsLegendOpacity
+);
 
-const worldTotalsGradient = [
-  {
-    magnitude: 1e4,
-    opacity: getWorldLegendOpacity(1e4),
-  },
-  {
-    magnitude: 1e5,
-    opacity: getWorldLegendOpacity(1e5),
-  },
-  {
-    magnitude: 1e6,
-    opacity: getWorldLegendOpacity(1e6),
-  },
-  {
-    magnitude: 1e7,
-    opacity: 0.8,
-  },
-];
+const worldTotalsGradient = generateLegendGradient(
+  worldTotalUpperBound,
+  legendLabelMagnitude,
+  [1e-3, 1e-2, 1e-1, 1],
+  getWorldTotalLegendOpacity
+);
 
-const worldPopulationGradient = [
-  {
-    magnitude: 1e6,
-    opacity: getWorldPopLegendOpacity(1e6),
-  },
-  {
-    magnitude: 1e7,
-    opacity: getWorldPopLegendOpacity(1e7),
-  },
-  {
-    magnitude: 1e8,
-    opacity: getWorldPopLegendOpacity(1e8),
-  },
-  {
-    magnitude: 1e9,
-    opacity: 0.8,
-  },
-];
+const worldPopulationGradient = generateLegendGradient(
+  worldPopulationUpperBound,
+  legendLabelMagnitude,
+  [1e-3, 1e-2, 1e-1, 1],
+  getWorldPopLegendOpacity
+);
 
 const usMiscLegendConfig = {
   covidVsFlu: {
@@ -282,24 +268,12 @@ const usMiscLegendConfig = {
   },
   infectionRate: {
     fillColor: '#ff9a00',
-    gradient: [
-      {
-        magnitude: '1%',
-        opacity: 0.1,
-      },
-      {
-        magnitude: '5%',
-        opacity: 0.5,
-      },
-      {
-        magnitude: '10%',
-        opacity: 0.7,
-      },
-      {
-        magnitude: '20%',
-        opacity: 0.8,
-      },
-    ],
+    gradient: generateLegendGradient(
+      usStateInfectionRateUpperBound,
+      legendLabelPercent,
+      [0.1, 0.2, 0.5, 1],
+      getLinearOpacity(usStateInfectionRateUpperBound)
+    ),
   },
 };
 
@@ -308,46 +282,22 @@ const usLegendConfig = {
   population: {
     defaultDisabled: true,
     fillColor: populationColor,
-    gradient: [
-      {
-        magnitude: 1e4,
-        opacity: getWorldLegendOpacity(1e4),
-      },
-      {
-        magnitude: 1e5,
-        opacity: getWorldLegendOpacity(1e5),
-      },
-      {
-        magnitude: 1e6,
-        opacity: getWorldLegendOpacity(1e6),
-      },
-      {
-        magnitude: 1e7,
-        opacity: 0.8,
-      },
-    ],
+    gradient: generateLegendGradient(
+      usCountyPopulationUpperBound,
+      legendLabelMagnitude,
+      [1e-3, 1e-2, 1e-1, 1],
+      getUsCountyPopulationLegendOpacity
+    ),
   },
   statePopulation: {
     defaultDisabled: true,
     fillColor: populationColor,
-    gradient: [
-      {
-        magnitude: 1e4,
-        opacity: getWorldLegendOpacity(1e4),
-      },
-      {
-        magnitude: 1e5,
-        opacity: getWorldLegendOpacity(1e5),
-      },
-      {
-        magnitude: 1e6,
-        opacity: getWorldLegendOpacity(1e6),
-      },
-      {
-        magnitude: 5e8,
-        opacity: 0.8,
-      },
-    ],
+    gradient: generateLegendGradient(
+      usStatePopulationUpperBound,
+      legendLabelMagnitude,
+      [1e-3, 1e-2, 1e-1, 1],
+      getUsStatePopulationLegendOpacity
+    ),
   },
   usStateTotalCases: {
     fillColor: casesColor,
@@ -359,45 +309,22 @@ const usLegendConfig = {
   },
   deaths: {
     fillColor: deathsColor,
-    gradient: [
-      {
-        magnitude: 10,
-        opacity: getUsCountyTotalDeathsLegendOpacity(10),
-      },
-      {
-        magnitude: 100,
-        opacity: getUsCountyTotalDeathsLegendOpacity(100),
-      },
-      {
-        magnitude: 1000,
-        opacity: getUsCountyTotalDeathsLegendOpacity(1000),
-      },
-      {
-        magnitude: 10000,
-        opacity: getUsCountyTotalDeathsLegendOpacity(10000),
-      },
-    ],
+    gradient: generateLegendGradient(
+      usCountyTotalDeathsUpperBound,
+      legendLabelMagnitude,
+      [1e-3, 1e-2, 1e-1, 1],
+      getUsCountyTotalDeathsLegendOpacity
+    ),
   },
   cases: {
     fillColor: casesColor,
-    gradient: [
-      {
-        magnitude: 100,
-        opacity: getUsCountyTotalCasesLegendOpacity(100),
-      },
-      {
-        magnitude: 1000,
-        opacity: getUsCountyTotalCasesLegendOpacity(1000),
-      },
-      {
-        magnitude: 10000,
-        opacity: getUsCountyTotalCasesLegendOpacity(10000),
-      },
-      {
-        magnitude: 100000,
-        opacity: getUsCountyTotalCasesLegendOpacity(100000),
-      },
-    ],
+    gradient: generateLegendGradient(
+      //1e6,
+      usCountyTotalCasesUpperBound,
+      legendLabelMagnitude,
+      [1e-3, 1e-2, 1e-1, 1],
+      getUsCountyTotalCasesLegendOpacity
+    ),
   },
 };
 
@@ -582,12 +509,7 @@ const worldLayers = [
         'interpolate',
         ['cubic-bezier', 0.0, 1.0, 0.3, 0.6],
         ['feature-state', 'population'],
-        0,
-        0,
-        1e9,
-        0.8,
-        1e14,
-        0.8,
+        ...worldPopulationAnchorPoints,
       ],
     },
   },
@@ -730,20 +652,7 @@ const usLayersState = [
         'interpolate',
         ['linear'],
         ['feature-state', 'casesPerCapita'],
-        0,
-        0,
-        0.01,
-        0.1,
-        0.02,
-        0.2,
-        0.05,
-        0.5,
-        0.1,
-        0.7,
-        0.2,
-        0.8,
-        1,
-        0.8,
+        ...infectionRateAnchorPoints,
       ],
     },
   },
@@ -871,12 +780,7 @@ const usLayersState = [
         'interpolate',
         ['cubic-bezier', 0.0, 1.0, 0.2, 0.9],
         ['feature-state', 'population'],
-        0,
-        0,
-        5e8,
-        0.8,
-        1e10,
-        0.8,
+        ...usStatePopulationAnchorPoints,
       ],
     },
   },
@@ -1084,20 +988,7 @@ const usLayersCounty = [
         'interpolate',
         ['linear'],
         ['feature-state', 'casesPerCapita'],
-        0,
-        0,
-        0.01,
-        0.1,
-        0.02,
-        0.2,
-        0.05,
-        0.5,
-        0.1,
-        0.7,
-        0.2,
-        0.8,
-        1,
-        0.8,
+        ...infectionRateAnchorPoints,
       ],
     },
   },
@@ -1224,12 +1115,7 @@ const usLayersCounty = [
         'interpolate',
         ['cubic-bezier', 0.0, 1.0, 0.2, 0.9],
         ['feature-state', 'population'],
-        0,
-        0,
-        1e7,
-        0.8,
-        1e10,
-        0.8,
+        ...usCountyPopulationAnchorPoints,
       ],
     },
   },
@@ -1374,17 +1260,17 @@ export const layerGroups = {
       name: 'Misc',
       layers: [
         'us-county-infection-rate',
-        'us-county-cases-vs-flu',
-        'us-county-cases-vs-avg',
-        'us-county-deaths-vs-flu',
-        'us-county-deaths-vs-avg',
+        //'us-county-cases-vs-flu',
+        //'us-county-cases-vs-avg',
+        //'us-county-deaths-vs-flu',
+        //'us-county-deaths-vs-avg',
         'us-per-capita-hotspots',
         'us-county-population',
         'us-state-infection-rate',
-        'us-state-cases-vs-flu',
-        'us-state-cases-vs-avg',
-        'us-state-deaths-vs-flu',
-        'us-state-deaths-vs-avg',
+        //'us-state-cases-vs-flu',
+        //'us-state-cases-vs-avg',
+        //'us-state-deaths-vs-flu',
+        //'us-state-deaths-vs-avg',
         'us-per-capita-hotspots',
         'us-state-population',
         ...getUsCommonLayers(),
