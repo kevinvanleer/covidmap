@@ -2,11 +2,11 @@
   "proxy": [
     {
       "source": "/resources/:resource",
-      "destination": "https://geo-covid19-api.herokuapp.com/resources/:resource"
+      "destination": "https://coviddata-psi.vercel.app/resources/:resource"
     },
     {
       "source": "/api/:resource",
-      "destination": "https://geo-covid19-api.herokuapp.com/api/:resource"
+      "destination": "https://coviddata-psi.vercel.app/api/:resource"
     }
   ]
 }
