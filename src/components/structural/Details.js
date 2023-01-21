@@ -167,9 +167,10 @@ export const Details = ({ date, collapsed }) => {
     totals,
     worldPopulations,
   ]);
-  let xLabel = useMemo(() => moment(date).subtract(14, 'days').format('MMM'), [
-    date,
-  ]);
+  let xLabel = useMemo(
+    () => moment(date).subtract(14, 'days').format('MMM'),
+    [date]
+  );
 
   const perCapitaComps = useMemo(() => {
     const allPerCapita = [];

@@ -42,10 +42,7 @@ const usCasesByCountySlice = createSlice({
   },
 });
 
-export const {
-  requestPending,
-  requestSucceeded,
-  requestFailed,
-} = usCasesByCountySlice.actions;
+export const { requestPending, requestSucceeded, requestFailed } =
+  usCasesByCountySlice.actions;
 
 export default usCasesByCountySlice.reducer;

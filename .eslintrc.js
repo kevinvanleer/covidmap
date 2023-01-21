@@ -8,15 +8,19 @@ module.exports = {
     parser: 'babel-eslint',
     ecmaVersion: 2020,
     sourceType: 'module',
+    ecmaFeatures: {
+      jsx: true,
+    },
   },
   extends: [
     'plugin:react/recommended',
     'plugin:prettier/recommended',
     'plugin:eslint-plugin-json/recommended',
   ],
-  plugins: ['prettier', 'unused-imports', 'babel'],
+  plugins: ['react', 'prettier', 'unused-imports', 'babel'],
   // add your custom rules here
   rules: {
+    'react/jsx-fragments': [2, 'syntax'],
     'react/prop-types': 1,
     'prettier/prettier': 'error',
     'no-unused-expressions': 'error',

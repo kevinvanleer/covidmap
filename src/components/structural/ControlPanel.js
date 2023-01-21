@@ -55,10 +55,10 @@ export const ControlPanel = ({ layers, activeLayers, onShowAbout, date }) => {
     [detailsHidden, dispatch]
   );
 
-  const onToggleCollapse = useCallback(() => dispatch(collapse(!collapsed)), [
-    collapsed,
-    dispatch,
-  ]);
+  const onToggleCollapse = useCallback(
+    () => dispatch(collapse(!collapsed)),
+    [collapsed, dispatch]
+  );
 
   let loadingMessage = null;
   let progress = sourcesLoading || mapLoading ? 0 : dataProgress;

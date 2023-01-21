@@ -21,18 +21,20 @@ export const DateSelector = ({ withChart }) => {
   const timeState = useSelector((state) => state.core.time);
   const [showTimeFilterMenu, setShowTimeFilterMenu] = useState(false);
 
-  const onSetCurrentTime = useCallback((value) => dispatch(setCurrent(value)), [
-    dispatch,
-  ]);
+  const onSetCurrentTime = useCallback(
+    (value) => dispatch(setCurrent(value)),
+    [dispatch]
+  );
 
   const onSetDuration = useCallback(
     (duration) => dispatch(setDuration(duration)),
     [dispatch]
   );
 
-  const onTogglePlayPause = useCallback(() => dispatch(togglePlayPause()), [
-    dispatch,
-  ]);
+  const onTogglePlayPause = useCallback(
+    () => dispatch(togglePlayPause()),
+    [dispatch]
+  );
 
   return (
     <Flexbox margin={withChart ? '0 0 0 30px' : '0'} flexDirection="column">

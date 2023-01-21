@@ -46,9 +46,6 @@ const apiServerStatusSlice = createSlice({
   },
 });
 
-export const {
-  aliveCheckPending,
-  aliveCheckPassed,
-  aliveCheckFailed,
-} = apiServerStatusSlice.actions;
+export const { aliveCheckPending, aliveCheckPassed, aliveCheckFailed } =
+  apiServerStatusSlice.actions;
 export default apiServerStatusSlice.reducer;
