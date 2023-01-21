@@ -1,6 +1,6 @@
 {
   "name": "covidmap",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "private": true,
   "proxy": "http://localhost:3003",
   "dependencies": {
