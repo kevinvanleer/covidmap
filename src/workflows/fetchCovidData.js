@@ -40,7 +40,8 @@ export const fetchUsCovidByState = async () => {
 };
 
 export const fetchWorldCovidData = async () => {
-  const response = await fetch('/api/global-covid-by-country');
+  return fetch('/api/global-covid-by-country');
+  //const response = await fetch('/api/global-covid-by-country');
   //
   //HACK: csvtojson adds comma to last json array element, remove it
   let text = await response.text();
