@@ -6,4 +6,6 @@ import configureAppStore from '../src/state/configureAppStore';
 
 const store = configureAppStore();
 
-addDecorator((story) => <Provider store={store}>{story()}</Provider>);
+export const decorators = [
+  (story) => <Provider store={store}>{story()}</Provider>,
+];
