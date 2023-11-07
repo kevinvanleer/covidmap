@@ -72,6 +72,16 @@ const timeSlice = createSlice({
     setDuration: (state, action) => {
       state.duration = action.payload;
     },
+    setTimeRange: (state, action) => {
+      state.max = parseInt(moment(action.payload.end).format('x'));
+      state.min = parseInt(moment(action.payload.start).format('x'));
+      if (state.current > state.max) {
+        state.current = state.max;
+      }
+      if (state.current < state.min) {
+        state.current = state.min;
+      }
+    },
   },
 });
 
@@ -80,6 +90,7 @@ export const {
   tick,
   setMax,
   setMin,
+  setTimeRange,
   setRate,
   setPause,
   setDuration,
