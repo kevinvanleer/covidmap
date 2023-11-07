@@ -40,7 +40,12 @@ export const fetchUsCovidByState = async () => {
 };
 
 export const fetchWorldCovidData = async () => {
-  return fetch('/api/global-covid-by-country');
+  const response = await fetch('/api/global-covid-by-country');
+  //
+  //HACK: csvtojson adds comma to last json array element, remove it
+  let text = await response.text();
+  if (text[text.length - 4] === ',') text = text.slice(0, -4) + text.slice(-3);
+  return JSON.parse(text);
 };
 
 export const fetchUsTotals = async () => {
@@ -173,11 +178,7 @@ export const initializeFeatureState = () => async (dispatch) => {
     ];
   });
   dispatch(addBoundaries(boundaryStates));
-  dispatch(
-    worldDataLoad(
-      sortWorldCasesByCountry((await (await worldDataPromise).json()).data)
-    )
-  );
+  dispatch(worldDataLoad(sortWorldCasesByCountry(await worldDataPromise)));
 
   dispatch(setByState(await byStatePromise));
 
