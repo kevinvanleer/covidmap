@@ -17,6 +17,7 @@ import {
   aliveCheckPassed,
   aliveCheckFailed,
 } from '../state/core/apiServerStatus.js';
+import { setTimeRange } from '../state/core/time.js';
 
 import * as usCasesByCountyStatus from '../state/request/usCasesByCounty.js';
 
@@ -147,6 +148,8 @@ export const initializeFeatureState = () => async (dispatch) => {
   dispatch(worldDataLoad((await (await worldDataPromise).json()).data));
 
   const byState = await byStatePromise;
+  const dates = byState.data.map((a) => a.date).sort();
+  dispatch(setTimeRange({ start: dates[0], end: dates[dates.length - 1] }));
 
   dispatch(setByState(byState));
 
