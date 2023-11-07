@@ -14,6 +14,8 @@ import {
   setActiveView,
 } from '../../state/ui/map.js';
 
+import { setTimeRange } from '../../state/core/time.js';
+
 export const Layers = ({ layers, activeLayers, collapsed }) => {
   const dispatch = useDispatch();
   const selectedGroup = useSelector((state) => state.ui.map.selectedLayerGroup);
@@ -21,6 +23,14 @@ export const Layers = ({ layers, activeLayers, collapsed }) => {
   const views = useSelector((state) => state.ui.map.views);
   const groups = useSelector((state) => state.ui.map.layerGroups);
   const map = useSelector((state) => state.ui.map.map);
+  const usStartDate = useSelector((state) => state.core.usCovidData.startDate);
+  const usEndDate = useSelector((state) => state.core.usCovidData.endDate);
+  const worldStartDate = useSelector(
+    (state) => state.core.worldCovidData.startDate
+  );
+  const worldEndDate = useSelector(
+    (state) => state.core.worldCovidData.endDate
+  );
   const zoomLevel = map ? map.getZoom() : 0;
   const filteredLayers = useMemo(
     () =>
@@ -57,8 +67,23 @@ export const Layers = ({ layers, activeLayers, collapsed }) => {
   const onSelectView = useCallback(
     (view) => {
       dispatch(setActiveView(view));
+      if (view.name === 'world') {
+        dispatch(
+          setTimeRange({
+            start: worldStartDate,
+            end: worldEndDate,
+          })
+        );
+      } else {
+        dispatch(
+          setTimeRange({
+            start: usStartDate,
+            end: usEndDate,
+          })
+        );
+      }
     },
-    [dispatch]
+    [dispatch, usStartDate, usEndDate, worldStartDate, worldEndDate]
   );
   const onSelectGroup = useCallback(
     (group) => {
