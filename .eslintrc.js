@@ -16,6 +16,7 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:prettier/recommended',
     'plugin:eslint-plugin-json/recommended',
+    'plugin:storybook/recommended',
   ],
   plugins: ['react', 'prettier', 'unused-imports', 'babel'],
   // add your custom rules here
