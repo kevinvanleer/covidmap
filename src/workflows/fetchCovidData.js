@@ -16,6 +16,7 @@ import {
   aliveCheckPassed,
   aliveCheckFailed,
 } from '../state/core/apiServerStatus.js';
+import { setTimeRange } from '../state/core/time.js';
 
 import * as usCasesByCountyStatus from '../state/request/usCasesByCounty.js';
 
@@ -69,7 +70,10 @@ export const fetchUsCovidByState = createAsyncThunk(
   'usCovidData/fetchByState',
   async (_, { dispatch }) => {
     const byStatePromise = (await fetch('/api/us-covid-by-state')).json();
-    dispatch(setByState(await byStatePromise));
+    const byState = await byStatePromise;
+    const dates = byState.data.map((a) => a.date).sort();
+    dispatch(setTimeRange({ start: dates[0], end: dates[dates.length - 1] }));
+    dispatch(setByState(byState));
   }
 );
 
