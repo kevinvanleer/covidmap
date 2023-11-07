@@ -3,6 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const usCovidDataSlice = createSlice({
   name: 'usCovidData',
   initialState: {
+    startDate: undefined,
+    endDate: undefined,
     totals: [
       {
         date: undefined,
@@ -99,6 +101,8 @@ const usCovidDataSlice = createSlice({
           newState[id] = [record];
         }
       });
+      state.startDate = action.payload.data[0].date;
+      state.endDate = action.payload.data[action.payload.data.length - 1].date;
       state.byState = newState;
       state.stateAndCounty = { ...newState, ...state.casesByCounty };
     },

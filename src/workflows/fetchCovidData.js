@@ -67,35 +67,6 @@ export const fetchAliveCheck = async () => {
   return fetch(`/api/alive`);
 };
 
-const sortWorldCasesByCountry = (data) => {
-  const sorted = {};
-  data.forEach((status) => {
-    const countryId = status.Country_code;
-    if (countryId in sorted) {
-      sorted[countryId].push({
-        date: status.Date_reported,
-        cases: status.Cumulative_cases,
-        deaths: status.Cumulative_deaths,
-        newCases: status.New_cases,
-        newDeaths: status.New_deaths,
-        country: status.Country,
-      });
-    } else {
-      sorted[countryId] = [
-        {
-          date: status.Date_reported,
-          cases: status.Cumulative_cases,
-          deaths: status.Cumulative_deaths,
-          newCases: status.New_cases,
-          newDeaths: status.New_deaths,
-          country: status.Country,
-        },
-      ];
-    }
-  });
-  return sorted;
-};
-
 const sortCasesByCounty = (newCases) => async (dispatch) => {
   let badRecords = [];
   let newStatus = {};
@@ -173,13 +144,11 @@ export const initializeFeatureState = () => async (dispatch) => {
     ];
   });
   dispatch(addBoundaries(boundaryStates));
-  dispatch(
-    worldDataLoad(
-      sortWorldCasesByCountry((await (await worldDataPromise).json()).data)
-    )
-  );
+  dispatch(worldDataLoad((await (await worldDataPromise).json()).data));
 
-  dispatch(setByState(await byStatePromise));
+  const byState = await byStatePromise;
+
+  dispatch(setByState(byState));
 
   dispatch(setTotals(await totalsPromise));
   dispatch(setPopulation(await populationPromise));
