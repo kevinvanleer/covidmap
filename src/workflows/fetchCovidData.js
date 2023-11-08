@@ -25,6 +25,7 @@ export const fetchUsCasesByCountyStream = createAsyncThunk(
     const response = await fetch(`/api/us-cases-by-county`);
 
     const reader = response.body
+      .pipeThrough(new DecompressionStream('gzip'))
       .pipeThrough(new TextDecoderStream())
       .getReader();
     let unterminated;
@@ -83,6 +84,7 @@ export const fetchWorldCovidDataStream = createAsyncThunk(
   async (_, { dispatch }) => {
     const response = await fetch('/api/global-covid-by-country');
     const reader = response.body
+      .pipeThrough(new DecompressionStream('gzip'))
       .pipeThrough(new TextDecoderStream())
       .getReader();
     let unterminated;
