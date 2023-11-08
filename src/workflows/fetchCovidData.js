@@ -29,6 +29,7 @@ export const fetchUsCasesByCountyStream = createAsyncThunk(
       .getReader();
     let unterminated;
     let items = [];
+    dispatch(usCasesByCountyStatus.requestPending(0.001));
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
@@ -45,6 +46,7 @@ export const fetchUsCasesByCountyStream = createAsyncThunk(
         }
       });
     }
+    dispatch(usCasesByCountyStatus.requestPending(1));
     dispatch(usDataAppend(items));
   }
 );
@@ -249,9 +251,8 @@ export const initializeFeatureState = () => async (dispatch) => {
     dispatch(aliveCheckFailed(e));
   }
 
-  try {
-    dispatch(usCasesByCountyStatus.requestPending(0));
-    /*while (!done) {
+  dispatch(usCasesByCountyStatus.requestPending(0));
+  /*while (!done) {
       const newCases = await fetchUsCasesByCounty(startIndex, pageSize, true);
       const data = newCases.data || newCases;
       dispatch(sortCasesByCounty(data));
@@ -266,11 +267,14 @@ export const initializeFeatureState = () => async (dispatch) => {
         );
       }
     }*/
-    dispatch(fetchUsCasesByCountyStream());
-    dispatch(usCasesByCountyStatus.requestSucceeded());
-  } catch (e) {
-    dispatch(usCasesByCountyStatus.requestFailed(e));
-  }
+  dispatch(fetchUsCasesByCountyStream())
+    .unwrap()
+    .then(() => {
+      dispatch(usCasesByCountyStatus.requestSucceeded());
+    })
+    .catch((reject) => {
+      dispatch(usCasesByCountyStatus.requestFailed(reject));
+    });
 
   dispatch(fetchBoundaries());
   dispatch(fetchWorldCovidDataStream());
