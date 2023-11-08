@@ -21,6 +21,44 @@ const usCovidDataSlice = createSlice({
       state.casesByCounty = action.payload;
       state.stateAndCounty = { ...state.byState, ...state.casesByCounty };
     },
+    append: (state, action) => {
+      let badRecords = [...state.badRecords];
+      let newStatus = { ...state.casesByCounty };
+
+      action.payload.forEach((status) => {
+        const countyId = parseInt(status.fips);
+
+        if (isNaN(countyId)) {
+          badRecords.push(status);
+        } else {
+          const countyId = parseInt(status.fips);
+
+          if (countyId in newStatus) {
+            newStatus[countyId].push({
+              date: status.date,
+              cases: status.cases,
+              deaths: status.deaths,
+              county: status.county,
+              state: status.state,
+            });
+          } else {
+            newStatus[countyId] = [
+              {
+                date: status.date,
+                cases: status.cases,
+                deaths: status.deaths,
+                county: status.county,
+                state: status.state,
+              },
+            ];
+          }
+        }
+      });
+
+      state.casesByCounty = newStatus;
+      state.badRecords = badRecords;
+      state.stateAndCounty = { ...state.byState, ...state.casesByCounty };
+    },
     addBoundaries: (state, action) => {
       state.casesByCounty = { ...state.casesByCounty, ...action.payload };
       state.stateAndCounty = { ...state.byState, ...state.casesByCounty };
@@ -107,6 +145,7 @@ const usCovidDataSlice = createSlice({
 
 export const {
   load,
+  append,
   appendStatus,
   insertStatus,
   appendBadRecords,
