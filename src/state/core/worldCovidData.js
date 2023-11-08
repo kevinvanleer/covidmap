@@ -12,7 +12,7 @@ const worldCovidDataSlice = createSlice({
       state.byCountry = action.payload;
     },
     append: (state, action) => {
-      const sorted = state.byCountry;
+      const sorted = { ...state.byCountry };
       action.payload.forEach((status) => {
         const countryId = status.Country_code;
         if (countryId in sorted) {

@@ -22,8 +22,8 @@ const usCovidDataSlice = createSlice({
       state.stateAndCounty = { ...state.byState, ...state.casesByCounty };
     },
     append: (state, action) => {
-      let badRecords = state.badRecords;
-      let newStatus = state.casesByCounty;
+      let badRecords = [...state.badRecords];
+      let newStatus = { ...state.casesByCounty };
 
       action.payload.forEach((status) => {
         const countyId = parseInt(status.fips);
@@ -58,9 +58,6 @@ const usCovidDataSlice = createSlice({
       state.casesByCounty = newStatus;
       state.badRecords = badRecords;
       state.stateAndCounty = { ...state.byState, ...state.casesByCounty };
-
-      //dispatch(insertStatus(newStatus));
-      //dispatch(appendBadRecords(badRecords));
     },
     addBoundaries: (state, action) => {
       state.casesByCounty = { ...state.casesByCounty, ...action.payload };
