@@ -29,8 +29,8 @@ export const fetchUsCasesByCountyStream = createAsyncThunk(
       .pipeThrough(new TextDecoderStream())
       .getReader();
     let unterminated;
-    let items = [];
     dispatch(usCasesByCountyStatus.requestPending(0.001));
+    let items = [];
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
@@ -46,9 +46,13 @@ export const fetchUsCasesByCountyStream = createAsyncThunk(
           items.push(JSON.parse(line));
         }
       });
+      if (items.length > 1e5) {
+        dispatch(usDataAppend(items));
+        items = [];
+      }
     }
-    dispatch(usCasesByCountyStatus.requestPending(1));
     dispatch(usDataAppend(items));
+    dispatch(usCasesByCountyStatus.requestPending(1));
   }
 );
 
@@ -104,6 +108,10 @@ export const fetchWorldCovidDataStream = createAsyncThunk(
           items.push(JSON.parse(line));
         }
       });
+      if (items.length > 1e5) {
+        dispatch(worldDataAppend(items));
+        items = [];
+      }
     }
     dispatch(worldDataAppend(items));
   }
