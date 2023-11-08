@@ -19,17 +19,14 @@ import {
 
 import * as usCasesByCountyStatus from '../state/request/usCasesByCounty.js';
 
-export const fetchUsCasesByCountyStream = createAsyncThunk(
-  'usCasesByCounty/pipe',
-  async (_, { dispatch }) => {
-    const response = await fetch(`/api/us-cases-by-county`);
-
+export const readResponse = createAsyncThunk(
+  'fetchCovidData/readResponse',
+  async ({ response, reducer }, { dispatch }) => {
     const reader = response.body
       .pipeThrough(new DecompressionStream('gzip'))
       .pipeThrough(new TextDecoderStream())
       .getReader();
     let unterminated;
-    dispatch(usCasesByCountyStatus.requestPending(0.001));
     let items = [];
     while (true) {
       const { value, done } = await reader.read();
@@ -47,11 +44,22 @@ export const fetchUsCasesByCountyStream = createAsyncThunk(
         }
       });
       if (items.length > 1e5) {
-        dispatch(usDataAppend(items));
+        dispatch(reducer(items));
         items = [];
       }
     }
-    dispatch(usDataAppend(items));
+    dispatch(reducer(items));
+  }
+);
+
+export const fetchUsCasesByCountyStream = createAsyncThunk(
+  'usCasesByCounty/pipe',
+  async (_, { dispatch }) => {
+    const response = await fetch(`/api/us-cases-by-county`);
+    dispatch(usCasesByCountyStatus.requestPending(0.001));
+
+    await dispatch(readResponse({ response, reducer: usDataAppend }));
+
     dispatch(usCasesByCountyStatus.requestPending(1));
   }
 );
@@ -87,33 +95,7 @@ export const fetchWorldCovidDataStream = createAsyncThunk(
   'globalCovidByCountry/pipe',
   async (_, { dispatch }) => {
     const response = await fetch('/api/global-covid-by-country');
-    const reader = response.body
-      .pipeThrough(new DecompressionStream('gzip'))
-      .pipeThrough(new TextDecoderStream())
-      .getReader();
-    let unterminated;
-    let items = [];
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      let lines = value;
-      if (unterminated) {
-        lines = unterminated + value;
-        unterminated = null;
-      }
-      lines.split('\n').forEach((line) => {
-        if (line.endsWith('}') !== true) {
-          unterminated = line;
-        } else {
-          items.push(JSON.parse(line));
-        }
-      });
-      if (items.length > 1e5) {
-        dispatch(worldDataAppend(items));
-        items = [];
-      }
-    }
-    dispatch(worldDataAppend(items));
+    await dispatch(readResponse({ response, reducer: worldDataAppend }));
   }
 );
 
