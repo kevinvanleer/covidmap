@@ -5,6 +5,8 @@ import moment from 'moment';
 import mapboxgl from 'mapbox-gl';
 import { findLast, get } from 'lodash';
 
+import { setActiveView } from '../../state/ui/map.js';
+
 import {
   setHold,
   setSelectedFeature,
@@ -171,6 +173,7 @@ const MapboxMap = ({ sources, activeLayers, layers, date, ...props }) => {
       map.on('load', async () => {
         dispatch(mapFinishedLoading());
         dispatch(beginLoadingSources());
+        dispatch(setActiveView({ name: 'world' }));
         await Promise.all([
           new Promise((resolve, reject) =>
             map.loadImage('/img/coronavirus-green-128.png', (error, image) => {
