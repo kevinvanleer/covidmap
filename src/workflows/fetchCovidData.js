@@ -1,14 +1,12 @@
-import { get } from 'lodash';
 import {
+  append as usDataAppend,
   addBoundaries,
-  insertStatus,
-  appendBadRecords,
   setTotals,
   setPopulation,
   setByState,
 } from '../state/core/usCovidData.js';
 import {
-  load as worldDataLoad,
+  append as worldDataAppend,
   setPopulation as worldSetPopulation,
   setTotals as worldSetTotals,
 } from '../state/core/worldCovidData.js';
@@ -19,6 +17,32 @@ import {
 } from '../state/core/apiServerStatus.js';
 
 import * as usCasesByCountyStatus from '../state/request/usCasesByCounty.js';
+
+export const fetchUsCasesByCountyStream = async (dispatch) => {
+  const response = await fetch(`/api/us-cases-by-county`);
+
+  const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+  let unterminated;
+  while (true) {
+    let items = [];
+    const { value, done } = await reader.read();
+    if (done) break;
+    let lines = value;
+    if (unterminated) {
+      lines = unterminated + lines;
+      unterminated = null;
+    }
+    lines.split('\n').forEach((line) => {
+      if (line.endsWith('}') !== true) {
+        unterminated = line;
+      } else {
+        items.push(JSON.parse(line));
+      }
+    });
+    //console.log(items);
+    dispatch(usDataAppend(items));
+  }
+};
 
 export const fetchUsCasesByCounty = async (startIndex, pageSize, reverse) => {
   const response = await fetch(
@@ -40,13 +64,37 @@ export const fetchUsCovidByState = async () => {
 };
 
 export const fetchWorldCovidData = async () => {
-  return fetch('/api/global-covid-by-country');
-  //const response = await fetch('/api/global-covid-by-country');
+  //return (await fetch('/api/global-covid-by-country')).json();
+  const response = await fetch('/api/global-covid-by-country');
   //
   //HACK: csvtojson adds comma to last json array element, remove it
   let text = await response.text();
   if (text[text.length - 4] === ',') text = text.slice(0, -4) + text.slice(-3);
   return JSON.parse(text);
+};
+
+export const fetchWorldCovidDataStream = async (dispatch) => {
+  const response = await fetch('/api/global-covid-by-country');
+  const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+  let unterminated;
+  while (true) {
+    let items = [];
+    const { value, done } = await reader.read();
+    if (done) break;
+    let lines = value;
+    if (unterminated) {
+      lines = unterminated + value;
+      unterminated = null;
+    }
+    lines.split('\n').forEach((line) => {
+      if (line.endsWith('}') !== true) {
+        unterminated = line;
+      } else {
+        items.push(JSON.parse(line));
+      }
+    });
+    dispatch(worldDataAppend(items));
+  }
 };
 
 export const fetchUsTotals = async () => {
@@ -73,6 +121,7 @@ export const fetchAliveCheck = async () => {
   return fetch(`/api/alive`);
 };
 
+/*
 const sortWorldCasesByCountry = (data) => {
   const sorted = {};
   data.forEach((status) => {
@@ -101,7 +150,9 @@ const sortWorldCasesByCountry = (data) => {
   });
   return sorted;
 };
+*/
 
+/*
 const sortCasesByCounty = (newCases) => async (dispatch) => {
   let badRecords = [];
   let newStatus = {};
@@ -139,12 +190,13 @@ const sortCasesByCounty = (newCases) => async (dispatch) => {
   dispatch(insertStatus(newStatus));
   dispatch(appendBadRecords(badRecords));
 };
+*/
 
 export const initializeFeatureState = () => async (dispatch) => {
-  let done = false;
-  let startIndex = 0;
+  //let done = false;
+  //let startIndex = 0;
   //HACK: We're getting the results from a stream now
-  let pageSize = 1e12;
+  //let pageSize = 1e12;
 
   dispatch(aliveCheckPending());
   try {
@@ -157,10 +209,10 @@ export const initializeFeatureState = () => async (dispatch) => {
   } catch (e) {
     dispatch(aliveCheckFailed(e));
   }
-
+  //
   const totalsPromise = fetchUsTotals();
   const populationPromise = fetchUsPopulation();
-  const worldDataPromise = fetchWorldCovidData();
+  //const worldDataPromise = fetchWorldCovidData();
   const worldPopulationPromise = fetchWorldPopulation();
   const globalCovidTotalsPromise = fetchGlobalCovidTotals();
   const byStatePromise = fetchUsCovidByState();
@@ -179,7 +231,8 @@ export const initializeFeatureState = () => async (dispatch) => {
     ];
   });
   dispatch(addBoundaries(boundaryStates));
-  dispatch(worldDataLoad(sortWorldCasesByCountry(await worldDataPromise)));
+  //dispatch(worldDataLoad(sortWorldCasesByCountry(await worldDataPromise)));
+  fetchWorldCovidDataStream(dispatch);
 
   dispatch(setByState(await byStatePromise));
 
@@ -191,7 +244,7 @@ export const initializeFeatureState = () => async (dispatch) => {
 
   try {
     dispatch(usCasesByCountyStatus.requestPending(0));
-    while (!done) {
+    /*while (!done) {
       const newCases = await fetchUsCasesByCounty(startIndex, pageSize, true);
       const data = newCases.data || newCases;
       dispatch(sortCasesByCounty(data));
@@ -205,7 +258,8 @@ export const initializeFeatureState = () => async (dispatch) => {
           )
         );
       }
-    }
+    }*/
+    fetchUsCasesByCountyStream(dispatch);
     dispatch(usCasesByCountyStatus.requestSucceeded());
   } catch (e) {
     dispatch(usCasesByCountyStatus.requestFailed(e));
