@@ -52,28 +52,10 @@ export const readResponse = createAsyncThunk(
   }
 );
 
-export const fetchUsCasesByCountyStream = createAsyncThunk(
+export const fetchUsCasesByCounty = createAsyncThunk(
   'usCasesByCounty/pipe',
-  async (_, { dispatch }) => {
-    const response = await fetch(`/api/us-cases-by-county`);
-    dispatch(usCasesByCountyStatus.requestPending(0.001));
-
-    await dispatch(readResponse({ response, reducer: usDataAppend }));
-
-    dispatch(usCasesByCountyStatus.requestPending(1));
-  }
+  async () => fetch(`/api/us-cases-by-county`)
 );
-
-export const fetchUsCasesByCounty = async (startIndex, pageSize, reverse) => {
-  const response = await fetch(
-    `/api/us-cases-by-county?startIndex=${startIndex}&pageSize=${pageSize}&reverse=${reverse}`
-  );
-
-  //HACK: csvtojson adds comma to last json array element, remove it
-  let text = await response.text();
-  if (text[text.length - 4] === ',') text = text.slice(0, -4) + text.slice(-3);
-  return JSON.parse(text);
-};
 
 export const fetchGlobalCovidTotals = createAsyncThunk(
   'worldCovidData/totals',
@@ -91,12 +73,9 @@ export const fetchUsCovidByState = createAsyncThunk(
   }
 );
 
-export const fetchWorldCovidDataStream = createAsyncThunk(
+export const fetchWorldCovidData = createAsyncThunk(
   'globalCovidByCountry/pipe',
-  async (_, { dispatch }) => {
-    const response = await fetch('/api/global-covid-by-country');
-    await dispatch(readResponse({ response, reducer: worldDataAppend }));
-  }
+  async () => fetch('/api/global-covid-by-country')
 );
 
 export const fetchUsTotals = createAsyncThunk(
@@ -259,9 +238,12 @@ export const initializeFeatureState = () => async (dispatch) => {
         );
       }
     }*/
-  dispatch(fetchUsCasesByCountyStream())
+  dispatch(fetchUsCasesByCounty())
     .unwrap()
-    .then(() => {
+    .then(async (response) => {
+      dispatch(usCasesByCountyStatus.requestPending(0.001));
+      await dispatch(readResponse({ response, reducer: usDataAppend }));
+      dispatch(usCasesByCountyStatus.requestPending(1));
       dispatch(usCasesByCountyStatus.requestSucceeded());
     })
     .catch((reject) => {
@@ -269,7 +251,11 @@ export const initializeFeatureState = () => async (dispatch) => {
     });
 
   dispatch(fetchBoundaries());
-  dispatch(fetchWorldCovidDataStream());
+  dispatch(fetchWorldCovidData())
+    .unwrap()
+    .then((response) =>
+      dispatch(readResponse({ response, reducer: worldDataAppend }))
+    );
 
   dispatch(fetchUsCovidByState());
 
