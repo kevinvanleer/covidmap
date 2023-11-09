@@ -16,6 +16,7 @@ import {
   aliveCheckPassed,
   aliveCheckFailed,
 } from '../state/core/apiServerStatus.js';
+import { setTimeRange } from '../state/core/time.js';
 
 import * as usCasesByCountyStatus from '../state/request/usCasesByCounty.js';
 
@@ -69,7 +70,10 @@ export const fetchUsCovidByState = createAsyncThunk(
   'usCovidData/fetchByState',
   async (_, { dispatch }) => {
     const byStatePromise = (await fetch('/api/us-covid-by-state')).json();
-    dispatch(setByState(await byStatePromise));
+    const byState = await byStatePromise;
+    const dates = byState.data.map((a) => a.date).sort();
+    dispatch(setTimeRange({ start: dates[0], end: dates[dates.length - 1] }));
+    dispatch(setByState(byState));
   }
 );
 
@@ -113,77 +117,6 @@ export const fetchAliveCheck = async () => {
   return fetch(`/api/alive`);
 };
 
-/*
-const sortWorldCasesByCountry = (data) => {
-  const sorted = {};
-  data.forEach((status) => {
-    const countryId = status.Country_code;
-    if (countryId in sorted) {
-      sorted[countryId].push({
-        date: status.Date_reported,
-        cases: status.Cumulative_cases,
-        deaths: status.Cumulative_deaths,
-        newCases: status.New_cases,
-        newDeaths: status.New_deaths,
-        country: status.Country,
-      });
-    } else {
-      sorted[countryId] = [
-        {
-          date: status.Date_reported,
-          cases: status.Cumulative_cases,
-          deaths: status.Cumulative_deaths,
-          newCases: status.New_cases,
-          newDeaths: status.New_deaths,
-          country: status.Country,
-        },
-      ];
-    }
-  });
-  return sorted;
-};
-*/
-
-/*
-const sortCasesByCounty = (newCases) => async (dispatch) => {
-  let badRecords = [];
-  let newStatus = {};
-
-  newCases.forEach((status) => {
-    const countyId = parseInt(status.fips);
-
-    if (isNaN(countyId)) {
-      badRecords.push(status);
-    } else {
-      const countyId = parseInt(status.fips);
-
-      if (countyId in newStatus) {
-        newStatus[countyId].push({
-          date: status.date,
-          cases: status.cases,
-          deaths: status.deaths,
-          county: status.county,
-          state: status.state,
-        });
-      } else {
-        newStatus[countyId] = [
-          {
-            date: status.date,
-            cases: status.cases,
-            deaths: status.deaths,
-            county: status.county,
-            state: status.state,
-          },
-        ];
-      }
-    }
-  });
-
-  dispatch(insertStatus(newStatus));
-  dispatch(appendBadRecords(badRecords));
-};
-*/
-
 const fetchBoundaries = createAsyncThunk(
   'boundaries/fetch',
   async (_, { dispatch }) => {
@@ -205,11 +138,6 @@ const fetchBoundaries = createAsyncThunk(
 );
 
 export const initializeFeatureState = () => async (dispatch) => {
-  //let done = false;
-  //let startIndex = 0;
-  //HACK: We're getting the results from a stream now
-  //let pageSize = 1e12;
-
   dispatch(aliveCheckPending());
   try {
     const aliveResponse = await fetchAliveCheck();
@@ -223,21 +151,6 @@ export const initializeFeatureState = () => async (dispatch) => {
   }
 
   dispatch(usCasesByCountyStatus.requestPending(0));
-  /*while (!done) {
-      const newCases = await fetchUsCasesByCounty(startIndex, pageSize, true);
-      const data = newCases.data || newCases;
-      dispatch(sortCasesByCounty(data));
-      done = data.length < pageSize;
-      startIndex += pageSize;
-      pageSize *= 2;
-      if (!done) {
-        dispatch(
-          usCasesByCountyStatus.requestPending(
-            startIndex / get(newCases, 'meta.totalCount', NaN)
-          )
-        );
-      }
-    }*/
   dispatch(fetchUsCasesByCounty())
     .unwrap()
     .then(async (response) => {
