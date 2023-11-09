@@ -13,6 +13,7 @@ import {
   mapFinishedLoading,
   beginLoadingSources,
   sourcesFinishedLoading,
+  setActiveView,
 } from '../../state/ui/map.js';
 import { loadingStatus } from '../../state/util/loadingStatus.js';
 
@@ -171,6 +172,7 @@ const MapboxMap = ({ sources, activeLayers, layers, date, ...props }) => {
       map.on('load', async () => {
         dispatch(mapFinishedLoading());
         dispatch(beginLoadingSources());
+        dispatch(setActiveView({ name: 'world' }));
         await Promise.all([
           new Promise((resolve, reject) =>
             map.loadImage('/img/coronavirus-green-128.png', (error, image) => {
