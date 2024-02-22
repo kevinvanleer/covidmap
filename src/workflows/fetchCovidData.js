@@ -44,7 +44,7 @@ export const readResponse = createAsyncThunk(
           items.push(JSON.parse(line));
         }
       });
-      if (items.length > 1e5) {
+      if (items.length > 5e4) {
         dispatch(reducer(items));
         items = [];
       }
